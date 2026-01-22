@@ -42,23 +42,35 @@ export default function LoginPage() {
                 className="outline-none"
               />
             </div>
-          </div>
-            <Link className="text-right text-[14px] text-[#4C5F66]" href="/forgot-password" >Forgot Password?</Link>
-          <div className="flex flex-col gap-1.25 ">
-            <button className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px]">
-              Log In
-            </button>
-
-            <div className="flex flex-col gap-5">
-
-            <Link className="text-[14px] text-center text-[#4C5F66]" href="/signup">
-              Don't have an account?{" "}
-              <span className="font-medium text-black">Sign Up</span>
+            <Link
+              className="text-right text-[14px] text-[#4C5F66]"
+              href="/forgot-password"
+            >
+              Forgot Password?
             </Link>
+            <div className="flex flex-col gap-2.5 justify-center items-center">
+              <button className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px] max-w-63.75 ">
+                Log In
+              </button>
+              <div className="text-center flex flex-col gap-5">
+                <Link
+                  className="text-[14px] text-center text-[#4C5F66]"
+                  href="/signup"
+                >
+                  Don't have an account?{" "}
+                  <span className="font-medium text-black">Sign Up</span>
+                </Link>
 
-            <hr className="max-w-[50%] min-w-[50%] text-[#E7E3E0] m-auto "></hr>
+                <hr className="max-w-[50%] min-w-[50%] text-[#E7E3E0] m-auto "></hr>
 
-            <Link className="text-[14px] text-center text-[#4C5F66]" href="../barangay/login">Barangay Administrator? <span className="font-medium text-gray-700">Log In</span> here</Link>
+                <Link
+                  className="text-[14px] text-center text-[#4C5F66]"
+                  href="../barangay/login"
+                >
+                  Barangay Administrator?{" "}
+                  <span className="font-medium text-gray-700">Log In</span> here
+                </Link>
+              </div>
             </div>
           </div>
         </div>

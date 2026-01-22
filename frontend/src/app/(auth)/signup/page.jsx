@@ -17,7 +17,7 @@ const poppins = Poppins({
 export default function SingupPage() {
   return (
     <main
-      className={`min-h-screen flex bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${poppins.className}`}
+      className={`min-h-screen flex justify-center bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${poppins.className}`}
     >
       <div className="grid">
         <div className="flex justify-end items-end">
@@ -76,17 +76,17 @@ export default function SingupPage() {
               />
             </div>
 
-            <div className="flex flex-row gap-3.25 p-2.25 justify-center items-center">
+            <div className="ml-1 flex flex-row gap-3.25 p-2.25 justify-start items-center">
               <input type="checkbox" name="eula" className="h-4.25 w-4.25 "/>
-              <label htmlFor="eula" className="px-1 text-[13px]">
-                I accept <span className="font-medium">Terms & conditions</span>{" "}
-                and <span className="font-medium">Privacy policy.</span>
+              <label htmlFor="eula" className="px-1 text-[13px] text-[#4C5F66]">
+                I accept <span className="font-medium text-black">Terms & conditions</span>{" "}
+                and <span className="font-medium text-black">Privacy policy.</span>
               </label>
             </div>
           </div>
 
-          <div className="flex flex-col gap-1.25">
-            <button className="bg-primary text-white font-medium py-3.75 px-20 rounded-[40px]">
+          <div className="flex flex-col gap-2.5 justify-center items-center">
+            <button className="bg-primary text-white font-medium py-3.75 px-20 rounded-[40px] max-w-63.75">
               Sign Up
             </button>
 
@@ -96,6 +96,6 @@ export default function SingupPage() {
           </div>
         </div>
       </div>
-    </main>
+    </main> 
   );
 }

@@ -36,8 +36,8 @@ export default function ForgotPasswordPage() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-1.25">
-            <button className="bg-primary text-white font-medium py-4 px-24 rounded-[40px]">
+          <div className="flex flex-col gap-1.25 justify-center items-center">
+            <button className="bg-primary text-white font-medium py-4 px-24 rounded-[40px] max-w-63.75">
               Submit
             </button>
             <Link
