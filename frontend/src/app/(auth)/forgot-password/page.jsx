@@ -22,12 +22,12 @@ export default function ForgotPasswordPage() {
             className="aspect-4/2 object-cover "
           />
         </div>
-        <div className="mx-2 mt-2 bg-white p-10 rounded-t-[20px] flex flex-col gap-8 min-h-140.25">
+        <div className="mx-2 mt-2 bg-white p-10 rounded-t-[20px] flex flex-col gap-8">
           <h3 className="font-semibold text-[20px]">Forgot Password</h3>
           <div className="flex flex-col gap-6 ">
             {/* Login form elements go here */}
             <div className=" flex flex-row gap-3 border-b border-[#E7E3E0] p-2.5">
-              <PhoneIcon className="h-6 w-6" />
+              <PhoneIcon className="h-6 w-6 stroke-[#4C5F66]" />
               <input
                 type="text"
                 placeholder="Phone number"

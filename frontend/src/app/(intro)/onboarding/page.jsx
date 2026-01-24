@@ -52,7 +52,7 @@ export default function OnboardingPage() {
             </div>
             <div className="">
               <div className="flex justify-between p-6 text-[14px]">
-                <button className="">Skip</button>
+                <Link className="font-medium" href="/login" >Skip</Link>
                 <button className="font-medium" onClick={() => {
                   setStep(step + 1);
                 }}>Next</button>
@@ -81,7 +81,7 @@ export default function OnboardingPage() {
             </div>
             <div className="">
               <div className="flex justify-between p-6 text-[14px]">
-                <button className="">Skip</button>
+                <Link className="font-medium" href="/login" >Skip</Link>
                 <button className="font-medium" onClick={() => {
                   setStep(step + 1);
                 }}>Next</button>
@@ -110,7 +110,8 @@ export default function OnboardingPage() {
             </div>
             <div className="">
               <div className="flex justify-between p-6 text-[14px]">
-                <button className="">Skip</button>
+                <Link className="font-medium" href="/login" >Skip</Link>
+                
                 <Link className="font-medium" href="/login" >Next</Link>
               </div>
               <div className="flex justify-center gap-3">

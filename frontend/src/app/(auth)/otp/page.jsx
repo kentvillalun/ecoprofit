@@ -23,7 +23,7 @@ export default function OtpPage() {
             className="aspect-4/2 object-cover "
           />
         </div>
-        <div className="mx-2 mt-2 bg-white py-10 px-10 rounded-t-[20px] flex flex-col gap-8 min-h-140.25">
+        <div className="mx-2 mt-2 bg-white py-10 px-10 rounded-t-[20px] flex flex-col gap-8">
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold text-[20px]">OTP Validation</h3>
             <p className="text-[#4C5F66] text-[14px]">

@@ -17,7 +17,7 @@ const poppins = Poppins({
 export default function SingupPage() {
   return (
     <main
-      className={`min-h-screen flex justify-center bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${poppins.className}`}
+      className={`min-h-screen flex justify-center bg-linear-to-b from-[#FFFFFF] from-10% to-[#89D957] ${poppins.className}`}
     >
       <div className="grid">
         <div className="flex justify-end items-end">
@@ -27,12 +27,12 @@ export default function SingupPage() {
             className="aspect-4/2 object-cover max-w-[]"
           />
         </div>
-        <div className="mx-2 mt-2 bg-white py-10 px-10 rounded-t-[20px] flex flex-col gap-8 min-h-140.25">
+        <div className="mx-2 mt-2 bg-white py-10 px-10 rounded-t-[20px] flex flex-col gap-8 ">
           <h3 className="font-semibold text-[20px]">Sign Up</h3>
           <div className="flex flex-col gap-4">
             {/* Login form elements go here */}
             <div className=" flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
-              <PhoneIcon className="h-5.75 w-5.75" />
+              <PhoneIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
               <input
                 type="text"
                 placeholder="Phone number"
@@ -41,7 +41,7 @@ export default function SingupPage() {
             </div>
 
             <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
-              <MapPinIcon className="h-5.75 w-5.75" />
+              <MapPinIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
               <input
                 type="text"
                 placeholder="Address/ Purok"
@@ -50,7 +50,7 @@ export default function SingupPage() {
             </div>
 
             <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
-              <BuildingOffice2Icon className="h-5.75 w-5.75" />
+              <BuildingOffice2Icon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
               <input
                 type="text"
                 placeholder="Barangay"
@@ -59,7 +59,7 @@ export default function SingupPage() {
             </div>
 
             <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
-              <LockClosedIcon className="h-5.75 w-5.75" />
+              <LockClosedIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
               <input
                 type="text"
                 placeholder="Password"
@@ -68,7 +68,7 @@ export default function SingupPage() {
             </div>
 
             <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
-              <LockClosedIcon className="h-5.75 w-5.75" />
+              <LockClosedIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
               <input
                 type="text"
                 placeholder="Confirm Password"
