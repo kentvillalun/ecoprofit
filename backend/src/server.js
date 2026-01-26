@@ -1,12 +1,12 @@
 import express from "express";
 import { config } from "dotenv"
-import { connectDB, disconnectDB } from "./config/db.js";
+// import { connectDB } from './config/db.js'
 
 
 import auth from "./routes/auth.route.js"
 
 config();
-connectDB();
+// connectDB();
 
 const app = express();
 
@@ -40,10 +40,10 @@ process.on("uncaughtException", async (err) => {
 });
 
 // Graceful shutdown 
-process.on("SIGTERM", async (err) => {
+process.on("SIGTERM", async () => {
     console.log("SIGTERM received, shutting down gracefully");
     server.close(async () => {
         await disconnectDB();
-        process.exit(1);
+        process.exit(0);
     });
 });
