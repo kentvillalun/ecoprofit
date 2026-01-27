@@ -1,12 +1,12 @@
 import express from "express";
 import { config } from "dotenv"
-// import { connectDB } from './config/db.js'
+import { connectDB } from './config/db.js'
 
 
 import auth from "./routes/auth.route.js"
 
 config();
-// connectDB();
+connectDB();
 
 const app = express();
 
