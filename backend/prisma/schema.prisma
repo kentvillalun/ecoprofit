@@ -12,3 +12,47 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Barangay {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  code      String?  @unique
+  users     User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  RESIDENT
+  BARANGAY_ADMIN
+  SUPER_ADMIN
+}
+
+model User {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  barangayId String? @db.Uuid
+  barangay Barangay? @relation(fields: [barangayId], references: [id])
+
+  role Role @default(RESIDENT)
+
+  phoneNumber String @unique @db.VarChar(20)
+
+  firstName String?
+  lastName String?
+
+  address String?
+  purok String?
+
+  passwordHash String 
+
+  termsAcceptedAt DateTime?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([barangayId])
+}
