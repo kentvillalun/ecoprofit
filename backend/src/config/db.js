@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '../generated/prisma/index.js'
 import { PrismaPg } from '@prisma/adapter-pg';
 
 const adapter = new PrismaPg({
@@ -25,4 +25,4 @@ const disconnectDB = async () => {
     await prisma.$disconnect();
 }
 
-export { prisma, connectDB, disconnectDB }
+export { connectDB, disconnectDB, prisma }
