@@ -8,6 +8,9 @@ import {
   BuildingOffice2Icon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { TermsModal } from "@/components/auth/TermsModal";
+import { useState } from "react";
+
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -15,10 +18,22 @@ const poppins = Poppins({
 });
 
 export default function SingupPage() {
+
+  const [isTermsOpen, setIsTermsOpen] = useState(false)
+
+  
+
   return (
+    
     <main
       className={`min-h-screen flex justify-center bg-linear-to-b from-[#FFFFFF] from-10% to-[#89D957] ${poppins.className}`}
     >
+      
+        {isTermsOpen && (
+          <section className="fixed min-h-screen bg-black/30 min-w-screen backdrop-blur-sm flex items-center justify-center">
+            <TermsModal setIsTermsOpen={setIsTermsOpen} isTermsOpen={isTermsOpen} />
+          </section>
+        )}
       <div className="grid">
         <div className="flex justify-end items-end">
           <img
@@ -78,10 +93,13 @@ export default function SingupPage() {
 
             <div className="ml-1 flex flex-row gap-3.25 p-2.25 justify-start items-center">
               <input type="checkbox" name="eula" className="h-4.25 w-4.25 "/>
-              <label htmlFor="eula" className="px-1 text-[13px] text-[#4C5F66]">
+              
+              <p htmlFor="eula" className="px-1 text-[13px] text-[#4C5F66]" onClick={() => {
+                setIsTermsOpen(true)
+              }} >
                 I accept <span className="font-medium text-black">Terms & conditions</span>{" "}
                 and <span className="font-medium text-black">Privacy policy.</span>
-              </label>
+              </p>
             </div>
           </div>
 

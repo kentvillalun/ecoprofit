@@ -3,6 +3,7 @@ import { prisma } from "../config/db.js";
 
 const register = async (req, res) => {
   try {
+    // Read request from the body
     const {
       phoneNumber,
       purok,
@@ -10,26 +11,26 @@ const register = async (req, res) => {
       password,
       confirmPassword,
       termsAccepted,
-    } = req.body ?? {}; // ✅ prevent destructure crash
+    } = req.body ?? {};
 
-    // 1) Required field checks
+    // Field Validation
     if (!phoneNumber || !password || !confirmPassword || !barangay) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // 2) Password match check
+    // Password match validation
     if (password !== confirmPassword) {
-      return res.status(400).json({ error: "Passwords do not match" });
+      return res.status(400).json({ error: "Password do not match" });
     }
 
-    // 3) Terms & Conditions check
+    // Terms and conditions check
     if (termsAccepted !== true) {
       return res
         .status(400)
-        .json({ error: "You must accept the Terms & Conditions" });
+        .json({ error: "You must check the Terms & Conditions" });
     }
 
-    // 4) Check if user already exists
+    // Check if user already exists
     const userExists = await prisma.user.findUnique({
       where: { phoneNumber },
     });
@@ -40,7 +41,7 @@ const register = async (req, res) => {
         .json({ error: "User already exists with this phone number" });
     }
 
-    // 5) Find barangay by code
+    // Ensure barangay is valid
     const barangayRecord = await prisma.barangay.findUnique({
       where: { code: barangay },
     });
@@ -49,21 +50,18 @@ const register = async (req, res) => {
       return res.status(400).json({ error: "Barangay not found" });
     }
 
-    // 6) Hash password
+    // Hashing Password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 7) Create user
+    // Creating the user
     const user = await prisma.user.create({
       data: {
         phoneNumber,
         purok,
         passwordHash: hashedPassword,
-
-        // ✅ connect user to existing barangay row
         barangay: {
           connect: { id: barangayRecord.id },
         },
-
         termsAccepted: true,
         termsAcceptedAt: new Date(),
       },
@@ -71,7 +69,7 @@ const register = async (req, res) => {
         id: true,
         phoneNumber: true,
         purok: true,
-        barangay: { select: { id: true, code: true, name: true } }, // optional
+        barangay: { select: { id: true, code: true, name: true } },
       },
     });
 
