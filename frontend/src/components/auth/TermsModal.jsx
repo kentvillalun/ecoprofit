@@ -1,4 +1,4 @@
-import { ShieldCheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Poppins } from "next/font/google";
 
 const poppins = Poppins({
