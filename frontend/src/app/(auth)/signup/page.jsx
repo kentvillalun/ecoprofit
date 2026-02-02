@@ -34,6 +34,7 @@ export default function SingupPage() {
     termsAccepted: yup.boolean().oneOf([true], "You must accept the Terms and Conditions to continue")
   });
 
+
   const {
     register,
     handleSubmit,

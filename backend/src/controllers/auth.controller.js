@@ -82,4 +82,18 @@ const register = async (req, res) => {
   }
 };
 
-export { register };
+const login = async (req, res) => {
+   
+  // Check if user exists
+    const user = await prisma.user.findUnique({
+      where: { phoneNumber },
+    });
+
+    if (!user) {
+      return res.status(401).json({error: "Invalid phone number or password"})
+    }
+}
+
+
+
+export { register, login };

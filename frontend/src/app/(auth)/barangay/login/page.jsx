@@ -2,6 +2,7 @@
 
 import { Poppins } from "next/font/google";
 import Link from "next/link";
+import { useState } from "react";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -9,6 +10,9 @@ const poppins = Poppins({
 });
 
 export default function BarangayLoginPage() {
+
+  const [showPassword, setShowPassword] = useState(false)
+
   return (
     <main
       className={`min-h-screen flex justify-center bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${poppins.className} `}
@@ -56,16 +60,18 @@ export default function BarangayLoginPage() {
                 </label>
                 <div className="flex flex-row justify-between outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors">
                   <input
-                    type="password"
+                    type={showPassword ? `text` : `password`}
                     className="outline-none max-w-full min-w-[70%] "
                     placeholder="Enter your password"
                   />
-                  <button className="hover:cursor-pointer">Show</button>
+                  <button className="hover:cursor-pointer " onClick={() => {
+                    setShowPassword((prev) => !showPassword)
+                  }}>Show</button>
                 </div>
               </div>
 
               <div className="flex flex-col gap-1 justify-center items-center">
-                <button className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px] max-w-63.75 ">
+                <button className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px] max-w-63.75">
                   Log In
                 </button>
               </div>
