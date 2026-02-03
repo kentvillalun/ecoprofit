@@ -6,6 +6,7 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { CameraIcon } from "@heroicons/react/24/solid";
+import Link from "next/link";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -14,34 +15,34 @@ const poppins = Poppins({
 
 export const ResidentBottomNav = () => {
   return (
-    <section className="min-h-18.75 absolute bottom-0 bg-white min-w-screen pb-2.25 flex flex-row items-center justify-center px-3">
+    <section className="min-h-18.75 bottom-0 bg-white min-w-screen pb-2.25 flex flex-row items-center justify-center px-3 z-1000 fixed">
       <div className="grid grid-cols-3 gap-1 text-[#9DB2CE]">
         <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col items-center justify-center">
+          <Link className="flex flex-col items-center justify-center" href="/home">
             <HomeIcon className="h-6.25 w-6.25" />
             <p className="text-[12px]">Home</p>
-          </div>
-          <div className="flex flex-col items-center justify-center">
+          </Link>
+          <Link className="flex flex-col items-center justify-center" href="/community">
             <MapPinIcon className="h-6.25 w-6.25" />
             <p className="text-[12px]">Barangay</p>
-          </div>
+          </Link>
         </div>
 
         <div className="">
-          <div className="min-w-16 min-h-16 bg-[#89D957] flex items-center justify-center rounded-full border-2 border-white shadow-gray-400 shadow-lg trasform -translate-y-10">
+          <Link className="min-w-16 min-h-16 bg-[#89D957] flex items-center justify-center rounded-full border-2 border-white shadow-gray-400 shadow-lg trasform -translate-y-10" href="/capture">
             <CameraIcon className="fill-white h-7.75  w-7.75" />
-          </div>
+          </Link>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col items-center justify-center">
+          <Link className="flex flex-col items-center justify-center" href="/requests">
             <ClipboardIcon className="h-6.25 w-6.25" />
             <p className="text-[12px]">Requests</p>
-          </div>
-          <div className="flex flex-col items-center justify-center">
+          </Link>
+          <Link className="flex flex-col items-center justify-center" href="/profile">
             <UserIcon className="h-6.25 w-6.25" />
             <p className="text-[12px]">Profile</p>
-          </div>
+          </Link>
         </div>
       </div>
     </section>
