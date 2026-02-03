@@ -21,19 +21,27 @@ const poppins = Poppins({
 
 export default function SingupPage() {
   const [isTermsOpen, setIsTermsOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
   const schema = yup.object().shape({
     phoneNumber: yup.string().required("Phone number is required"),
     purok: yup.string().required("Sitio or Purok is required"),
     barangay: yup.string().required("Barangay is required"),
-    password: yup.string().required("Password is required").min(4, "Password must be at least 4 characters").max(16, "Password must not exceed 16 characters"),
+    password: yup
+      .string()
+      .required("Password is required")
+      .min(4, "Password must be at least 4 characters")
+      .max(16, "Password must not exceed 16 characters"),
     confirmPassword: yup
       .string()
       .oneOf([yup.ref("password"), null], "Passwords do not match")
       .required("Please confirm your password"),
-    termsAccepted: yup.boolean().oneOf([true], "You must accept the Terms and Conditions to continue")
+    termsAccepted: yup
+      .boolean()
+      .oneOf([true], "You must accept the Terms and Conditions to continue"),
   });
-
 
   const {
     register,
@@ -44,8 +52,6 @@ export default function SingupPage() {
   });
 
   const onSubmit = async (data) => {
-    
-
     const payload = {
       phoneNumber: data.phoneNumber,
       purok: data.purok,
@@ -53,26 +59,28 @@ export default function SingupPage() {
       password: data.password,
       confirmPassword: data.confirmPassword,
       termsAccepted: data.termsAccepted,
-    }
+    };
 
     const res = await fetch("http://localhost:5001/auth/register", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload)
-    })
+      body: JSON.stringify(payload),
+    });
 
     const result = await res.json();
 
     if (!res.ok) {
-    alert("Error:", result);
-    return;
-  }
+      alert("Error:", result);
+      return;
+    }
 
-  alert("Success:", result);
-  
+    alert("Success:", result);
   };
+
+
+  
 
   return (
     <main
@@ -99,7 +107,7 @@ export default function SingupPage() {
           onSubmit={handleSubmit(onSubmit)}
         >
           <h3 className="font-semibold text-[20px]">Sign Up</h3>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 text-[#717680]">
             {/* Login form elements go here */}
             <div className=" flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
               <PhoneIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
@@ -110,7 +118,9 @@ export default function SingupPage() {
                 {...register("phoneNumber")}
               />
             </div>
-            <p className="text-[14px] text-red-500">{errors.phoneNumber?.message}</p>
+            <p className="text-[14px] text-red-500">
+              {errors.phoneNumber?.message}
+            </p>
 
             <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
               <MapPinIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
@@ -121,7 +131,7 @@ export default function SingupPage() {
                 {...register("purok")}
               />
             </div>
-<p className="text-[14px] text-red-500">{errors.purok?.message}</p>
+            <p className="text-[14px] text-red-500">{errors.purok?.message}</p>
 
             <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
               <BuildingOffice2Icon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
@@ -132,29 +142,53 @@ export default function SingupPage() {
                 {...register("barangay")}
               />
             </div>
-      <p className="text-[14px] text-red-500">{errors.barangay?.message}</p>
+            <p className="text-[14px] text-red-500">
+              {errors.barangay?.message}
+            </p>
 
             <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
               <LockClosedIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
               <input
-                type="password"
+                type={showPassword ? `text` : `password`}
                 placeholder="Password"
                 className="outline-none"
                 {...register("password")}
               />
+              <p
+                className="hover:cursor-pointer "
+                onClick={() => {
+                  setShowPassword((prev) => !showPassword);
+                }}
+              >
+                Show
+              </p>
+              
             </div>
-            <p className="text-[14px] text-red-500">{errors.password?.message}</p>
+            <p className="text-[14px] text-red-500">
+              {errors.password?.message}
+            </p>
 
             <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
               <LockClosedIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
               <input
-                type="password"
+                type={showConfirmPassword ? `text` : `password`}
                 placeholder="Confirm Password"
                 className="outline-none"
                 {...register("confirmPassword")}
               />
+              <p
+                className="hover:cursor-pointer "
+                onClick={() => {
+                  setShowConfirmPassword((prev) => !showConfirmPassword);
+                }}
+              >
+                Show
+              </p>
+              
             </div>
-            <p className="text-[14px] text-red-500">{errors.confirmPassword?.message}</p>
+            <p className="text-[14px] text-red-500">
+              {errors.confirmPassword?.message}
+            </p>
 
             <div className="ml-1 flex flex-row gap-3.25 p-2.25 justify-start items-center">
               <input
@@ -178,7 +212,9 @@ export default function SingupPage() {
                 <span className="font-medium text-black">Privacy policy.</span>
               </p>
             </div>
-             <p className="text-[14px] text-red-500">{errors.termsAccepted?.message}</p>
+            <p className="text-[14px] text-red-500">
+              {errors.termsAccepted?.message}
+            </p>
           </div>
 
           <div className="flex flex-col gap-2.5 justify-center items-center">
