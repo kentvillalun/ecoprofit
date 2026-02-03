@@ -24,7 +24,6 @@ export default function SingupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-
   const schema = yup.object().shape({
     phoneNumber: yup.string().required("Phone number is required"),
     purok: yup.string().required("Sitio or Purok is required"),
@@ -79,9 +78,6 @@ export default function SingupPage() {
     alert("Success:", result);
   };
 
-
-  
-
   return (
     <main
       className={`min-h-screen flex justify-center bg-linear-to-b from-[#FFFFFF] from-10% to-[#89D957] ${poppins.className}`}
@@ -97,124 +93,132 @@ export default function SingupPage() {
       <div className="grid">
         <div className="flex justify-end items-end">
           <img
-            src="/onboarding/step1.png"
+            src="/onboarding/Ecoprofit logo.svg"
             alt="EcoProfit Logo"
             className="aspect-4/2 object-cover"
           />
         </div>
         <form
-          className="mx-2 mt-2 bg-white py-10 px-10 rounded-t-[20px] flex flex-col gap-8 "
+          className="mx-2 mt-2 bg-white py-10 px-10 rounded-t-[20px] flex flex-col gap-4 "
           onSubmit={handleSubmit(onSubmit)}
         >
-          <h3 className="font-semibold text-[20px]">Sign Up</h3>
-          <div className="flex flex-col gap-2 text-[#717680]">
-            {/* Login form elements go here */}
-            <div className=" flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
-              <PhoneIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
-              <input
-                type="text"
-                placeholder="Phone number"
-                className="outline-none"
-                {...register("phoneNumber")}
-              />
-            </div>
-            <p className="text-[14px] text-red-500">
-              {errors.phoneNumber?.message}
-            </p>
-
-            <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
-              <MapPinIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
-              <input
-                type="text"
-                placeholder="Sitio/Purok"
-                className="outline-none"
-                {...register("purok")}
-              />
-            </div>
-            <p className="text-[14px] text-red-500">{errors.purok?.message}</p>
-
-            <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
-              <BuildingOffice2Icon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
-              <input
-                type="text"
-                placeholder="Barangay"
-                className="outline-none"
-                {...register("barangay")}
-              />
-            </div>
-            <p className="text-[14px] text-red-500">
-              {errors.barangay?.message}
-            </p>
-
-            <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
-              <LockClosedIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
-              <input
-                type={showPassword ? `text` : `password`}
-                placeholder="Password"
-                className="outline-none"
-                {...register("password")}
-              />
-              <p
-                className="hover:cursor-pointer "
-                onClick={() => {
-                  setShowPassword((prev) => !showPassword);
-                }}
-              >
-                Show
+          <div className="flex flex-col gap-8">
+            <h3 className="font-semibold text-[20px]">Sign Up</h3>
+            <div className="flex flex-col gap-2 text-[#717680]">
+              {/* Login form elements go here */}
+              <div className=" flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
+                <PhoneIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
+                <input
+                  type="text"
+                  placeholder="Phone number"
+                  className="outline-none"
+                  {...register("phoneNumber")}
+                />
+              </div>
+              <p className="text-[14px] text-red-500">
+                {errors.phoneNumber?.message}
               </p>
-              
-            </div>
-            <p className="text-[14px] text-red-500">
-              {errors.password?.message}
-            </p>
 
-            <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
-              <LockClosedIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
-              <input
-                type={showConfirmPassword ? `text` : `password`}
-                placeholder="Confirm Password"
-                className="outline-none"
-                {...register("confirmPassword")}
-              />
-              <p
-                className="hover:cursor-pointer "
-                onClick={() => {
-                  setShowConfirmPassword((prev) => !showConfirmPassword);
-                }}
-              >
-                Show
+              <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
+                <MapPinIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
+                <input
+                  type="text"
+                  placeholder="Sitio/Purok"
+                  className="outline-none"
+                  {...register("purok")}
+                />
+              </div>
+              <p className="text-[14px] text-red-500">
+                {errors.purok?.message}
               </p>
-              
-            </div>
-            <p className="text-[14px] text-red-500">
-              {errors.confirmPassword?.message}
-            </p>
 
-            <div className="ml-1 flex flex-row gap-3.25 p-2.25 justify-start items-center">
-              <input
-                type="checkbox"
-                name="eula"
-                className="h-4.25 w-4.25 "
-                {...register("termsAccepted")}
-              />
+              <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
+                <BuildingOffice2Icon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
+                <input
+                  type="text"
+                  placeholder="Barangay"
+                  className="outline-none"
+                  {...register("barangay")}
+                />
+              </div>
+              <p className="text-[14px] text-red-500">
+                {errors.barangay?.message}
+              </p>
 
-              <p
-                className="px-1 text-[13px] text-[#4C5F66]"
-                onClick={() => {
-                  setIsTermsOpen(true);
-                }}
-              >
-                I accept{" "}
-                <span className="font-medium text-black">
-                  Terms & conditions
-                </span>{" "}
-                and{" "}
-                <span className="font-medium text-black">Privacy policy.</span>
+              <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5 justify-between">
+                <div className="flex flex-row gap-3">
+                  <LockClosedIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
+                  <input
+                    type={showPassword ? `text` : `password`}
+                    placeholder="Password"
+                    className="outline-none"
+                    {...register("password")}
+                  />
+                </div>
+                <p
+                  className="hover:cursor-pointer "
+                  onClick={() => {
+                    setShowPassword((prev) => !showPassword);
+                  }}
+                >
+                  Show
+                </p>
+              </div>
+              <p className="text-[14px] text-red-500">
+                {errors.password?.message}
+              </p>
+
+              <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5 justify-between">
+                <div className="flex flex-row gap-3">
+                  <LockClosedIcon className="h-5.75 w-5.75 stroke-[#4C5F66]" />
+                  <input
+                    type={showConfirmPassword ? `text` : `password`}
+                    placeholder="Confirm Password"
+                    className="outline-none"
+                    {...register("confirmPassword")}
+                  />
+                </div>
+                <p
+                  className="hover:cursor-pointer "
+                  onClick={() => {
+                    setShowConfirmPassword((prev) => !showConfirmPassword);
+                  }}
+                >
+                  Show
+                </p>
+              </div>
+              <p className="text-[14px] text-red-500">
+                {errors.confirmPassword?.message}
+              </p>
+
+              <div className="ml-1 flex flex-row gap-3.25 p-2.25 justify-start items-center">
+                <input
+                  type="checkbox"
+                  name="eula"
+                  className="h-4.25 w-4.25 "
+                  {...register("termsAccepted")}
+                />
+
+                <p
+                  className="px-1 text-[13px] text-[#4C5F66]"
+                  onClick={() => {
+                    setIsTermsOpen(true);
+                  }}
+                >
+                  I accept{" "}
+                  <span className="font-medium text-black">
+                    Terms & conditions
+                  </span>{" "}
+                  and{" "}
+                  <span className="font-medium text-black">
+                    Privacy policy.
+                  </span>
+                </p>
+              </div>
+              <p className="text-[14px] text-red-500">
+                {errors.termsAccepted?.message}
               </p>
             </div>
-            <p className="text-[14px] text-red-500">
-              {errors.termsAccepted?.message}
-            </p>
           </div>
 
           <div className="flex flex-col gap-2.5 justify-center items-center">

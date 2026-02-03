@@ -18,7 +18,7 @@ export default function OtpPage() {
       <div className="grid">
         <div className="flex justify-end items-end">
           <img
-            src="/onboarding/step1.png"
+            src="/onboarding/Ecoprofit logo.svg"
             alt="EcoProfit Logo"
             className="aspect-4/2 object-cover "
           />
