@@ -1,10 +1,10 @@
-
+import { ResidentHeader } from "@/components/navigation/ResidentHeader"
 
 export default function CapturePage() {
 
     return (
         <main>
-            This is the Capture your recyclables page
+            <ResidentHeader title={"Capture Recyclables"}/>
         </main>
     )
 }
