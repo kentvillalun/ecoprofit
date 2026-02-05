@@ -4,6 +4,7 @@ import { Poppins } from "next/font/google";
 import Image from "next/image";
 import { BellIcon } from "@heroicons/react/24/outline";
 import { CameraIcon } from "@heroicons/react/24/solid"
+import Link from 'next/link'
  
 const poppins = Poppins({
   subsets: ["latin"],
@@ -18,7 +19,9 @@ export default function HomePage() {
       <header className="flex flex-row items-start justify-between min-w-full max-h-18.75 bg-white fixed top-0 p-5 ">
         <div className="flex flex-row justify-between min-w-full ">
           <Image src="/logo-solo.svg" width={32} height={38} alt="Logo" />
+          <Link href={"/announcements"}>
           <BellIcon className="w-7.25 h-7.25" />
+          </Link>
         </div>
       </header>
 
@@ -30,10 +33,10 @@ export default function HomePage() {
         </div>
 
         <div className="flex items-center justify-center">
-          <div className="bg-[#89D957] min-h-45 min-w-45 flex flex-col items-center justify-start gap-1 pt-7 rounded-full border-2 border-white shadow-gray-400 shadow-lg">
+          <Link className="bg-[#89D957] min-h-45 min-w-45 flex flex-col items-center justify-start gap-1 pt-7 rounded-full border-2 border-white shadow-gray-400 shadow-lg" href={"/capture"}>
             <CameraIcon className="h-21 w-21 fill-white"/>
             <p className="font-medium text-sm text-white">Capture Recyclables</p>
-          </div>
+          </Link>
         </div>
 
         <div className="grid grid-cols-2 gap-3">

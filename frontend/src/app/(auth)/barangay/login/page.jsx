@@ -21,7 +21,7 @@ export default function BarangayLoginPage() {
         <div className="grid">
           <div className="flex justify-center items-end">
             <img
-              src="/onboarding/step1.png"
+              src="/onboarding/Ecoprofit logo.svg"
               alt="EcoProfit Logo"
               className="aspect-4/2 md:aspect-7/2 object-cover md:w-[40%]"
             />
