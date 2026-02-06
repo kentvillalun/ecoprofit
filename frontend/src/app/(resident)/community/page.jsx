@@ -1,4 +1,5 @@
 import { ResidentHeader } from "@/components/navigation/ResidentHeader";
+import { PageContent } from "@/components/layout/PageContent";
 import { Poppins } from "next/font/google";
 import Image from "next/image";
 
@@ -18,7 +19,7 @@ export default function CommunityPage() {
         notification={true}
       />
 
-      <section className="absolute left-0 right-0 top-18 h-[calc(100dvh-72px)] p-3 flex flex-col gap-6 overflow-y-auto pb-[calc(120px+env(safe-area-inset-bottom))]">
+      <PageContent>
         <div className="mt-4 flex flex-col gap-4">
           {/* Collection Schedule */}
           <div className="flex flex-row bg-white rounded-xl shadow-gray-200 shadow-md p-4 items-center gap-6">
@@ -75,10 +76,10 @@ export default function CommunityPage() {
           </div>
 
           {/* How It Works */}
-          <div className="flex flex-col bg-white rounded-xl shadow-gray-200 shadow-md p-4 gap-1">
-            <p className="">How It Works</p>
+          <div className="flex flex-col bg-white rounded-xl shadow-gray-200 shadow-md p-4 gap-1 text-sm">
+            <p className="font-medium">How It Works</p>
             <div className="flex flex-row gap-4 items-center ">
-              <div className="flex flex-row gap-3 ">
+              <div className="flex flex-row gap-2 ">
                 <div className="text-primary border-2 rounded-full h-8 w-8 text-center text-lg font-medium">
                   1
                 </div>
@@ -116,15 +117,11 @@ export default function CommunityPage() {
                   Barangay Office:{" "}
                   <span className="text-[#727272]">09XX-XXX-XXXX</span>
                 </div>
-                <div className="">
-                  Barangay Hall Location:{" "}
-                  <span className="text-[#727272]"></span>
-                </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </PageContent>
     </main>
   );
 }

@@ -3,9 +3,10 @@
 import { Poppins } from "next/font/google";
 import Image from "next/image";
 import { BellIcon } from "@heroicons/react/24/outline";
-import { CameraIcon } from "@heroicons/react/24/solid"
-import Link from 'next/link'
- 
+import { CameraIcon } from "@heroicons/react/24/solid";
+import Link from "next/link";
+import { PageContent } from "@/components/layout/PageContent.jsx";
+
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -20,29 +21,37 @@ export default function HomePage() {
         <div className="flex flex-row justify-between min-w-full ">
           <Image src="/logo-solo.svg" width={32} height={38} alt="Logo" />
           <Link href={"/announcements"}>
-          <BellIcon className="w-7.25 h-7.25" />
+            <BellIcon className="w-7.25 h-7.25" />
           </Link>
         </div>
       </header>
 
-      <section className="absolute left-0 right-0 top-18 h-[calc(100dvh-72px)] p-3 flex flex-col gap-6 overflow-y-auto pb-[calc(120px+env(safe-area-inset-bottom))]">
-
+      <PageContent>
         <div className="flex flex-col items-start">
           <p className="font-medium text-sm">Hi, Jaymar</p>
-          <p className="text-sm">Sell your recyclables to Barangay Beddend Laud</p>
+          <p className="text-sm">
+            Sell your recyclables to Barangay Beddend Laud
+          </p>
         </div>
 
         <div className="flex items-center justify-center">
-          <Link className="bg-[#89D957] min-h-45 min-w-45 flex flex-col items-center justify-start gap-1 pt-7 rounded-full border-2 border-white shadow-gray-400 shadow-lg" href={"/capture"}>
-            <CameraIcon className="h-21 w-21 fill-white"/>
-            <p className="font-medium text-sm text-white">Capture Recyclables</p>
+          <Link
+            className="bg-[#89D957] min-h-45 min-w-45 flex flex-col items-center justify-start gap-1 pt-7 rounded-full border-2 border-white shadow-gray-400 shadow-lg"
+            href={"/capture"}
+          >
+            <CameraIcon className="h-21 w-21 fill-white" />
+            <p className="font-medium text-sm text-white">
+              Capture Recyclables
+            </p>
           </Link>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-white p-2 rounded-xl">
             <p className="font-medium text-xs">Barangay Schedule Today:</p>
-            <p className="text-xs text-[#727272]">Tue & Thu — 9:00 AM to 4:00 PM</p>
+            <p className="text-xs text-[#727272]">
+              Tue & Thu — 9:00 AM to 4:00 PM
+            </p>
           </div>
           <div className="bg-white p-2 rounded-xl">
             <p className="font-medium text-xs">Current Buying Prices:</p>
@@ -55,7 +64,6 @@ export default function HomePage() {
           <p className="font-medium text-xs">Recent Requests</p>
           <div className="flex flex-col gap-3">
             <div className="grid grid-cols-2 p-5 bg-white rounded-2xl">
-
               <div className="text-sm">
                 <p className="">Plastic & Paper</p>
                 <p className="text-[#727272]">Sep 10</p>
@@ -63,17 +71,20 @@ export default function HomePage() {
 
               <div className="text-xs flex flex-col gap-2 ">
                 <div className="flex items-center  justify-end">
-                  <div className="font-medium text-[#74C857] bg-[#89D95720] px-2 py-1 rounded-3xl">Completed</div>
+                  <div className="font-medium text-[#74C857] bg-[#89D95720] px-2 py-1 rounded-3xl">
+                    Completed
+                  </div>
                 </div>
                 <div className="flex flex-row gap-2 items-center justify-between">
                   <div className="font-medium text-[#1D9BF0]">Accepted</div>
-                  <div className="font-medium text-[#727272] bg-[#D9D9D952] px-2 py-1 rounded-3xl">Contact</div>
+                  <div className="font-medium text-[#727272] bg-[#D9D9D952] px-2 py-1 rounded-3xl">
+                    Contact
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 p-5 bg-white rounded-2xl">
-
               <div className="text-sm">
                 <p className="">Glass Bottles</p>
                 <p className="text-[#727272]">Sep 9</p>
@@ -81,17 +92,21 @@ export default function HomePage() {
 
               <div className="text-xs flex flex-col gap-2">
                 <div className="flex items-center  justify-end">
-                  <div className="font-medium text-[#EEB90E] bg-[#FCD50A25] px-2 py-1 rounded-3xl">Pending</div>
+                  <div className="font-medium text-[#EEB90E] bg-[#FCD50A25] px-2 py-1 rounded-3xl">
+                    Pending
+                  </div>
                 </div>
                 <div className="flex flex-row gap-2 items-center justify-between">
                   <div className="font-medium text-[#727272]">Accepted</div>
-                  <div className="font-medium text-[#727272] bg-[#D9D9D952] px-2 py-1 rounded-3xl">Contact</div>
+                  <div className="font-medium text-[#727272] bg-[#D9D9D952] px-2 py-1 rounded-3xl">
+                    Contact
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </PageContent>
     </main>
   );
 }
