@@ -3,6 +3,7 @@
 import { Poppins } from "next/font/google";
 import { PhoneIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { Page } from "@/components/layout/Page";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -11,8 +12,8 @@ const poppins = Poppins({
 
 export default function ForgotPasswordPage() {
   return (
-    <main
-      className={`min-h-screen flex justify-between bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${poppins.className}`}
+    <Page gradient={true}
+      
     >
       <div className="grid">
         <div className="flex justify-end items-end">
@@ -51,6 +52,6 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
       </div>
-    </main>
+    </Page>
   );
 }

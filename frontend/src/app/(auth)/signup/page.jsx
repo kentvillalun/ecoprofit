@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Page } from "@/components/layout/Page";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -79,8 +80,8 @@ export default function SingupPage() {
   };
 
   return (
-    <main
-      className={`min-h-screen flex justify-center bg-linear-to-b from-[#FFFFFF] from-10% to-[#89D957] ${poppins.className}`}
+    <Page
+      gradient={true} className="from-10%!"
     >
       {isTermsOpen && (
         <section className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center">
@@ -99,7 +100,7 @@ export default function SingupPage() {
           />
         </div>
         <form
-          className="mx-2 mt-2 bg-white py-10 px-10 rounded-t-[20px] flex flex-col gap-4 "
+          className="mx-2 mt-2 bg-white p-8 rounded-t-[20px] flex flex-col gap-4 "
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="flex flex-col gap-8">
@@ -239,6 +240,6 @@ export default function SingupPage() {
           </div>
         </form>
       </div>
-    </main>
+    </Page>
   );
 }

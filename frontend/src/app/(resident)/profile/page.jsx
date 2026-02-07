@@ -1,7 +1,11 @@
+import { Page } from "@/components/layout/Page";
+import { ResidentHeader } from "@/components/navigation/ResidentHeader";
 
 export default function ProfilePage() {
 
     return (
-        <main className="">This is the Profile page</main>
+        <Page gradient={true}>
+            <ResidentHeader title={"Profile"}/>
+        </Page>
     )
 }

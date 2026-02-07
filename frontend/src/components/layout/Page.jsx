@@ -14,7 +14,7 @@ export const Page = ({children, className = '', gradient}) => {
     const [isGradient, setIsGradient] = useState(gradient)
 
     return (
-        <main className={`relative min-h-screen flex justify-center ${isGradient ? "bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957]" : "" } ${poppins.className} px-4`}>
+        <main className={`relative min-h-screen flex justify-center ${isGradient ? "bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957]" : "" } ${poppins.className} ${className}` }>
             {children}
         </main>
     )

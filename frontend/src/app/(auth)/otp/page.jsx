@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Poppins } from "next/font/google";
 import { PhoneIcon } from "@heroicons/react/24/outline";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
+import { Page } from "@/components/layout/Page";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -12,7 +13,7 @@ const poppins = Poppins({
 
 export default function OtpPage() {
   return (
-    <main
+    <Page
       className={`min-h-screen flex justify-center bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${poppins.className}`}
     >
       <div className="grid">
@@ -23,7 +24,7 @@ export default function OtpPage() {
             className="aspect-4/2 object-cover "
           />
         </div>
-        <div className="mx-2 mt-2 bg-white py-10 px-10 rounded-t-[20px] flex flex-col gap-8">
+        <div className="mx-2 mt-2 bg-white p-8 rounded-t-[20px] flex flex-col gap-8">
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold text-[20px]">OTP Validation</h3>
             <p className="text-[#4C5F66] text-[14px]">
@@ -80,6 +81,6 @@ export default function OtpPage() {
           </div>
         </div>
       </div>
-    </main>
+    </Page>
   );
 }

@@ -7,6 +7,7 @@ import { CameraIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { PageContent } from "@/components/layout/PageContent.jsx";
 import { Page } from "@/components/layout/Page.jsx";
+import { Card } from "@/components/ui/Card";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -46,23 +47,23 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white p-2 rounded-xl">
+          <Card className="flex-col items-start">
             <p className="font-medium text-xs">Barangay Schedule Today:</p>
             <p className="text-xs text-[#727272]">
               Tue & Thu — 9:00 AM to 4:00 PM
             </p>
-          </div>
-          <div className="bg-white p-2 rounded-xl">
+          </Card>
+          <Card className="flex-col items-start">
             <p className="font-medium text-xs">Current Buying Prices:</p>
             <p className="text-xs text-[#727272]">PET: ₱8/kg</p>
             <p className="text-xs text-[#727272]">Cardboard: ₱5/kg</p>
-          </div>
+          </Card>
         </div>
 
         <div className="flex flex-col gap-2">
           <p className="font-medium text-xs">Recent Requests</p>
           <div className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 p-5 bg-white rounded-2xl">
+            <Card className="grid grid-cols-2 items-start bg-white">
               <div className="text-sm">
                 <p className="">Plastic & Paper</p>
                 <p className="text-[#727272]">Sep 10</p>
@@ -81,9 +82,9 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
 
-            <div className="grid grid-cols-2 p-5 bg-white rounded-2xl">
+            <Card className="grid grid-cols-2 items-start bg-white">
               <div className="text-sm">
                 <p className="">Glass Bottles</p>
                 <p className="text-[#727272]">Sep 9</p>
@@ -102,7 +103,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
           </div>
         </div>
       </PageContent>

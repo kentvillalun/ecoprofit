@@ -6,6 +6,7 @@ import { LockClosedIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
+import { Page } from "@/components/layout/Page";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -16,18 +17,16 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <main
-      className={`min-h-screen flex justify-center bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${poppins.className}`}
-    >
+    <Page gradient={true}>
       <div className="grid">
         <div className="flex justify-end items-end">
           <img
-            src="../onboarding/Ecoprofit logo.svg"
+            src="/onboarding/Ecoprofit logo.svg"
             alt="EcoProfit Logo"
             className="aspect-4/2 object-cover "
           />
         </div>
-        <div className="mx-2 mt-2 bg-white py-10 px-10 rounded-t-[20px] flex flex-col gap-8 ">
+        <div className="mx-2 mt-2 bg-white p-8 rounded-t-[20px] flex flex-col gap-8 ">
           <h3 className="font-semibold text-[20px]">Log In</h3>
           <div className="flex flex-col gap-6 text-[#717680]">
             {/* Login form elements go here */}
@@ -79,6 +78,6 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-    </main>
+    </Page>
   );
 }
