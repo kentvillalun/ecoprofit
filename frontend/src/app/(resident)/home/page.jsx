@@ -6,6 +6,7 @@ import { BellIcon } from "@heroicons/react/24/outline";
 import { CameraIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { PageContent } from "@/components/layout/PageContent.jsx";
+import { Page } from "@/components/layout/Page.jsx";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -14,9 +15,7 @@ const poppins = Poppins({
 
 export default function HomePage() {
   return (
-    <main
-      className={`relative min-h-screen flex justify-center bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${poppins.className} px-4`}
-    >
+    <Page gradient={true}>
       <header className="flex flex-row items-start justify-between min-w-full max-h-18.75 bg-white fixed top-0 p-5 ">
         <div className="flex flex-row justify-between min-w-full ">
           <Image src="/logo-solo.svg" width={32} height={38} alt="Logo" />
@@ -107,6 +106,6 @@ export default function HomePage() {
           </div>
         </div>
       </PageContent>
-    </main>
+    </Page>
   );
 }

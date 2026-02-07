@@ -2,6 +2,8 @@ import { ResidentHeader } from "@/components/navigation/ResidentHeader";
 import { PageContent } from "@/components/layout/PageContent";
 import { Poppins } from "next/font/google";
 import Image from "next/image";
+import { Page } from "@/components/layout/Page";
+import { Card } from "@/components/ui/Card";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -10,9 +12,7 @@ const poppins = Poppins({
 
 export default function CommunityPage() {
   return (
-    <main
-      className={`relative min-h-screen flex justify-center bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${poppins.className} px-4`}
-    >
+    <Page gradient={true}>
       <ResidentHeader
         title={"Barangay Beddeng Laud"}
         subtitle={"EcoAid Program"}
@@ -22,7 +22,7 @@ export default function CommunityPage() {
       <PageContent>
         <div className="mt-4 flex flex-col gap-4">
           {/* Collection Schedule */}
-          <div className="flex flex-row bg-white rounded-xl shadow-gray-200 shadow-md p-4 items-center gap-6">
+          <Card className="gap-6 flex-row">
             <div className="">
               <Image
                 src={"/calendar.svg"}
@@ -44,10 +44,10 @@ export default function CommunityPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
 
           {/* Accepted Materials */}
-          <div className="flex flex-row bg-white rounded-xl shadow-gray-200 shadow-md p-4 items-center gap-6">
+          <Card className="gap-6 flex-row">
             <div className="">
               <Image
                 src={"/leaves.svg"}
@@ -73,10 +73,10 @@ export default function CommunityPage() {
                 </li>
               </ul>
             </div>
-          </div>
+          </Card>
 
           {/* How It Works */}
-          <div className="flex flex-col bg-white rounded-xl shadow-gray-200 shadow-md p-4 gap-1 text-sm">
+          <Card className="flex-col items-start gap-1">
             <p className="font-medium">How It Works</p>
             <div className="flex flex-row gap-4 items-center ">
               <div className="flex flex-row gap-2 ">
@@ -98,10 +98,10 @@ export default function CommunityPage() {
                 </li>
               </ul>
             </div>
-          </div>
+          </Card>
 
           {/* Barangay Contact Info */}
-          <div className="flex flex-row bg-white rounded-xl shadow-gray-200 shadow-md p-4 items-center gap-6">
+          <Card className="flex-row gap-6">
             <div className="">
               <Image
                 src={"/contact.svg"}
@@ -119,9 +119,9 @@ export default function CommunityPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       </PageContent>
-    </main>
+    </Page>
   );
 }
