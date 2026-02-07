@@ -10,10 +10,11 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
 });
 
-export const ResidentHeader = ({ title, subtitle, notification }) => {
+export const ResidentHeader = ({ title, subtitle, notification, edit }) => {
 
   const [isNotification, setIsNotification] = useState(notification)
-  
+  const [isEdit, setIsEdit] = useState(edit)
+
   return (
     <header
       className={`flex flex-row items-start justify-between min-w-full max-h-24 bg-white fixed top-0 py-5 px-8 ${poppins.className} shadow-lg`}
@@ -34,6 +35,8 @@ export const ResidentHeader = ({ title, subtitle, notification }) => {
         ) : (
           <div className="w-6"></div>
         )}
+
+        
       </div>
     </header>
   );
