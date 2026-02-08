@@ -76,7 +76,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="flex flex-row gap-2 items-center justify-between">
-                  <div className="font-medium text-[#1D9BF0]">Accepted</div>
+                  <div className="font-medium text-[#727272]">Accepted</div>
                   <div className="font-medium text-[#727272] bg-[#D9D9D952] px-2 py-1 rounded-3xl">
                     Contact
                   </div>
