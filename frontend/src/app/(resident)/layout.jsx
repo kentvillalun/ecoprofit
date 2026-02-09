@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 export default function ResidentLayout({ children }) {
   const pathname = usePathname();
 
-  const paths = ["/capture", "/announcements"]
+  const paths = ["/capture", "/announcements", "/profile/personal-information"]
   const hideNav = paths.some(paths =>  pathname.startsWith(paths))
 
   return (

@@ -31,7 +31,7 @@ export default function ProfilePage() {
 
           <div className="flex flex-col gap-14">
             <div className="flex flex-col gap-2">
-              <Link href={""}>
+              <Link href={"/profile/personal-information"}>
                 <Card className="flex-row gap-5">
                   <div className="min-w-10 min-h-10 rounded-full bg-[#9DB2CE26] flex items-center justify-center">
                     <ListBulletIcon className="w-6 h-6" />
