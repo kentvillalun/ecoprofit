@@ -40,7 +40,7 @@ export default function ProfilePage() {
                 </Card>
               </Link>
 
-              <Link href={""}>
+              <Link href={"/profile/notifications"}>
                 <Card className="flex-row gap-5">
                   <div className="min-w-10 min-h-10 rounded-full bg-[#9DB2CE26] flex items-center justify-center">
                     <BellIcon className="w-6 h-6" />
@@ -49,7 +49,7 @@ export default function ProfilePage() {
                 </Card>
               </Link>
 
-              <Link href={""}>
+              <Link href={"/profile/settings"}>
                 <Card className="flex-row gap-5">
                   <div className="min-w-10 min-h-10 rounded-full bg-[#9DB2CE26] flex items-center justify-center">
                     <Cog8ToothIcon className="w-6 h-6" />
@@ -58,7 +58,7 @@ export default function ProfilePage() {
                 </Card>
               </Link>
 
-              <Link href={""}>
+              <Link href={"/profile/help-support"}>
                 <Card className="flex-row gap-5">
                   <div className="min-w-10 min-h-10 rounded-full bg-[#9DB2CE26] flex items-center justify-center">
                     <QuestionMarkCircleIcon className="w-6 h-6" />
