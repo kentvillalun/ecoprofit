@@ -16,7 +16,7 @@ export default function CommunityPage() {
       <ResidentHeader
         title={"Barangay Beddeng Laud"}
         subtitle={"EcoAid Program"}
-        notification={true}
+        action={'notification'}
       />
 
       <PageContent>

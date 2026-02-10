@@ -1,19 +1,41 @@
 "use client";
 
-import { ArrowLeftIcon, BellIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, BellIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { Poppins } from "next/font/google";
 import { useState } from "react";
-import Link from "next/link"
+import Link from "next/link";
 
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
-export const ResidentHeader = ({ title, subtitle, notification, edit }) => {
+export const ResidentHeader = ({
+  title,
+  subtitle,
+  action,
+  setIsEditing
+}) => {
+  
+  const [actions, setActions] = useState(action);
+  
 
-  const [isNotification, setIsNotification] = useState(notification)
-  const [isEdit, setIsEdit] = useState(edit)
+
+  const actionItem = () => {
+    switch (actions) {
+      case "notification":
+        return (
+          <Link href={"/announcements"}>
+            <BellIcon className="w-7.25 h-7.25" />
+          </Link>
+        );
+      case 'edit':
+        return <PencilIcon className="w-6 h-6 text-[#727272]" onClick={() => setIsEditing(true)}/>
+
+      default: 
+       return <div className="w-6"></div> 
+    }
+  };
 
   return (
     <header
@@ -28,15 +50,7 @@ export const ResidentHeader = ({ title, subtitle, notification, edit }) => {
           <p className="font-semibold text-lg text-nowrap">{title}</p>
           <p className="text-sm font-medium text-nowrap">{subtitle}</p>
         </div>
-        {isNotification ? (
-          <Link href={"/announcements"}>
-            <BellIcon className="w-7.25 h-7.25" />
-          </Link>
-        ) : (
-          <div className="w-6"></div>
-        )}
-
-        
+        {actionItem()}
       </div>
     </header>
   );
