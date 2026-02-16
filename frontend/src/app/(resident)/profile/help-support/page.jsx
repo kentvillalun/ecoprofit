@@ -1,9 +1,15 @@
+"use client";
+
 import { Page } from "@/components/layout/Page";
 import { PageContent } from "@/components/layout/PageContent";
 import { ResidentHeader } from "@/components/navigation/ResidentHeader";
-import { ChevronDownIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
+import { Card } from "@/components/ui/Card";
+import { useState } from "react";
 
 export default function HelpAndSupportPage() {
+  const [openKey, setOpenKey] = useState(null);
+
   const faqs = [
     {
       key: "q1",
@@ -31,21 +37,25 @@ export default function HelpAndSupportPage() {
       answer: `If your pickup is delayed, please wait for updates in the app. If there are no updates after the scheduled date, you may contact your barangay directly through the contact information provided in the app.`,
     },
     {
-        key: "q6",
-        question: "Can I cancel my request?",
-        answer: `Yes, you can cancel your request if it has not yet been picked up Just go to your request details and select the cancel option. Once the pickup is already completed, cancellation is no longer allowed.`
+      key: "q6",
+      question: "Can I cancel my request?",
+      answer: `Yes, you can cancel your request if it has not yet been picked up Just go to your request details and select the cancel option. Once the pickup is already completed, cancellation is no longer allowed.`,
     },
     {
-        key: "q7",
-        question: "Why is my registered barangay not editable?",
-        answer: `Your registered barangay is fixed to make sure your requests go to the correct office. If you moved to a different barangay, please contact support to update your information.`
+      key: "q7",
+      question: "Why is my registered barangay not editable?",
+      answer: `Your registered barangay is fixed to make sure your requests go to the correct office. If you moved to a different barangay, please contact support to update your information.`,
     },
     {
-        key: "q8",
-        question: "Who should contact for other concerns?",
-        answer: `For other concerns, you may contact your barangay office directly. You can also use the contact details listed in the app’s Help section.`
-    }
+      key: "q8",
+      question: "Who should contact for other concerns?",
+      answer: `For other concerns, you may contact your barangay office directly. You can also use the contact details listed in the app’s Help section.`,
+    },
   ];
+
+  const toggleFaq = (key) => {
+    setOpenKey((prev) => (prev === key ? null : key));
+  };
 
   return (
     <Page gradient={true}>
@@ -53,19 +63,45 @@ export default function HelpAndSupportPage() {
 
       <PageContent>
         <div className="">
-          <div className="font-medium py-3 text-sm flex flex-col gap-2">
+          <div className="font-medium py-3 text-sm flex flex-col gap-2 ">
             <h2 className="">Frequently Asked Questions (FAQs)</h2>
-            <div className="">
-                {faqs.map((faq) => (
-                    <div className="" key={faq.key}>
-                        <div className="flex flex-row items-center  justify-between">
+            <div className="flex flex-col gap-2">
+              {faqs.map((faq) => {
+                const isOpen = openKey === faq.key;
+
+                return (
+                  <Card className="rounded-md! flex-col gap-5" key={faq.key}>
+                    <button
+                      type="button"
+                      className="flex flex-row min-w-full items-center justify-between gap-5 text-left"
+                      onClick={() => toggleFaq(faq.key)}
+                    >
+                      <p className="">{faq.question}</p>
+                      {isOpen ? (
+                        <ChevronDownIcon className="h-6 w-6 stroke-[#74C857]" />
+                      ) : (
+                        <ChevronUpIcon className="h-6 w-6 stroke-[#74C857]" />
+                      )}
+                    </button>
+                    {isOpen && (
+                      <p className="italic font-light p-2 ">{faq.answer}</p>
+                    )}
+                  </Card>
+                );
+              })}
+
+              {/* {faqs.map((faq) => (
+                    <Card className="rounded-md! flex-col gap-5" key={faq.key}>
+                        <div className="flex flex-row min-w-full items-center justify-between gap-5">
                             <p className="">{faq.question}</p>
                             <div className="">
-                                <ChevronDownIcon className="h-6 w-6"/>
+                              
+                                <ChevronDownIcon className="h-6 w-6 stroke-[#74C857]"/>
                             </div>
                         </div>
-                    </div>
-                ))}
+                        <p className="italic font-light p-2 ">{faq.answer}</p>
+                    </Card>
+                ))} */}
             </div>
           </div>
         </div>
