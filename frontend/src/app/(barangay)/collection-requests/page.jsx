@@ -3,6 +3,12 @@ import { PageContent } from "@/components/layout/PageContent";
 import { BarangayTopBar } from "@/components/navigation/BarangayTopBar";
 import { BarangayHeaderCard } from "@/components/ui/BarangayHeaderCard";
 
+// TODO
+// Make a SearchInput Reusable component
+// Make a StatusChips component
+// Make a RequestCard component
+
+
 export default function CollectionRequests() {
   return (
     <Page>
