@@ -10,7 +10,7 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
 });
 
-export const BarangayHeader = ({ title }) => {
+export const BarangayTopBar = ({ title }) => {
  
     const { sidebarOpen, setSidebarOpen} = useContext(DrawerContext)
     
