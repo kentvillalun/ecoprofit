@@ -7,7 +7,7 @@ const inter = Inter({
 
 export const StatusChip = ({ STATUS_TABS, currentTab, setCurrentTab }) => {
   return (
-    <div className="gap-2 flex flex-row items-start justify-start overflow-x-auto pb-3">
+    <div className="gap-2 flex flex-row items-start justify-start overflow-x-auto pb-3 min-h-15 overflow-y-hidden">
       {STATUS_TABS.map((tab) => {
         const isActive = currentTab === tab.key;
         return (

@@ -9,6 +9,7 @@ import { SearchInput } from "@/components/ui/SearchInput";
 import { StatusChip } from "@/components/ui/StatusChip";
 import { useState } from "react";
 import { Inter } from "next/font/google";
+import { mockRequests } from "./mockRequests";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,6 +30,10 @@ export default function CollectionRequests() {
     { key: "completed", label: "Completed" },
   ];
 
+
+
+  
+
   return (
     <Page>
       <BarangayTopBar title="Collection Requests" />
@@ -47,8 +52,11 @@ export default function CollectionRequests() {
           {currentTab === "pending" && (
             <h2 className="font-semibold text-xl pb-2 pl-3 md:pl-4">Pending Request</h2>
           )}
-          <div className="">
-            <RequestCard />
+          <div className="flex md:hidden flex-col gap-2">
+            
+            {mockRequests.map((r) => (
+              <RequestCard data={r}/>
+            ))}
           </div>
         </div>
       </PageContent>
