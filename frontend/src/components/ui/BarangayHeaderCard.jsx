@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/Card";
 import { Inter } from "next/font/google";
+import { SearchInput } from "./SearchInput";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -8,10 +9,13 @@ const inter = Inter({
 
 export const BarangayHeaderCard = ({ title, subtitle }) => {
   return (
-    <Card className={`${inter.className} md:py-5! md:px-6!`}>
+    <Card className={`${inter.className} md:py-5! md:px-6! grid! md:grid-cols-2 md:gap-10  `}>
       <div className="flex-col flex">
         <h1 className="font-semibold text-3xl hidden md:block">{title}</h1>
         <p className="">{subtitle}</p>
+      </div>
+      <div className="">
+        <SearchInput className="hidden md:flex!" />
       </div>
     </Card>
   );
