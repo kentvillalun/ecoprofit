@@ -1,6 +1,6 @@
-import { Card } from "./Card";
+import { Card } from "../ui/Card";
 import Link from "next/link";
-import { Pill } from "./Pill";
+import { Pill } from "../ui/Pill";
 
 // Juan Dela Cruz         [Pending]
 // Sitio 3 • Plastic Bottles
@@ -10,7 +10,10 @@ import { Pill } from "./Pill";
 // [ View Details ]
 export const RequestCard = ({ data }) => {
   return (
-    <Card key={data.id} className="flex flex-row items-stretch justify-between ">
+    <Card
+      key={data.id}
+      className="flex flex-row items-stretch justify-between "
+    >
       <div className="flex flex-col gap-1">
         <h3 className="font-medium">{data.residentName}</h3>
         <div className="text-[#727272] text-sm">
