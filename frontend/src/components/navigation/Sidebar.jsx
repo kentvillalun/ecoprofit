@@ -73,9 +73,9 @@ export const Sidebar = () => {
 
   return (
     <aside
-      className={`w-64 h-screen flex flex-col justify-between bg-[#74C857] fixed top-0 text-white left-0 z-10 md:shadow-xl ${poppins.className} overflow-auto z-100`}
+      className={`w-64 h-screen flex flex-col justify-between bg-[#74C857] fixed top-0 text-white left-0 z-10 md:shadow-xl ${poppins.className} overflow-y-auto`}
     >
-      <div className="p-4 flex flex-col gap-9">
+      <div className="p-4 flex flex-col gap-4 lg:gap-9">
         <div className="flex flex-row justify-between items-center">
           <img
             src="/logo-labeled.svg"
@@ -90,7 +90,7 @@ export const Sidebar = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 pl-2">
+        <div className="flex flex-col gap-2 pl-2 lg:gap-3">
           {sidebarItems.map((items) => (
             <Link
               className="flex flex-row gap-3 hover:cursor-pointer p-2 rounded-lg hover:bg-primary transition-all ease-in-out"

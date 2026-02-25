@@ -53,7 +53,7 @@ export default function CollectionRequests() {
                 <RequestCard data={r} key={r.id} />
               ))}
             </div>
-            <RequestTable mockRequests={mockRequests} status={"pending"}/>
+            <RequestTable mockRequests={mockRequests} status={currentTab}/>
           </div>
         </div>
       </PageContent>
