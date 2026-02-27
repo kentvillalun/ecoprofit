@@ -46,6 +46,10 @@ export const RequestTable = ({ mockRequests, status }) => {
 
   const columns = tableConfig[status];
 
+
+  const pendingRequest = mockRequests.filter(req => req.status === "Pending")
+
+//   po;ish styling data rows
   return (
     <Card className={`${inter.className} hidden md:flex px-8  overflow-x-auto`}>
       <table className="w-full text-sm border-collapse text-nowrap">
@@ -59,8 +63,8 @@ export const RequestTable = ({ mockRequests, status }) => {
           </tr>
         </thead>
         <tbody className="">
-          {mockRequests.map((req) => (
-            <tr className="  text-center" key={req.id}>
+          {pendingRequest.map((req) => (
+            <tr className="text-center hover:bg-[#f8f8f8] transition-all transform " key={req.id}>
               {columns.map((col) => (
                 <td key={col.header} className="p-3">
                   {col.render(req)}

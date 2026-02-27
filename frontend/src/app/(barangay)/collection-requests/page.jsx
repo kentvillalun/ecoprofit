@@ -30,13 +30,13 @@ export default function CollectionRequests() {
   return (
     <Page>
       <BarangayTopBar title="Collection Requests" />
-      <PageContent className="bg-[#F3F3FF]! md:pl-70 md:p-6 md:gap-5">
+      <PageContent className="bg-[#F3F3FF]! md:pl-70 md:p-6 md:gap-7">
         <BarangayHeaderCard
           title={"Request"}
           subtitle={"Review pickup requests and set schedules."}
         />
         <SearchInput />
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-3">
           <StatusChip
             STATUS_TABS={STATUS_TABS}
             currentTab={currentTab}

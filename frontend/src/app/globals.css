@@ -5,3 +5,7 @@
     
 }
 
+.sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: #00800020 transparent;
+}
