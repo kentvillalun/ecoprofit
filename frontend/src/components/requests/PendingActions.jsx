@@ -6,8 +6,8 @@ export const PendingActions = () => {
       <Link href={""} className="text-gray-600">
         View
       </Link>
-      <button className="text-green-600">Approve</button>
-      <button className="text-red-600">Decline</button>
+      <button className="text-green-600 hover:cursor-pointer">Approve</button>
+      <button className="text-red-600 hover:cursor-pointer">Decline</button>
     </div>
   );
 };

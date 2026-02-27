@@ -49,7 +49,6 @@ export const RequestTable = ({ mockRequests, status }) => {
 
   const pendingRequest = mockRequests.filter(req => req.status === "Pending")
 
-//   po;ish styling data rows
   return (
     <Card className={`${inter.className} hidden md:flex px-8  overflow-x-auto`}>
       <table className="w-full text-sm border-collapse text-nowrap">

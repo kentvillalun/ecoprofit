@@ -17,6 +17,12 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
+  // To do List (user story)
+  // You have implemented the filter function and show only the pending in the request table in pending tab, however you have overlooked the fact that when in mobile screen it is not filtered
+  // Implement a filter function in the mobile screen by mapping only a filtered list for both the requestCards and requestTable
+  // This can be done making the requestTable and requestCard fully reusable
+
+
 export default function CollectionRequests() {
   const [currentTab, setCurrentTab] = useState("pending");
 
@@ -42,19 +48,31 @@ export default function CollectionRequests() {
             currentTab={currentTab}
             setCurrentTab={setCurrentTab}
           />
-          <div className={`${inter.className}`}>
-            {currentTab === "pending" && (
+
+          {/* Pending as the current tab */}
+          {currentTab === "pending" && (
+            <div className={`${inter.className}`}>
               <h2 className="font-semibold text-xl pb-2 pl-3 md:pl-0">
                 Pending Request
               </h2>
-            )}
-            <div className="flex md:hidden flex-col gap-2">
-              {mockRequests.map((r) => (
-                <RequestCard data={r} key={r.id} />
-              ))}
+              <div className="flex md:hidden flex-col gap-2">
+                {mockRequests.map((r) => (
+                  <RequestCard data={r} key={r.id} />
+                ))}
+              </div>
+              <RequestTable mockRequests={mockRequests} status={currentTab} />
             </div>
-            <RequestTable mockRequests={mockRequests} status={currentTab}/>
-          </div>
+          )}
+          {currentTab === "approved" && (
+            <div className={`${inter.className}`}>
+              <div className="flex md:hidden flex-col gap-2">
+                {mockRequests.map((r) => (
+                  <RequestCard data={r} key={r.id} />
+                ))}
+              </div>
+              <RequestTable mockRequests={mockRequests} status={currentTab} />
+            </div>
+          )}
         </div>
       </PageContent>
     </Page>
