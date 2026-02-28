@@ -8,34 +8,34 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
-export const RequestTable = ({ mockRequests, status }) => {
+export const RequestTable = ({ data, status }) => {
   const tableConfig = {
     pending: [
-      { header: "Date", render: (mockRequests) => mockRequests.createdAt },
+      { header: "Date", render: (data) => data.createdAt },
       {
         header: "Household",
-        render: (mockRequests) => mockRequests.residentName,
+        render: (data) => data.residentName,
       },
-      { header: "Sitio", render: (mockRequests) => mockRequests.sitio },
+      { header: "Sitio", render: (data) => data.sitio },
       {
         header: "Material",
-        render: (mockRequests) => mockRequests.materialType,
+        render: (data) => data.materialType,
       },
       {
         header: "Est. Qty",
-        render: (mockRequests) => mockRequests.estimatedWeight,
+        render: (data) => data.estimatedWeight,
       },
       {
         header: "Status",
-        render: (mockRequests) => (
+        render: (data) => (
           <div className="flex items-center justify-center">
-            <Pill type={mockRequests.status} />
+            <Pill type={data.status} />
           </div>
         ),
       },
       {
         header: "Action",
-        render: (mockRequests) => (
+        render: (data) => (
           <div className="flex items-center justify-center">
             <PendingActions />
           </div>
@@ -47,7 +47,7 @@ export const RequestTable = ({ mockRequests, status }) => {
   const columns = tableConfig[status];
 
 
-  const pendingRequest = mockRequests.filter(req => req.status === "Pending")
+  const filteredRequest = data.filter(req => req.status === status)
 
   return (
     <Card className={`${inter.className} hidden md:flex px-8  overflow-x-auto`}>
@@ -62,7 +62,7 @@ export const RequestTable = ({ mockRequests, status }) => {
           </tr>
         </thead>
         <tbody className="">
-          {pendingRequest.map((req) => (
+          {filteredRequest.map((req) => (
             <tr className="text-center hover:bg-[#f8f8f8] transition-all transform " key={req.id}>
               {columns.map((col) => (
                 <td key={col.header} className="p-3">

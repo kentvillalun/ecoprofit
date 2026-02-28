@@ -7,7 +7,7 @@ export const mockRequests = [
     estimatedWeight: "2 kg",
     notes: "Clean and dry bottles",
     createdAt: "2026-03-14",
-    status: "Pending",
+    status: "pending",
     photoUrl: "/mock/plastic1.jpg",
   },
   {
@@ -18,7 +18,7 @@ export const mockRequests = [
     estimatedWeight: "5 kg",
     notes: "",
     createdAt: "2026-03-13",
-    status: "Approved",
+    status: "approved",
     photoUrl: "/mock/cardboard1.jpg",
   },
   {
@@ -29,7 +29,7 @@ export const mockRequests = [
     estimatedWeight: "1.5 kg",
     notes: "Mostly soda cans",
     createdAt: "2026-03-12",
-    status: "For Pickup",
+    status: "pickup",
     photoUrl: "/mock/cans1.jpg",
   },
   {
@@ -40,7 +40,7 @@ export const mockRequests = [
     estimatedWeight: "3 kg",
     notes: "",
     createdAt: "2026-03-11",
-    status: "Completed",
+    status: "completed",
     photoUrl: "/mock/glass1.jpg",
   },
   {
@@ -51,7 +51,7 @@ export const mockRequests = [
     estimatedWeight: "4 kg",
     notes: "Includes containers",
     createdAt: "2026-03-10",
-    status: "Pending",
+    status: "pending",
     photoUrl: "/mock/plastic2.jpg",
   },
   {
@@ -62,7 +62,7 @@ export const mockRequests = [
     estimatedWeight: "6 kg",
     notes: "",
     createdAt: "2026-03-09",
-    status: "Approved",
+    status: "approved",
     photoUrl: "/mock/paper1.jpg",
   },
   {
@@ -73,7 +73,7 @@ export const mockRequests = [
     estimatedWeight: "2 kg",
     notes: "",
     createdAt: "2026-03-08",
-    status: "For Pickup",
+    status: "pickup",
     photoUrl: "/mock/tin1.jpg",
   },
   {
@@ -84,7 +84,7 @@ export const mockRequests = [
     estimatedWeight: "3 kg",
     notes: "Separated by color",
     createdAt: "2026-03-07",
-    status: "Completed",
+    status: "completed",
     photoUrl: "/mock/plastic3.jpg",
   },
   {
@@ -95,7 +95,7 @@ export const mockRequests = [
     estimatedWeight: "8 kg",
     notes: "",
     createdAt: "2026-03-06",
-    status: "Pending",
+    status: "pending",
     photoUrl: "/mock/metal1.jpg",
   },
   {
@@ -106,7 +106,7 @@ export const mockRequests = [
     estimatedWeight: "2 kg",
     notes: "",
     createdAt: "2026-03-05",
-    status: "Approved",
+    status: "approved",
     photoUrl: "/mock/cardboard2.jpg",
   },
   {
@@ -117,7 +117,7 @@ export const mockRequests = [
     estimatedWeight: "4 kg",
     notes: "",
     createdAt: "2026-03-04",
-    status: "For Pickup",
+    status: "pickup",
     photoUrl: "/mock/plastic4.jpg",
   },
   {
@@ -128,7 +128,7 @@ export const mockRequests = [
     estimatedWeight: "2.5 kg",
     notes: "",
     createdAt: "2026-03-03",
-    status: "Completed",
+    status: "completed",
     photoUrl: "/mock/glass2.jpg",
   },
 ];
