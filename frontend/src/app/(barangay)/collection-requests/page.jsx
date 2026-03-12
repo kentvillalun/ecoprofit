@@ -35,7 +35,7 @@ export default function CollectionRequests() {
   return (
     <Page>
       <BarangayTopBar title="Collection Requests" />
-      <PageContent className="bg-[#F3F3FF]! md:pl-70 md:p-6 md:gap-7">
+      <PageContent className="bg-[#F3F3FF]! md:pl-75 md:p-6 md:gap-7">
         <BarangayHeaderCard
           title={"Request"}
           subtitle={"Review pickup requests and set schedules."}

@@ -1,15 +1,18 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
-  Squares2X2Icon as DashboardIcon,
-  ClipboardDocumentListIcon as RequestIcon,
+  HomeIcon as DashboardIcon,
+  InboxStackIcon as RequestIcon,
   UserIcon as ResidentsIcon,
   MegaphoneIcon as AnnoucementsIcon,
-  ArchiveBoxIcon as InventoryIcon,
-  BuildingStorefrontIcon as JunkshopSalesIcon,
-  BanknotesIcon as FinanceIcon,
-  DocumentChartBarIcon as ReportsIcon,
+  CubeIcon as MaterialStockIcon,
+  BanknotesIcon as JunkshopSalesIcon,
+  ChartBarIcon as ReportsIcon,
   Cog6ToothIcon as SettingsIcon,
   ArrowLeftStartOnRectangleIcon as LogoutIcon,
+  ArrowsRightLeftIcon as CollectionSortingIcon,
+  GiftIcon as RedemptionProgramIcon,
+  ClipboardDocumentCheckIcon as RewardsIcon,
+  WalletIcon as ProgramFundsIcon
 } from "@heroicons/react/24/solid";
 import { useContext } from "react";
 import { DrawerContext } from "@/app/(barangay)/layout.jsx";
@@ -30,23 +33,33 @@ export const Sidebar = () => {
       href: "",
     },
     {
-      icon: RequestIcon,
-      label: "Requests",
-      href: "",
-    },
-    {
       icon: ResidentsIcon,
       label: "Residents",
       href: "",
     },
     {
-      icon: AnnoucementsIcon,
-      label: "Announcements",
+      icon: RequestIcon,
+      label: "Collection Requests",
       href: "",
     },
     {
-      icon: InventoryIcon,
-      label: "Inventory",
+      icon: CollectionSortingIcon,
+      label: "Collection & Sorting",
+      href: "",
+    },
+    {
+      icon: MaterialStockIcon,
+      label: "Material Stock",
+      href: "",
+    },
+    {
+      icon: RedemptionProgramIcon,
+      label: "Redemption Programs",
+      href: "",
+    },
+    {
+      icon: RewardsIcon,
+      label: "Reward Inventory",
       href: "",
     },
     {
@@ -55,8 +68,13 @@ export const Sidebar = () => {
       href: "",
     },
     {
-      icon: FinanceIcon,
-      label: "Finance",
+      icon: ProgramFundsIcon,
+      label: "Program Funds",
+      href: "",
+    },
+    {
+      icon: AnnoucementsIcon,
+      label: "Announcements",
       href: "",
     },
     {
@@ -73,7 +91,7 @@ export const Sidebar = () => {
 
   return (
     <aside
-      className={`w-64 h-screen flex flex-col justify-between bg-[#74C857] fixed top-0 text-white left-0 z-10 md:shadow-xl ${poppins.className} overflow-y-auto sidebar`}
+      className={`w-70 h-screen flex flex-col justify-between bg-[#74C857] fixed top-0 text-white left-0 z-10 md:shadow-xl ${poppins.className} overflow-y-auto sidebar`}
     >
       <div className="p-4 flex flex-col gap-4 lg:gap-9">
         <div className="flex flex-row justify-between items-center">

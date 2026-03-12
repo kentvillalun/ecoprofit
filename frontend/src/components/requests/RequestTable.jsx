@@ -42,6 +42,9 @@ export const RequestTable = ({ data, status }) => {
         ),
       },
     ],
+    approved: [
+      {header: <input type="checklist"/>}
+    ]
   };
 
   const columns = tableConfig[status];
