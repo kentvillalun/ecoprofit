@@ -91,7 +91,7 @@ export const Sidebar = () => {
 
   return (
     <aside
-      className={`w-70 h-screen flex flex-col justify-between bg-[#74C857] fixed top-0 text-white left-0 z-10 md:shadow-xl ${poppins.className} overflow-y-auto sidebar`}
+      className={`w-72 h-screen flex flex-col justify-between bg-[#74C857] fixed top-0 text-white left-0 z-10 md:shadow-xl ${poppins.className} overflow-y-auto sidebar`}
     >
       <div className="p-4 flex flex-col gap-4 lg:gap-9">
         <div className="flex flex-row justify-between items-center">

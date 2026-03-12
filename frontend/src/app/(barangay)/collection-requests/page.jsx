@@ -17,28 +17,23 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
-// To do List (user story)
-// You have implemented the filter function and show only the pending in the request table in pending tab, however you have overlooked the fact that when in mobile screen it is not filtered
-// Implement a filter function in the mobile screen by mapping only a filtered list for both the requestCards and requestTable
-// This can be done making the requestTable and requestCard fully reusable
-
 export default function CollectionRequests() {
-  const [currentTab, setCurrentTab] = useState("pending");
+  const [currentTab, setCurrentTab] = useState("requested");
 
   const STATUS_TABS = [
-    { key: "pending", label: "Pending" },
+    { key: "requested", label: "Pending" },
     { key: "approved", label: "Approved" },
-    { key: "pickup", label: "For Pickup" },
-    { key: "completed", label: "Completed" },
+    { key: "collected", label: "Collected" },
+    { key: "rejected", label: "Rejected" },
   ];
 
   return (
     <Page>
       <BarangayTopBar title="Collection Requests" />
-      <PageContent className="bg-[#F3F3FF]! md:pl-75 md:p-6 md:gap-7">
+      <PageContent className="bg-[#F3F3FF]! md:pl-77 md:p-6 md:gap-7">
         <BarangayHeaderCard
-          title={"Request"}
-          subtitle={"Review pickup requests and set schedules."}
+          title={"Collection Requests"}
+          subtitle={"Review and manage resident pickup requests for recyclable collection."}
         />
         <SearchInput />
         <div className="flex flex-col gap-3">
@@ -49,7 +44,7 @@ export default function CollectionRequests() {
           />
 
         
-          {currentTab === "pending" && (
+          {currentTab && (
             <div className={`${inter.className}`}>
               <h2 className="font-semibold text-xl pb-2 pl-3 md:pl-0">
                 Pending Request
