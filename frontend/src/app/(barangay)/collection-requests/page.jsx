@@ -27,13 +27,21 @@ export default function CollectionRequests() {
     { key: "rejected", label: "Rejected" },
   ];
 
+  const titles = {
+    requested: "Pending Requests",
+    approved: "Approved Requests",
+    collected: "Collected Requests",
+    rejected: "Rejected Requests",
+  };
   return (
     <Page>
       <BarangayTopBar title="Collection Requests" />
       <PageContent className="bg-[#F3F3FF]! md:pl-77 md:p-6 md:gap-7">
         <BarangayHeaderCard
           title={"Collection Requests"}
-          subtitle={"Review and manage resident pickup requests for recyclable collection."}
+          subtitle={
+            "Review and manage resident pickup requests for recyclable collection."
+          }
         />
         <SearchInput />
         <div className="flex flex-col gap-3">
@@ -43,14 +51,14 @@ export default function CollectionRequests() {
             setCurrentTab={setCurrentTab}
           />
 
-        
           {currentTab && (
             <div className={`${inter.className}`}>
               <h2 className="font-semibold text-xl pb-2 pl-3 md:pl-0">
-                Pending Request
+                {titles[currentTab]}
               </h2>
+
               <div className="flex md:hidden flex-col gap-2">
-                <RequestCard data={mockRequests} status={currentTab}/>
+                <RequestCard data={mockRequests} status={currentTab} />
               </div>
               <RequestTable data={mockRequests} status={currentTab} />
             </div>
