@@ -95,7 +95,6 @@ export default function CollectionRequests() {
                 status={currentTab}
                 selectedIds={selectedApprovedRequests}
                 onToggleSelect={handleApprovedRequestSelect}
-                handleBatchCollection={handleBatchCollection}
               />
             </div>
           )}
