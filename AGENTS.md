@@ -7,7 +7,7 @@ It enables residents to contribute recyclable materials and allows the barangay 
 - collect and record materials
 - track material stock (MRF)
 - manage redemption programs (waste-to-goods/services/medicine)
-- manage program funds, including expenses and profits
+- manage program funds, including expenses, income/proceeds, and profits
 - generate reports
 
 This system is based on real barangay operations in Barangay Beddeng Laud, Vigan City.
@@ -62,6 +62,7 @@ There is NO delayed sorting workflow.
 - Status:
   - REQUESTED
   - APPROVED
+  - IN_PROGRESS
   - COLLECTED
   - REJECTED
 
@@ -106,7 +107,7 @@ Note:
 - Tracks program-related financial activity
 - Includes:
   - expenses
-  - sales proceeds
+  - income/proceeds
   - profits
   - other financial records related to barangay recycling programs
 
@@ -126,6 +127,7 @@ Implementing:
 - Request lifecycle for override pickup requests
 - Intake recording in Collection & Sorting
 - Status transitions and validation
+- Batch collection flow from Approved to In Progress
 - Replacing mock data with real backend logic
 
 ---

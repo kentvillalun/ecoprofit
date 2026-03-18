@@ -13,8 +13,8 @@ It does NOT apply to:
 
 ## Status Flow
 
-REQUESTED → APPROVED → COLLECTED
-           ↘
+REQUESTED -> APPROVED -> IN_PROGRESS -> COLLECTED
+           ->
             REJECTED
 
 ---
@@ -27,7 +27,12 @@ Resident submits a pickup request.
 ---
 
 ### APPROVED
-Barangay accepts and schedules the pickup.
+Barangay accepts the request and marks it ready for pickup.
+
+---
+
+### IN_PROGRESS
+Request has been selected for batch collection or is part of ongoing pickup work.
 
 ---
 
@@ -50,3 +55,11 @@ COLLECTED means:
 - materials are already sorted
 - materials are already recorded
 - contribution transaction has been created
+
+---
+
+## Batch Collection
+
+Batch collection is used to move one or more approved requests into IN_PROGRESS.
+
+IN_PROGRESS is used to track ongoing collection before completion.

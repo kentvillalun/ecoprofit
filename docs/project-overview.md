@@ -15,14 +15,14 @@ The system supports:
 - event-based and barangay-based intake
 - material tracking and utilization
 - redemption programs (waste-to-goods/services/medicine)
-- financial tracking of program expenses and profits
+- financial tracking of expenses, income/proceeds, and profits
 - reporting and transparency
 
 ---
 
 ## Core Idea
 
-Residents contribute recyclable materials.
+Residents contribute recyclable materials through a unified intake model.
 
 The barangay:
 - collects and records materials
@@ -56,3 +56,18 @@ There are different ways materials enter the system:
 - Override / on-demand pickup requests
 - Event-based collection
 - Barangay hall exchange or direct submission
+
+All materials are recorded as Contribution / Intake transactions using one of these source types:
+
+- SUNDAY_ECOAID
+- PICKUP_REQUEST
+- EVENT_COLLECTION
+- BARANGAY_EXCHANGE
+
+Pickup requests follow this lifecycle:
+
+REQUESTED -> APPROVED -> IN_PROGRESS -> COLLECTED
+           ->
+            REJECTED
+
+Batch collection moves approved requests into IN_PROGRESS before materials are collected, sorted, and recorded.
