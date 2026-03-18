@@ -5,11 +5,12 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
 });
 
-// pending || approved || collected || rejected 
+// pending || approved || in_progress || collected || rejected 
 export const Pill = ({ type }) => {
   const styles = {
     requested: "bg-[#FCD50A25] text-[#EEB90E]",
     approved: "bg-[#1D9BF017] text-[#1D9BF0]",
+    in_progress: "bg-[#FFF4D6] text-[#C88A00]",
     rejected: "bg-[#FFE4E4] text-[#E54848]",
     collected: "bg-[#89D95720] text-[#74C857]",
     "not-scheduled": "bg-gray-200 text-gray-700",
@@ -19,6 +20,7 @@ export const Pill = ({ type }) => {
   const labels = {
     requested: "Pending",
     approved: "Approved",
+    in_progress: "In Progress",
     rejected: "Rejected",
     collected: "Collected",
     "not-scheduled": "Not Scheduled",

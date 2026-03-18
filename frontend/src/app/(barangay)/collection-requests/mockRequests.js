@@ -32,7 +32,7 @@ export const mockRequests = [
     scheduleStatus: "not-scheduled",
     collectionDate: "",
     rejectionReason: "",
-    status: "approved",
+    status: "in_progress",
     photoUrl: "/mock/cardboard1.jpg",
   },
   {

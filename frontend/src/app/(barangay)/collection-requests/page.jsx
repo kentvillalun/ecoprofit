@@ -19,10 +19,34 @@ const inter = Inter({
 
 export default function CollectionRequests() {
   const [currentTab, setCurrentTab] = useState("requested");
+  const [requests, setRequests] = useState(mockRequests);
+  const [selectedApprovedRequests, setSelectedApprovedRequests] = useState([]);
+
+  const handleApprovedRequestSelect = (requestId) => {
+    setSelectedApprovedRequests((currentSelected) =>
+      currentSelected.includes(requestId)
+        ? currentSelected.filter((id) => id !== requestId)
+        : [...currentSelected, requestId]
+    );
+  };
+
+  const handleBatchCollection = () => {
+    if (selectedApprovedRequests.length === 0) return;
+
+    setRequests((currentRequests) =>
+      currentRequests.map((request) =>
+        selectedApprovedRequests.includes(request.id)
+          ? { ...request, status: "in_progress" }
+          : request
+      )
+    );
+    setSelectedApprovedRequests([]);
+  };
 
   const STATUS_TABS = [
     { key: "requested", label: "Pending" },
     { key: "approved", label: "Approved" },
+    { key: "in_progress", label: "In Progress" },
     { key: "collected", label: "Collected" },
     { key: "rejected", label: "Rejected" },
   ];
@@ -30,6 +54,7 @@ export default function CollectionRequests() {
   const titles = {
     requested: "Pending Requests",
     approved: "Approved Requests",
+    in_progress: "In Progress Requests",
     collected: "Collected Requests",
     rejected: "Rejected Requests",
   };
@@ -58,12 +83,33 @@ export default function CollectionRequests() {
               </h2>
 
               <div className="flex md:hidden flex-col gap-2">
-                <RequestCard data={mockRequests} status={currentTab} />
+                <RequestCard
+                  data={requests}
+                  status={currentTab}
+                  selectedIds={selectedApprovedRequests}
+                  onToggleSelect={handleApprovedRequestSelect}
+                />
               </div>
-              <RequestTable data={mockRequests} status={currentTab} />
+              <RequestTable
+                data={requests}
+                status={currentTab}
+                selectedIds={selectedApprovedRequests}
+                onToggleSelect={handleApprovedRequestSelect}
+                handleBatchCollection={handleBatchCollection}
+              />
             </div>
           )}
         </div>
+        {currentTab === "approved" && selectedApprovedRequests.length > 0 && (
+          <div className="fixed bottom-6 left-4 right-4 z-20 md:left-auto md:right-6">
+            <button
+              className="w-full rounded-2xl bg-primary px-5 py-4 text-white shadow-lg transition-all duration-200 hover:cursor-pointer hover:opacity-90 md:w-auto"
+              onClick={handleBatchCollection}
+            >
+              Create Batch Collection ({selectedApprovedRequests.length})
+            </button>
+          </div>
+        )}
       </PageContent>
     </Page>
   );

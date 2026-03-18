@@ -11,7 +11,13 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
-export const RequestTable = ({ data, status }) => {
+export const RequestTable = ({
+  data,
+  status,
+  selectedIds = [],
+  onToggleSelect,
+  handleBatchCollection
+}) => {
   const tableConfig = {
     requested: [
       { header: "Date Requested", render: (data) => data.createdAt },
@@ -46,7 +52,16 @@ export const RequestTable = ({ data, status }) => {
       },
     ],
     approved: [
-      { header: "Select", render: (data) => <input type="checkbox" /> },
+      {
+        header: "Select",
+        render: (data) => (
+          <input
+            type="checkbox"
+            checked={selectedIds.includes(data.id)}
+            onChange={() => onToggleSelect?.(data.id)}
+          />
+        ),
+      },
       { header: "Approved Date", render: (data) => data.approvedAt },
       { header: "Household", render: (data) => data.residentName },
       { header: "Sitio", render: (data) => data.sitio },
@@ -63,6 +78,37 @@ export const RequestTable = ({ data, status }) => {
       {
         header: "Action",
         render: (data) => (
+          <div className="flex items-center justify-center">
+            <ApprovedActions />
+          </div>
+        ),
+      },
+    ],
+    in_progress: [
+      { header: "Approved Date", render: (data) => data.approvedAt },
+      { header: "Household", render: (data) => data.residentName },
+      { header: "Sitio", render: (data) => data.sitio },
+      { header: "Material Type", render: (data) => data.materialType },
+      { header: "Est. Weight", render: (data) => data.estimatedWeight },
+      {
+        header: "Status",
+        render: (data) => (
+          <div className="flex items-center justify-center">
+            <Pill type={data.status} />
+          </div>
+        ),
+      },
+      {
+        header: "Pickup Schedule",
+        render: (data) => (
+          <div className="flex items-center justify-center">
+            <Pill type={data.scheduleStatus} />
+          </div>
+        ),
+      },
+      {
+        header: "Action",
+        render: () => (
           <div className="flex items-center justify-center">
             <ApprovedActions />
           </div>
@@ -114,7 +160,7 @@ export const RequestTable = ({ data, status }) => {
 
   return (
     <Card
-      className={`${inter.className} hidden md:flex md:flex-col px-8  overflow-x-auto md:gap-3`}
+      className={`${inter.className} hidden md:flex md:flex-col px-8  overflow-x-auto md:gap-3 md:items-start`}
     >
       <table className="w-full text-sm border-collapse text-nowrap">
         <thead className="border-b border-[#E6EFF5]">
@@ -141,11 +187,7 @@ export const RequestTable = ({ data, status }) => {
           ))}
         </tbody>
       </table>
-      {status === "approved" && (
-        <div className="flex items-center justify-end w-full">
-          <button className="px-4 rounded-md bg-[#74C857] text-white py-2 hover:bg-primary transition-all duration-200 ease-in-out hover:cursor-pointer">Create Batch Collection</button>
-        </div>
-      )}
+     
     </Card>
   );
 };
