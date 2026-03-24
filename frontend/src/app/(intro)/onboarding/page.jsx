@@ -44,7 +44,7 @@ export default function OnboardingPage() {
 
       {step === 2 && (
         <>
-          <div className="flex flex-col justify-between h-screen w-full max-w-md p-4 pt-12 pb-10 ">
+          <div className="flex flex-col justify-between min-h-svh w-full max-w-md p-4 pt-12 pb-10 overflow-x-hidden">
             <div className="flex flex-col items-center w-full max-w-md p-2 justify-center ">
               <div className="max-w-108 relative w-full aspect-square">
                 <Image src="/onboarding/step1.svg" alt="Step 1" fill />
@@ -83,7 +83,7 @@ export default function OnboardingPage() {
 
       {step === 3 && (
         <>
-          <div className="flex flex-col justify-between h-screen w-full max-w-md p-4 pt-12 pb-10 font-poppins">
+          <div className="flex flex-col justify-between min-h-svh w-full max-w-md p-4 pt-12 pb-10 overflow-x-hidden">
             <div className="flex flex-col items-center w-full max-w-md p-2 justify-center ">
               <div className="max-w-108 relative w-full aspect-square">
                 <Image src="/onboarding/step2.svg" alt="Step 2" fill />
@@ -122,7 +122,7 @@ export default function OnboardingPage() {
 
       {step === 4 && (
         <>
-          <div className="flex flex-col justify-between h-screen w-full max-w-md p-4 pt-12 pb-10 font-poppins">
+          <div className="flex flex-col justify-between min-h-svh w-full max-w-md p-4 pt-12 pb-10 font-poppins overflow-x-hidden">
             <div className="flex flex-col items-center w-full max-w-md p-2 justify-center ">
               <div className="max-w-108 relative w-full aspect-square">
                 <Image src="/onboarding/step3.svg" alt="Step 3" fill />
