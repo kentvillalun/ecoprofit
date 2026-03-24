@@ -14,19 +14,19 @@ export default function RequestsPage() {
     {
       id: 1,
       title: "Plastic Bottles Collection",
-      status: "Approved",
+      status: "approved",
       isCompleted: false,
     },
     {
       id: 2,
       title: "Cardboard Pickup",
-      status: "For Pickup",
+      status: "in_progress",
       isCompleted: false,
     },
     {
       id: 3,
       title: "Metal Scraps",
-      status: "Completed",
+      status: "collected",
       isCompleted: true,
     },
   ];
@@ -45,16 +45,16 @@ export default function RequestsPage() {
         <div className="flex flex-col gap-6">
           <div className="grid grid-cols-2 gap-2">
             <button
-              className={`rounded-2xl shadow-lg py-3 font-medium text-[#727272] ${currentTab === "ongoing" ? "text-white bg-[#89D957]" : ""} transition-all duration-250 ease-out`}
+              className={`rounded-2xl shadow-lg py-3 font-medium text-[#727272] ${currentTab === "ongoing" ? "text-white bg-[#89D957]" : "bg-white"} transition-all duration-250 ease-out`}
               onClick={() => setCurrectTab("ongoing")}
             >
               Ongoing
             </button>
             <button
-              className={`rounded-2xl shadow-lg py-3 font-medium text-[#727272] ${currentTab === "completed" ? "text-white bg-[#89D957]" : ""} `}
+              className={`rounded-2xl shadow-lg py-3 font-medium text-[#727272] ${currentTab === "completed" ? "text-white bg-[#89D957]" : "bg-white"} `}
               onClick={() => setCurrectTab("completed")}
             >
-              Completed
+              Collected
             </button>
           </div>
 

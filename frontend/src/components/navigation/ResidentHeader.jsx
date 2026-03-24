@@ -39,7 +39,7 @@ export const ResidentHeader = ({
 
   return (
     <header
-      className={`flex flex-row items-start justify-between min-w-full max-h-24 bg-white fixed top-0 py-5 px-8 ${poppins.className} shadow-lg`}
+      className={`flex flex-row items-start justify-between min-w-full max-h-24 bg-white fixed top-0 py-5 px-8 ${poppins.className} shadow-lg z-1000 `}
     >
       <div className="flex flex-row items-center justify-between min-w-full">
         <ArrowLeftIcon
