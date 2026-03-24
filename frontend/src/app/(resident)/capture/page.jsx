@@ -3,7 +3,7 @@
 import { ResidentHeader } from "@/components/navigation/ResidentHeader";
 import { CameraIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
 import { XCircleIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Poppins } from "next/font/google";
 
 const poppins = Poppins({
@@ -12,9 +12,77 @@ const poppins = Poppins({
 });
 
 export default function CapturePage() {
-  const [isCaptured, setIsCaptured] = useState(false);
+  const [capturedImageUrl, setCapturedImageUrl] = useState(null);
   const [isReady, setIsReady] = useState(false);
   const [isSumbit, setIsSubmit] = useState(false);
+  const [permissionMessage, setPermissionMessage] = useState("");
+  const fileInputRef = useRef(null);
+
+  const isCaptured = Boolean(capturedImageUrl);
+
+  useEffect(() => {
+    return () => {
+      if (capturedImageUrl) {
+        URL.revokeObjectURL(capturedImageUrl);
+      }
+    };
+  }, [capturedImageUrl]);
+
+  const openCamera = async () => {
+    setPermissionMessage("");
+
+    if (!fileInputRef.current) {
+      return;
+    }
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      fileInputRef.current.click();
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+      });
+
+      stream.getTracks().forEach((track) => track.stop());
+      fileInputRef.current.click();
+    } catch (error) {
+      if (
+        error?.name === "NotAllowedError" ||
+        error?.name === "PermissionDeniedError" ||
+        error?.name === "SecurityError"
+      ) {
+        setPermissionMessage(
+          "Camera permission was denied. Please allow access and try again."
+        );
+        return;
+      }
+
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleImageChange = (event) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setPermissionMessage("");
+    setIsReady(false);
+
+    setCapturedImageUrl((currentUrl) => {
+      if (currentUrl) {
+        URL.revokeObjectURL(currentUrl);
+      }
+
+      return URL.createObjectURL(file);
+    });
+
+    event.target.value = "";
+  };
 
   return (
     <main className={`${poppins.className}`}>
@@ -38,18 +106,50 @@ export default function CapturePage() {
       )}
       <section className="absolute left-0 right-0 top-18 h-[calc(100dvh-72px)] p-3 flex flex-col gap-6 overflow-y-auto pb-[calc(120px+env(safe-area-inset-bottom))]">
         <div className="flex flex-col items-center gap-3">
-          <div className="flex flex-col items-center px-6 py-8 border-6 border-dashed rounded-2xl border-gray-200 text-center">
-            <CameraIcon className="h-25 fill-gray-200" />
-            <p className="font-medium text-gray-500 text-lg">
-              Capture your recyclables
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={handleImageChange}
+          />
+          <button
+            type="button"
+            className="w-full max-w-md overflow-hidden rounded-2xl border-6 border-dashed border-gray-200 text-center"
+            onClick={openCamera}
+          >
+            <div className="flex min-h-70 flex-col items-center justify-center px-6 py-8">
+              {isCaptured ? (
+                <img
+                  src={capturedImageUrl}
+                  alt="Captured recyclables"
+                  className="h-full max-h-80 w-full rounded-xl object-cover"
+                />
+              ) : (
+                <>
+                  <CameraIcon className="h-25 fill-gray-200" />
+                  <p className="font-medium text-gray-500 text-lg">
+                    Capture your recyclables
+                  </p>
+                  <p className="text-gray-400">
+                    Use your camera to take a photo for verification
+                  </p>
+                </>
+              )}
+            </div>
+          </button>
+          {permissionMessage && (
+            <p className="max-w-md px-2 text-center text-sm text-red-500">
+              {permissionMessage}
             </p>
-            <p className="text-gray-400">
-              Use your camera to take a photo for verification
-            </p>
-          </div>
+          )}
           {isCaptured ? (
-            <div className="flex flex-row gap-4">
-              <button className=" text-[#727272] p-3 rounded-lg text-sm shadow-md min-w-27">
+            <div className="flex w-full max-w-md flex-col gap-3 sm:flex-row">
+              <button
+                className="text-[#727272] p-3 rounded-lg text-sm shadow-md min-w-27 bg-white"
+                onClick={openCamera}
+              >
                 Retake
               </button>
               <button
@@ -62,7 +162,7 @@ export default function CapturePage() {
           ) : (
             <button
               className="bg-[#74C857] text-white p-3 rounded-lg text-sm shadow-md min-w-27"
-              onClick={() => setIsCaptured(true)}
+              onClick={openCamera}
             >
               Open Camera
             </button>
