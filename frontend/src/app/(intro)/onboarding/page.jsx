@@ -15,7 +15,7 @@ export default function OnboardingPage() {
 
   return (
     <main
-      className={`min-h-screen flex items-center justify-center bg-linear-to-b from-[#FFFFFF]  from-24% to-[#89D957] ${poppins.className}`}
+      className={`min-h-svh flex items-center justify-center bg-linear-to-b from-[#FFFFFF]  from-24% to-[#89D957] ${poppins.className}`}
     >
       {step === 1 && (
         <>
