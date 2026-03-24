@@ -18,7 +18,10 @@ export default function LoginPage() {
 
   return (
     <Page gradient={true}>
-      <div className="grid">
+      <div className={`w-full max-w-md min-h-svh flex flex-col justify-between px-1 ${poppins.className}`}>
+        <div className=""></div>
+        <div className=""></div>
+        
         <div className="flex justify-end items-end">
           <img
             src="/onboarding/Ecoprofit logo.svg"
@@ -26,7 +29,7 @@ export default function LoginPage() {
             className="aspect-4/2 object-cover "
           />
         </div>
-        <div className="mx-2 mt-2 bg-white p-8 rounded-t-[20px] flex flex-col gap-8 ">
+        <div className="mx-1 mt-2 bg-white p-8 rounded-t-[20px] flex flex-col gap-8 max-w-full">
           <h3 className="font-semibold text-[20px]">Log In</h3>
           <div className="flex flex-col gap-6 text-[#717680]">
             {/* Login form elements go here */}
@@ -35,7 +38,7 @@ export default function LoginPage() {
               <input
                 type="text"
                 placeholder="Phone number"
-                className="outline-none"
+                className="outline-none max-w-full"
               />
             </div>
 
@@ -45,7 +48,7 @@ export default function LoginPage() {
                 <input
                   type={showPassword ? `text` : `password`}
                   placeholder="Password"
-                  className="outline-none"
+                  className="outline-none max-w-40 md:max-w-full"
                 />
               </div>
               <button
@@ -74,7 +77,10 @@ export default function LoginPage() {
                 Don't have an account?{" "}
                 <span className="font-medium text-black">Sign Up</span>
               </Link>
+              
             </div>
+            <div className=""></div>
+            <div className=""></div>
           </div>
         </div>
       </div>

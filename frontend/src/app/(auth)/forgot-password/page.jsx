@@ -12,27 +12,29 @@ const poppins = Poppins({
 
 export default function ForgotPasswordPage() {
   return (
-    <Page gradient={true}
-      
-    >
-      <div className="grid">
+    <Page gradient={true}>
+      <div className="w-full max-w-md min-h-svh flex flex-col justify-between px-1">
+        <div className=""></div>
+        <div className=""></div>
+
         <div className="flex justify-end items-end">
           <img
-            src="../onboarding/Ecoprofit logo.svg"
+            src="/onboarding/Ecoprofit logo.svg"
             alt="EcoProfit Logo"
-            className="aspect-4/2 object-cover "
+            className="aspect-4/2 object-cover"
           />
         </div>
-        <div className="mx-2 mt-2 bg-white p-10 rounded-t-[20px] flex flex-col gap-8">
+
+        <div className="mx-1 mt-2 bg-white p-8 rounded-t-[20px] flex flex-col gap-8 max-w-full">
           <h3 className="font-semibold text-[20px]">Forgot Password</h3>
-          <div className="flex flex-col gap-6 ">
-            {/* Login form elements go here */}
-            <div className=" flex flex-row gap-3 border-b border-[#E7E3E0] p-2.5">
-              <PhoneIcon className="h-6 w-6 stroke-[#4C5F66]" />
+
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-row gap-3 border-b border-[#E7E3E0] p-2.5">
+              <PhoneIcon className="h-6 w-6 shrink-0 stroke-[#4C5F66]" />
               <input
                 type="text"
                 placeholder="Phone number"
-                className="outline-none"
+                className="outline-none w-full min-w-0 max-w-full"
               />
             </div>
           </div>
@@ -41,15 +43,18 @@ export default function ForgotPasswordPage() {
             <button className="bg-primary text-white font-medium py-4 px-24 rounded-[40px] max-w-63.75">
               Submit
             </button>
+
             <Link
               className="text-[14px] text-center text-[#4C5F66]"
               href="/login"
             >
-              
-              Back to{" "}
-              <span className="font-medium text-black">Log In</span>
+              Back to <span className="font-medium text-black">Log In</span>
             </Link>
           </div>
+          <div className=""></div>
+          <div className=""></div>
+          <div className=""></div>
+        <div className=""></div>
         </div>
       </div>
     </Page>
