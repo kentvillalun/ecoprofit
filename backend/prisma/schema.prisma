@@ -16,6 +16,7 @@ datasource db {
 model Barangay {
   id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name         String
+  city         String?
   code         String? @unique
   isRegistered Boolean @default(true)
   users        User[]
