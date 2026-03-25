@@ -14,13 +14,29 @@ datasource db {
 }
 
 model Barangay {
-  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name      String
-  code      String?  @unique
-  users     User[]
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String
+  code         String? @unique
+  isRegistered Boolean @default(true)
+  users        User[]
+  sitios       Sitio[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Sitio {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String
+  barangayId String   @db.Uuid
+  barangay   Barangay @relation(fields: [barangayId], references: [id])
+  users      User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([barangayId, name])
+  @@index([barangayId])
 }
 
 enum Role {
@@ -34,6 +50,8 @@ model User {
   
   barangayId String? @db.Uuid
   barangay Barangay? @relation(fields: [barangayId], references: [id])
+  sitioId    String?   @db.Uuid
+  sitio      Sitio?    @relation(fields: [sitioId], references: [id])
 
   role Role @default(RESIDENT)
 
@@ -56,4 +74,5 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@index([barangayId])
+  @@index([sitioId])
 }

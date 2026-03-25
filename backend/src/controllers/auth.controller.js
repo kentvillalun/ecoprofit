@@ -1,21 +1,109 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../config/db.js";
 
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+const isUuid = (value) => UUID_REGEX.test(value ?? "");
+
+const listBarangays = async (req, res) => {
+  try {
+    const search = req.query.search?.trim() ?? "";
+
+    const barangays = await prisma.barangay.findMany({
+      where: {
+        isRegistered: true,
+        ...(search
+          ? {
+              name: {
+                contains: search,
+                mode: "insensitive",
+              },
+            }
+          : {}),
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+      take: 10,
+    });
+
+    return res.status(200).json({
+      status: "success",
+      data: barangays,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const listSitiosByBarangay = async (req, res) => {
+  try {
+    const { barangayId } = req.params;
+
+    if (!isUuid(barangayId)) {
+      return res.status(400).json({ error: "Invalid barangay ID" });
+    }
+
+    const barangay = await prisma.barangay.findFirst({
+      where: {
+        id: barangayId,
+        isRegistered: true,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!barangay) {
+      return res.status(404).json({ error: "Barangay not found" });
+    }
+
+    const sitios = await prisma.sitio.findMany({
+      where: {
+        barangayId,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+
+    return res.status(200).json({
+      status: "success",
+      data: sitios,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 const register = async (req, res) => {
   try {
     // Read request from the body
     const {
       phoneNumber,
-      purok,
-      barangay,
+      barangayId,
+      sitioId,
       password,
       confirmPassword,
       termsAccepted,
     } = req.body ?? {};
 
     // Field Validation
-    if (!phoneNumber || !password || !confirmPassword || !barangay) {
+    if (!phoneNumber || !password || !confirmPassword || !barangayId || !sitioId) {
       return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    if (!isUuid(barangayId) || !isUuid(sitioId)) {
+      return res.status(400).json({ error: "Invalid address selection" });
     }
 
     // Password match validation
@@ -42,12 +130,38 @@ const register = async (req, res) => {
     }
 
     // Ensure barangay is valid
-    const barangayRecord = await prisma.barangay.findUnique({
-      where: { code: barangay },
+    const barangayRecord = await prisma.barangay.findFirst({
+      where: {
+        id: barangayId,
+        isRegistered: true,
+      },
+      select: {
+        id: true,
+        code: true,
+        name: true,
+      },
     });
 
     if (!barangayRecord) {
       return res.status(400).json({ error: "Barangay not found" });
+    }
+
+    const sitioRecord = await prisma.sitio.findFirst({
+      where: {
+        id: sitioId,
+        barangayId: barangayRecord.id,
+      },
+      select: {
+        id: true,
+        name: true,
+        barangayId: true,
+      },
+    });
+
+    if (!sitioRecord) {
+      return res.status(400).json({
+        error: "Selected sitio does not belong to the selected barangay",
+      });
     }
 
     // Hashing Password
@@ -57,10 +171,13 @@ const register = async (req, res) => {
     const user = await prisma.user.create({
       data: {
         phoneNumber,
-        purok,
+        purok: sitioRecord.name,
         passwordHash: hashedPassword,
         barangay: {
           connect: { id: barangayRecord.id },
+        },
+        sitio: {
+          connect: { id: sitioRecord.id },
         },
         termsAccepted: true,
         termsAcceptedAt: new Date(),
@@ -70,6 +187,7 @@ const register = async (req, res) => {
         phoneNumber: true,
         purok: true,
         barangay: { select: { id: true, code: true, name: true } },
+        sitio: { select: { id: true, name: true } },
       },
     });
 
@@ -95,5 +213,4 @@ const login = async (req, res) => {
 }
 
 
-
-export { register, login };
+export { listBarangays, listSitiosByBarangay, register, login };
