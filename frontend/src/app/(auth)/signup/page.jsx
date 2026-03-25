@@ -8,6 +8,7 @@ import {
   BuildingOffice2Icon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { TermsModal } from "@/components/auth/TermsModal";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -58,11 +59,13 @@ export default function SingupPage() {
   const [submitError, setSubmitError] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
     setValue,
+    reset,
     clearErrors,
     setError,
     formState: { errors },
@@ -275,7 +278,34 @@ export default function SingupPage() {
       return;
     }
 
-    setSubmitSuccess("Signup successful.");
+    reset({
+      phoneNumber: "",
+      barangayName: "",
+      barangayId: "",
+      sitioId: "",
+      password: "",
+      confirmPassword: "",
+      termsAccepted: false,
+    });
+    setBarangayQuery("");
+    setSelectedBarangay(null);
+    setBarangayOptions([]);
+    setSitioOptions([]);
+    setBarangayLookupError("");
+    setSitioLookupError("");
+    setShowSuggestions(false);
+    setIsTermsOpen(false);
+    setSubmitError("");
+    setSubmitSuccess("");
+
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(
+        "authSuccessMessage",
+        "Signup successful. You can now log in."
+      );
+    }
+
+    router.push("/login");
   };
 
   return (

@@ -201,16 +201,63 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-   
-  // Check if user exists
+  try {
+    const { phoneNumber, password } = req.body ?? {};
+
+    if (!phoneNumber || !password) {
+      return res.status(400).json({ error: "Phone number and password are required" });
+    }
+
+    // Check if user exists
     const user = await prisma.user.findUnique({
       where: { phoneNumber },
+      include: {
+        barangay: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
+        },
+        sitio: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
     if (!user) {
-      return res.status(401).json({error: "Invalid phone number or password"})
+      return res.status(401).json({ error: "Invalid phone number or password" });
     }
-}
+
+    const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+
+    if (!passwordMatches) {
+      return res.status(401).json({ error: "Invalid phone number or password" });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({ error: "This account is inactive" });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      data: {
+        id: user.id,
+        role: user.role,
+        phoneNumber: user.phoneNumber,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        barangay: user.barangay,
+        sitio: user.sitio,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 
 export { listBarangays, listSitiosByBarangay, register, login };
