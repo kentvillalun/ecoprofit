@@ -1,5 +1,6 @@
 "use client";
 
+// npm run dev -- -H 0.0.0.0
 import { Poppins } from "next/font/google";
 import {
   PhoneIcon,
