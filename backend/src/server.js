@@ -5,7 +5,7 @@ import { connectDB, disconnectDB } from './config/db.js'
 import cors from "cors";
 
 
-import auth from "./routes/auth.route.js"
+import authRoute from "./routes/auth.route.js"
 
 config();
 connectDB();
@@ -25,7 +25,7 @@ app.use(cors({
   credentials: false, // keep this only if you use cookies/sessions
 }));
 
-app.use("/auth", auth)
+app.use("/auth", authRoute)
 
 
 

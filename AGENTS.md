@@ -23,10 +23,10 @@ This system is based on real barangay operations in Barangay Beddeng Laud, Vigan
 ---
 
 ## Project Structure
-- `/frontend` → Next.js app
-- `/backend` → Express API
-- `/docs` → system documentation
-- `AGENTS.md` → AI instructions
+- `/frontend` -> Next.js app
+- `/backend` -> Express API
+- `/docs` -> system documentation
+- `AGENTS.md` -> AI instructions
 
 ---
 
@@ -123,12 +123,38 @@ Note:
 
 ## Current Focus
 
-Implementing:
-- Request lifecycle for override pickup requests
-- Intake recording in Collection & Sorting
-- Status transitions and validation
-- Batch collection flow from Approved to In Progress
-- Replacing mock data with real backend logic
+Resident-side auth pages are already fixed and considered stable.
+
+Completed and now stable:
+- onboarding
+- login
+- signup
+- OTP validation
+- forgot password
+- barangay login
+
+Current implementation target:
+- resident signup address selection
+- barangay input with autocomplete suggestions while typing
+- only show registered barangays from the database
+- sitio input as a dependent dropdown/select
+- disable sitio until a barangay is selected
+- refresh sitio options when barangay changes
+- reset sitio when barangay changes
+- validate that the barangay exists
+- validate that the selected sitio belongs to the selected barangay
+- replace any temporary or mock address values with backend/database-driven data
+
+Data source rules:
+- use only the project's own backend and database
+- do NOT use third-party or external address APIs
+- barangay options must come from registered barangay records managed by the system
+
+Implementation approach:
+- keep the solution simple and beginner-friendly
+- prefer clear and maintainable patterns over abstraction
+- do not over-engineer for production-scale scenarios yet
+- avoid unnecessary refactoring of already stable auth pages
 
 ---
 
@@ -152,3 +178,5 @@ When assisting:
 - Suggest minimal, clean implementations
 - Align with existing architecture
 - Preserve business rules from `/docs`
+- Do not reopen or refactor stable auth UI flows unless the request explicitly requires it
+- For signup address inputs, prefer backend-driven autocomplete and dependent dropdown behavior over hardcoded frontend lists

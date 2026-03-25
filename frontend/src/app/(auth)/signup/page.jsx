@@ -27,8 +27,8 @@ export default function SingupPage() {
 
   const schema = yup.object().shape({
     phoneNumber: yup.string().required("Phone number is required"),
-    purok: yup.string().required("Sitio or Purok is required"),
     barangay: yup.string().required("Barangay is required"),
+    purok: yup.string().required("Sitio or Purok is required"),
     password: yup
       .string()
       .required("Password is required")
@@ -54,8 +54,8 @@ export default function SingupPage() {
   const onSubmit = async (data) => {
     const payload = {
       phoneNumber: data.phoneNumber,
-      purok: data.purok,
       barangay: data.barangay,
+      purok: data.purok,
       password: data.password,
       confirmPassword: data.confirmPassword,
       termsAccepted: data.termsAccepted,
@@ -123,18 +123,7 @@ export default function SingupPage() {
               {errors.phoneNumber?.message}
             </p>
 
-            <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
-              <MapPinIcon className="h-5.75 w-5.75 shrink-0 stroke-[#4C5F66]" />
-              <input
-                type="text"
-                placeholder="Sitio/Purok"
-                className="outline-none max-w-full w-full min-w-0"
-                {...register("purok")}
-              />
-            </div>
-            <p className="text-[14px] text-red-500">
-              {errors.purok?.message}
-            </p>
+            
 
             <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
               <BuildingOffice2Icon className="h-5.75 w-5.75 shrink-0 stroke-[#4C5F66]" />
@@ -147,6 +136,19 @@ export default function SingupPage() {
             </div>
             <p className="text-[14px] text-red-500">
               {errors.barangay?.message}
+            </p>
+
+            <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
+              <MapPinIcon className="h-5.75 w-5.75 shrink-0 stroke-[#4C5F66]" />
+              <input
+                type="text"
+                placeholder="Sitio/Purok"
+                className="outline-none max-w-full w-full min-w-0"
+                {...register("purok")}
+              />
+            </div>
+            <p className="text-[14px] text-red-500">
+              {errors.purok?.message}
             </p>
 
             <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5 justify-between">
@@ -179,7 +181,7 @@ export default function SingupPage() {
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm Password"
-                  className="outline-none w-full min-w-0 max-w-32 md:max-w-full"
+                  className="outline-none w-full min-w-0 max-w-40 md:max-w-full"
                   {...register("confirmPassword")}
                 />
               </div>

@@ -20,6 +20,34 @@ The system supports:
 
 ---
 
+## Current Development Status
+
+Resident-side authentication frontend has already been fixed and is now stable.
+
+Stable auth pages:
+- onboarding
+- login
+- signup
+- OTP validation
+- forgot password
+- barangay login
+
+Current active feature work is focused on resident signup address selection:
+- barangay input uses autocomplete suggestions while typing
+- barangay suggestions must come only from registered barangays in the database
+- sitio input is a dependent dropdown/select
+- sitio stays disabled until a barangay is selected
+- changing barangay resets sitio
+- backend validation must ensure the barangay exists
+- backend validation must ensure the sitio belongs to the selected barangay
+
+Implementation direction:
+- use the project's own backend and database only
+- do not use third-party or external address APIs
+- keep the solution simple, readable, and beginner-friendly
+
+---
+
 ## Core Idea
 
 Residents contribute recyclable materials through a unified intake model.
