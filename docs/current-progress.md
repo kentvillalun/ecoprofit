@@ -12,27 +12,29 @@
 - Collection Requests UI tabs
 - Basic request filtering using mock data
 - Approved tab selection and mock batch collection flow to In Progress
+- Resident signup address selection (barangay autocomplete + sitio dependent dropdown)
+- Backend endpoints for barangay search and sitio listing
+- Backend validation for barangay/sitio combinations during registration
+- Full auth flow connected to backend (login and signup call real API)
+- OTP backend implemented: `OtpVerification` model, `sendOtp` utility, verify/resend endpoints
+- OTP frontend: 6-digit input with auto-focus, resend cooldown (60s), API integration
+- Resident capture page: camera access via file input, image preview, submit confirmation UI
 
 ---
 
 ## In Progress
-- Resident signup address selection
-- Barangay autocomplete using registered barangays from the database
-- Sitio dependent dropdown based on selected barangay
-- Replacing temporary or mock address values with backend-driven data
-- Backend validation for valid barangay and sitio combinations
+- Nothing actively in progress
 
 ---
 
 ## Next Steps
 
-1. Add backend endpoint for registered barangay suggestions in resident signup
-2. Add backend endpoint or service for sitio options by selected barangay
-3. Connect signup form barangay autocomplete to real backend data
-4. Disable sitio until barangay is selected and reset sitio on barangay change
-5. Enforce backend validation that barangay exists
-6. Enforce backend validation that selected sitio belongs to the selected barangay
-7. Continue request lifecycle and intake backend work after signup address selection is stable
+1. Integrate real Semaphore API key so OTP sends actual SMS (currently logs to console in dev)
+2. Connect capture page to backend (submit captured image as a pickup request)
+3. Implement request lifecycle backend: create, approve, reject, move to in-progress, collect
+4. Replace mock data in Collection Requests UI with real backend data
+5. Build resident requests page backend integration (list own requests, see status)
+6. Continue with intake module after request lifecycle is stable
 
 ---
 

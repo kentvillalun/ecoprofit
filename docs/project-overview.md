@@ -22,29 +22,25 @@ The system supports:
 
 ## Current Development Status
 
-Resident-side authentication frontend has already been fixed and is now stable.
+The full resident authentication flow is complete and connected to the backend.
 
-Stable auth pages:
+Stable and fully working:
 - onboarding
-- login
-- signup
-- OTP validation
+- login (connected to backend, bcrypt password check)
+- signup with barangay autocomplete and sitio dependent dropdown (connected to backend)
+- OTP validation (6-digit input, resend cooldown, backend verify/resend endpoints)
 - forgot password
 - barangay login
+- resident capture page (camera access, image preview, submit UI — backend not yet connected)
 
-Current active feature work is focused on resident signup address selection:
-- barangay input uses autocomplete suggestions while typing
-- barangay suggestions must come only from registered barangays in the database
-- sitio input is a dependent dropdown/select
-- sitio stays disabled until a barangay is selected
-- changing barangay resets sitio
-- backend validation must ensure the barangay exists
-- backend validation must ensure the sitio belongs to the selected barangay
+OTP notes:
+- Backend uses Semaphore API for SMS. Without a `SEMAPHORE_API_KEY`, OTP is printed to the server console (dev mode).
+- Real SMS delivery requires setting `SEMAPHORE_API_KEY` in `backend/.env`.
 
-Implementation direction:
-- use the project's own backend and database only
-- do not use third-party or external address APIs
-- keep the solution simple, readable, and beginner-friendly
+Current active work is moving toward the request lifecycle and intake backend:
+- connect the capture page to a real pickup request backend endpoint
+- implement request status transitions (REQUESTED → APPROVED → IN_PROGRESS → COLLECTED)
+- replace mock data in the Collection Requests UI with real API calls
 
 ---
 
