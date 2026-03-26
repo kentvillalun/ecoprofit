@@ -2,16 +2,231 @@
 
 import Link from "next/link";
 import { Poppins } from "next/font/google";
-import { PhoneIcon } from "@heroicons/react/24/outline";
-import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { Page } from "@/components/layout/Page";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
+// Outside component — only created once, never recreated on rerender
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5001";
+
+// How many seconds the user must wait before resending
+const RESEND_COOLDOWN = 60;
+
 export default function OtpPage() {
+  const router = useRouter();
+
+  // ── OTP digits ────────────────────────────────────────────────
+  // We store each digit separately in an array of 6 empty strings.
+  // When joined together they form the full 6-digit code.
+  const [digits, setDigits] = useState(["", "", "", "", "", ""]);
+
+  // ── Refs for each input ───────────────────────────────────────
+  // useRef gives us direct access to the DOM input elements.
+  // We need this to programmatically move focus between boxes
+  // when the user types or deletes a digit.
+  // useRef does NOT cause a rerender when it changes — unlike useState.
+  const inputRefs = useRef([]);
+
+  // ── Registration data from sessionStorage ────────────────────
+  const [pendingPhone, setPendingPhone] = useState("");
+  const [pendingData, setPendingData] = useState(null);
+
+  // ── UI state ──────────────────────────────────────────────────
+  const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // ── Resend cooldown ───────────────────────────────────────────
+  // countdown starts at 60 and ticks down every second.
+  // When it hits 0, the resend button becomes active.
+  const [countdown, setCountdown] = useState(RESEND_COOLDOWN);
+  const [isResending, setIsResending] = useState(false);
+  const [resendMessage, setResendMessage] = useState("");
+
+  // ── Read sessionStorage on mount ─────────────────────────────
+  // useEffect with empty [] runs once when the component first loads.
+  // We read sessionStorage here instead of at the top level because
+  // sessionStorage is a browser API — it doesn't exist on the server.
+  // Next.js renders components on the server first, so any browser
+  // API must be accessed inside useEffect, not at the top level.
+  useEffect(() => {
+    const phone = sessionStorage.getItem("pendingPhone");
+    const registration = sessionStorage.getItem("pendingRegistration");
+
+    // If there's no pending data, the user navigated here directly
+    // without going through signup — send them back
+    if (!phone || !registration) {
+      router.replace("/signup");
+      return;
+    }
+
+    setPendingPhone(phone);
+    setPendingData(JSON.parse(registration));
+  }, []);
+
+  // ── Countdown timer ───────────────────────────────────────────
+  // Runs every second while countdown is above 0.
+  // The cleanup function (return) clears the interval when the
+  // component unmounts or when countdown changes.
+  useEffect(() => {
+    if (countdown <= 0) return;
+
+    const interval = setInterval(() => {
+      // prev is the current value of countdown
+      // We use the functional form to avoid stale state
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+
+    // Cleanup: clear the interval when effect reruns or component unmounts
+    return () => clearInterval(interval);
+  }, [countdown]);
+
+  // ── Handle digit input ────────────────────────────────────────
+  const handleChange = (index, value) => {
+    // Only allow single digits 0-9
+    // /^\d$/ is a regex: ^ means start, \d means digit, $ means end
+    // This ensures only one numeric character passes through
+    if (value && !/^\d$/.test(value)) return;
+
+    // Update the digit at this index
+    const newDigits = [...digits]; // spread creates a copy so we don't mutate state directly
+    newDigits[index] = value;
+    setDigits(newDigits);
+    setSubmitError("");
+
+    // Auto-advance: if a digit was typed and there's a next input, focus it
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+      // ?. is optional chaining — if inputRefs.current[index + 1] is
+      // undefined, it won't crash, it just does nothing
+    }
+  };
+
+  // ── Handle backspace ──────────────────────────────────────────
+  const handleKeyDown = (index, e) => {
+    // When backspace is pressed on an empty input, go back to previous
+    if (e.key === "Backspace" && !digits[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  // ── Handle paste ──────────────────────────────────────────────
+  // User can paste the full 6-digit code and it fills all boxes
+  const handlePaste = (e) => {
+    e.preventDefault(); // stop default paste behavior
+
+    // Get pasted text, remove non-digits, take first 6 characters
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+
+    if (!pasted) return;
+
+    const newDigits = [...digits];
+    pasted.split("").forEach((char, i) => {
+      newDigits[i] = char;
+    });
+    setDigits(newDigits);
+
+    // Focus the input after the last pasted digit
+    const nextIndex = Math.min(pasted.length, 5);
+    inputRefs.current[nextIndex]?.focus();
+  };
+
+  // ── Submit ────────────────────────────────────────────────────
+  const handleSubmit = async () => {
+    const code = digits.join(""); // combine ["4","8","2","9","3","1"] → "482931"
+
+    if (code.length < 6) {
+      setSubmitError("Please enter the complete 6-digit code");
+      return;
+    }
+
+    if (!pendingData) {
+      setSubmitError("Session expired. Please sign up again.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phoneNumber: pendingData.phoneNumber,
+          code,
+          barangayId: pendingData.barangayId,
+          sitioId: pendingData.sitioId,
+          password: pendingData.password,
+          termsAccepted: pendingData.termsAccepted,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setSubmitError(result.error ?? "Verification failed. Please try again.");
+        return;
+      }
+
+      // Clean up sessionStorage — we don't need this data anymore
+      sessionStorage.removeItem("pendingPhone");
+      sessionStorage.removeItem("pendingRegistration");
+
+      // Registration complete — go to login
+      sessionStorage.setItem("authSuccessMessage", "Account created! You can now log in.");
+      router.push("/login");
+
+    } catch {
+      setSubmitError("Something went wrong. Please try again.");
+    } finally {
+      // finally always runs whether try succeeded or catch ran
+      setIsSubmitting(false);
+    }
+  };
+
+  // ── Resend OTP ────────────────────────────────────────────────
+  const handleResend = async () => {
+    if (countdown > 0 || !pendingPhone) return;
+
+    setIsResending(true);
+    setResendMessage("");
+    setSubmitError("");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/resend-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber: pendingPhone }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setSubmitError(result.error ?? "Failed to resend code.");
+        return;
+      }
+
+      // Reset the digits so user starts fresh
+      setDigits(["", "", "", "", "", ""]);
+      inputRefs.current[0]?.focus();
+
+      // Restart the cooldown
+      setCountdown(RESEND_COOLDOWN);
+      setResendMessage("A new code has been sent.");
+
+    } catch {
+      setSubmitError("Something went wrong. Please try again.");
+    } finally {
+      setIsResending(false);
+    }
+  };
+
+  // ── JSX ───────────────────────────────────────────────────────
   return (
     <Page gradient={true} className="from-10%!">
       <div
@@ -32,48 +247,70 @@ export default function OtpPage() {
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold text-[20px]">OTP Validation</h3>
             <p className="text-[#4C5F66] text-[14px]">
-              We have sent OTP on your number
+              We have sent a verification code to{" "}
+              {/* Show the phone number so user knows where the OTP was sent */}
+              <span className="font-medium text-black">
+                {pendingPhone || "your number"}
+              </span>
             </p>
           </div>
 
+          {/* ── 6 digit inputs ── */}
           <div className="flex flex-row justify-center gap-1.75 flex-wrap">
-            <input
-              type="text"
-              className="outline h-10 w-10 outline-[#E7E3E0] rounded-[5px] p-3 text-center"
-              maxLength={1}
-            />
-            <input
-              type="text"
-              className="outline h-10 w-10 outline-[#E7E3E0] rounded-[5px] p-3 text-center"
-              maxLength={1}
-            />
-            <input
-              type="text"
-              className="outline h-10 w-10 outline-[#E7E3E0] rounded-[5px] p-3 text-center"
-              maxLength={1}
-            />
-            <input
-              type="text"
-              className="outline h-10 w-10 outline-[#E7E3E0] rounded-[5px] p-3 text-center"
-              maxLength={1}
-            />
-            <input
-              type="text"
-              className="outline h-10 w-10 outline-[#E7E3E0] rounded-[5px] p-3 text-center"
-              maxLength={1}
-            />
-            <input
-              type="text"
-              className="outline h-10 w-10 outline-[#E7E3E0] rounded-[5px] p-3 text-center"
-              maxLength={1}
-            />
-            
+            {digits.map((digit, index) => (
+              <input
+                key={index}
+                type="text"
+                inputMode="numeric"
+                // inputMode="numeric" shows the number keyboard on mobile
+                // without using type="number" which has unwanted behavior
+                maxLength={1}
+                value={digit}
+                className="outline h-10 w-10 outline-[#E7E3E0] rounded-[5px] p-3 text-center"
+                // ref callback: stores each input element in the array
+                // so we can call .focus() on them programmatically
+                ref={(el) => (inputRefs.current[index] = el)}
+                onChange={(e) => handleChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                onPaste={handlePaste}
+              />
+            ))}
           </div>
+
+          {/* ── Error message ── */}
+          {submitError && (
+            <p className="text-[14px] text-red-500 text-center">{submitError}</p>
+          )}
+
+          {/* ── Resend success message ── */}
+          {resendMessage && (
+            <p className="text-[14px] text-green-600 text-center">{resendMessage}</p>
+          )}
 
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2.5 justify-center items-center">
-              <button className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px] max-w-63.75">
-                Continue
+              <button
+                className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px] max-w-63.75 disabled:opacity-50"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                type="button"
+              >
+                {isSubmitting ? "Verifying..." : "Continue"}
+              </button>
+
+              {/* ── Resend button with cooldown ── */}
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={countdown > 0 || isResending}
+                className="text-[14px] text-[#4C5F66] disabled:opacity-50"
+              >
+                {isResending
+                  ? "Sending..."
+                  : countdown > 0
+                  // Shows "Resend code in 60s" counting down to 0
+                  ? `Resend code in ${countdown}s`
+                  : "Resend code"}
               </button>
 
               <div className="text-center flex flex-col gap-5">

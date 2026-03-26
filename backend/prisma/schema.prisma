@@ -13,6 +13,18 @@ datasource db {
   provider = "postgresql"
 }
 
+model OtpVerification {
+  id            String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  phoneNumber   String
+  code          String
+
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+
+  @@index([phoneNumber])
+}
+
+
 model Barangay {
   id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name         String
@@ -77,3 +89,4 @@ model User {
   @@index([barangayId])
   @@index([sitioId])
 }
+

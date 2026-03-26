@@ -154,7 +154,7 @@ export default function LoginPage() {
             ) : null}
 
             {successMessage ? (
-              <p className="text-[14px] text-green-600">{successMessage}</p>
+              <p className="text-[14px] text-green-600 text-center">{successMessage}</p>
             ) : null}
 
             <div className="flex items-end justify-end">
