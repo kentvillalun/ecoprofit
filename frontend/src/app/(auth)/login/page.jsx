@@ -164,7 +164,7 @@ export default function LoginPage() {
             </div>
             <div className="flex flex-col gap-1 justify-center items-center">
               <button
-                className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px] max-w-63.75 disabled:opacity-70"
+                className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px] disabled:opacity-70"
                 type="submit"
                 disabled={isSubmitting}
               >

@@ -1,6 +1,7 @@
 // backend/src/controllers/auth.controller.js
 
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { prisma } from "../config/db.js";
 import { sendOtp } from "../utils/sms.js";
 
@@ -280,22 +281,33 @@ const verifyOtp = async (req, res) => {
 // POST /auth/resend-otp
 // Deletes the old OTP and sends a fresh one.
 // The 60-second cooldown is enforced on the frontend.
+// Accepts an optional otpFlow field ("signup" | "forgot-password").
+// The user-existence check is flipped between flows:
+//   - signup: user must NOT exist yet
+//   - forgot-password: user MUST exist (they're resetting their password)
 // ─────────────────────────────────────────────
 const resendOtp = async (req, res) => {
   try {
-    const { phoneNumber } = req.body ?? {};
+    const { phoneNumber, otpFlow = "signup" } = req.body ?? {};
 
     if (!phoneNumber) {
       return res.status(400).json({ error: "Phone number is required" });
     }
 
-    // Make sure this number isn't already a registered user
     const userExists = await prisma.user.findUnique({
       where: { phoneNumber },
     });
 
-    if (userExists) {
-      return res.status(400).json({ error: "This phone number is already registered" });
+    if (otpFlow === "forgot-password") {
+      // For password reset, the user must have an account to resend to
+      if (!userExists) {
+        return res.status(400).json({ error: "No account found for this phone number" });
+      }
+    } else {
+      // For signup, the phone must not already be registered
+      if (userExists) {
+        return res.status(400).json({ error: "This phone number is already registered" });
+      }
     }
 
     // Delete old OTP and generate a fresh one
@@ -369,4 +381,177 @@ const login = async (req, res) => {
   }
 };
 
-export { listBarangays, listSitiosByBarangay, register, verifyOtp, resendOtp, login };
+// ─────────────────────────────────────────────
+// POST /auth/forgot-password
+// Checks the phone number exists, then sends an OTP.
+// Does NOT change the password yet — that happens after OTP is verified.
+// ─────────────────────────────────────────────
+const forgotPassword = async (req, res) => {
+  try {
+    const { phoneNumber } = req.body ?? {};
+
+    if (!phoneNumber) {
+      return res.status(400).json({ error: "Phone number is required" });
+    }
+
+    // Only registered users can reset their password
+    const user = await prisma.user.findUnique({
+      where: { phoneNumber },
+      select: { id: true, isActive: true },
+    });
+
+    if (!user) {
+      // Return the same message whether or not the account exists.
+      // This prevents attackers from using this endpoint to check
+      // which phone numbers are registered.
+      return res.status(200).json({
+        status: "otp_sent",
+        message: "If an account exists for this number, a code has been sent.",
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({ error: "This account is inactive" });
+    }
+
+    // Clear any existing OTPs for this number before sending a new one
+    await prisma.otpVerification.deleteMany({
+      where: { phoneNumber },
+    });
+
+    const code = await sendOtp(phoneNumber);
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await prisma.otpVerification.create({
+      data: { phoneNumber, code, expiresAt },
+    });
+
+    return res.status(200).json({
+      status: "otp_sent",
+      message: "If an account exists for this number, a code has been sent.",
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+// ─────────────────────────────────────────────
+// POST /auth/verify-forgot-password-otp
+// Validates the OTP sent during forgot-password flow.
+// On success, generates a short-lived reset token and returns it.
+// The token is used in the next step (/auth/reset-password).
+// ─────────────────────────────────────────────
+const verifyForgotPasswordOtp = async (req, res) => {
+  try {
+    const { phoneNumber, code } = req.body ?? {};
+
+    if (!phoneNumber || !code) {
+      return res.status(400).json({ error: "Phone number and OTP code are required" });
+    }
+
+    // Find a valid, unexpired OTP for this phone number
+    const otpRecord = await prisma.otpVerification.findFirst({
+      where: {
+        phoneNumber,
+        code,
+        expiresAt: { gt: new Date() },
+      },
+    });
+
+    if (!otpRecord) {
+      return res.status(400).json({ error: "Invalid or expired verification code" });
+    }
+
+    // Delete the used OTP so it can't be reused
+    await prisma.otpVerification.delete({
+      where: { id: otpRecord.id },
+    });
+
+    // Clear any old reset tokens for this number before creating a new one.
+    // Prevents multiple active tokens if the user runs the flow more than once.
+    await prisma.passwordResetToken.deleteMany({
+      where: { phoneNumber },
+    });
+
+    // Generate a cryptographically secure random token.
+    // crypto.randomBytes(32) gives 32 bytes of random data.
+    // .toString("hex") turns it into a 64-character hex string.
+    const token = crypto.randomBytes(32).toString("hex");
+
+    // Token expires in 15 minutes — enough time to fill the reset form
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
+    await prisma.passwordResetToken.create({
+      data: { phoneNumber, token, expiresAt },
+    });
+
+    return res.status(200).json({ status: "success", data: { token } });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+// ─────────────────────────────────────────────
+// POST /auth/reset-password
+// Validates the reset token, then updates the user's password.
+// Deletes the token after use so it cannot be replayed.
+// ─────────────────────────────────────────────
+const resetPassword = async (req, res) => {
+  try {
+    const { token, phoneNumber, password, confirmPassword } = req.body ?? {};
+
+    if (!token || !phoneNumber || !password || !confirmPassword) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ error: "Passwords do not match" });
+    }
+
+    // Find the reset token and verify it belongs to this phone number
+    // and hasn't expired
+    const resetRecord = await prisma.passwordResetToken.findFirst({
+      where: {
+        token,
+        phoneNumber,
+        expiresAt: { gt: new Date() },
+      },
+    });
+
+    if (!resetRecord) {
+      return res.status(400).json({ error: "Invalid or expired reset link. Please start over." });
+    }
+
+    // Hash the new password with the same settings as registration
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await prisma.user.update({
+      where: { phoneNumber },
+      data: { passwordHash: hashedPassword },
+    });
+
+    // Delete the token after use — one-time use only
+    await prisma.passwordResetToken.delete({
+      where: { id: resetRecord.id },
+    });
+
+    return res.status(200).json({
+      status: "success",
+      message: "Password reset successfully. You can now log in.",
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+export {
+  listBarangays,
+  listSitiosByBarangay,
+  register,
+  verifyOtp,
+  resendOtp,
+  login,
+  forgotPassword,
+  verifyForgotPasswordOtp,
+  resetPassword,
+};

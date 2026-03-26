@@ -13,6 +13,16 @@ datasource db {
   provider = "postgresql"
 }
 
+model PasswordResetToken {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  phoneNumber String
+  token       String   @unique
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([phoneNumber])
+}
+
 model OtpVerification {
   id            String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   phoneNumber   String

@@ -32,7 +32,10 @@ export default function OtpPage() {
   // useRef does NOT cause a rerender when it changes — unlike useState.
   const inputRefs = useRef([]);
 
-  // ── Registration data from sessionStorage ────────────────────
+  // ── Flow type and registration data from sessionStorage ───────
+  // otpFlow tells us whether we came from signup or forgot-password.
+  // pendingData is only needed for signup (holds barangayId, sitioId, etc.)
+  const [otpFlow, setOtpFlow] = useState("signup");
   const [pendingPhone, setPendingPhone] = useState("");
   const [pendingData, setPendingData] = useState(null);
 
@@ -55,17 +58,27 @@ export default function OtpPage() {
   // API must be accessed inside useEffect, not at the top level.
   useEffect(() => {
     const phone = sessionStorage.getItem("pendingPhone");
+    const flow = sessionStorage.getItem("otpFlow") ?? "signup";
     const registration = sessionStorage.getItem("pendingRegistration");
 
-    // If there's no pending data, the user navigated here directly
-    // without going through signup — send them back
-    if (!phone || !registration) {
-      router.replace("/signup");
-      return;
+    if (flow === "forgot-password") {
+      // Forgot-password flow only needs the phone number
+      if (!phone) {
+        router.replace("/forgot-password");
+        return;
+      }
+      setPendingPhone(phone);
+      setOtpFlow("forgot-password");
+    } else {
+      // Signup flow needs both phone and full registration data
+      if (!phone || !registration) {
+        router.replace("/signup");
+        return;
+      }
+      setPendingPhone(phone);
+      setPendingData(JSON.parse(registration));
+      setOtpFlow("signup");
     }
-
-    setPendingPhone(phone);
-    setPendingData(JSON.parse(registration));
   }, []);
 
   // ── Countdown timer ───────────────────────────────────────────
@@ -144,49 +157,81 @@ export default function OtpPage() {
       return;
     }
 
-    if (!pendingData) {
-      setSubmitError("Session expired. Please sign up again.");
-      return;
-    }
-
     setIsSubmitting(true);
     setSubmitError("");
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phoneNumber: pendingData.phoneNumber,
-          code,
-          barangayId: pendingData.barangayId,
-          sitioId: pendingData.sitioId,
-          password: pendingData.password,
-          termsAccepted: pendingData.termsAccepted,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        setSubmitError(result.error ?? "Verification failed. Please try again.");
-        return;
+      if (otpFlow === "forgot-password") {
+        await handleForgotPasswordVerify(code);
+      } else {
+        await handleSignupVerify(code);
       }
-
-      // Clean up sessionStorage — we don't need this data anymore
-      sessionStorage.removeItem("pendingPhone");
-      sessionStorage.removeItem("pendingRegistration");
-
-      // Registration complete — go to login
-      sessionStorage.setItem("authSuccessMessage", "Account created! You can now log in.");
-      router.push("/login");
-
     } catch {
       setSubmitError("Something went wrong. Please try again.");
     } finally {
       // finally always runs whether try succeeded or catch ran
       setIsSubmitting(false);
     }
+  };
+
+  // ── Signup OTP verification ───────────────────────────────────
+  const handleSignupVerify = async (code) => {
+    if (!pendingData) {
+      setSubmitError("Session expired. Please sign up again.");
+      return;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        phoneNumber: pendingData.phoneNumber,
+        code,
+        barangayId: pendingData.barangayId,
+        sitioId: pendingData.sitioId,
+        password: pendingData.password,
+        termsAccepted: pendingData.termsAccepted,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      setSubmitError(result.error ?? "Verification failed. Please try again.");
+      return;
+    }
+
+    // Clean up sessionStorage — we don't need this data anymore
+    sessionStorage.removeItem("pendingPhone");
+    sessionStorage.removeItem("pendingRegistration");
+    sessionStorage.removeItem("otpFlow");
+
+    // Registration complete — go to login
+    sessionStorage.setItem("authSuccessMessage", "Account created! You can now log in.");
+    router.push("/login");
+  };
+
+  // ── Forgot-password OTP verification ─────────────────────────
+  const handleForgotPasswordVerify = async (code) => {
+    const response = await fetch(`${API_BASE_URL}/auth/verify-forgot-password-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phoneNumber: pendingPhone, code }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      setSubmitError(result.error ?? "Verification failed. Please try again.");
+      return;
+    }
+
+    // Store the reset token so the reset-password page can use it.
+    // Keep pendingPhone because reset-password needs it to identify the account.
+    sessionStorage.setItem("resetToken", result.data.token);
+    sessionStorage.removeItem("otpFlow");
+
+    router.push("/reset-password");
   };
 
   // ── Resend OTP ────────────────────────────────────────────────
@@ -201,7 +246,8 @@ export default function OtpPage() {
       const response = await fetch(`${API_BASE_URL}/auth/resend-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phoneNumber: pendingPhone }),
+        // Pass otpFlow so the backend applies the right user-existence check
+        body: JSON.stringify({ phoneNumber: pendingPhone, otpFlow }),
       });
 
       const result = await response.json();
