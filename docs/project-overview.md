@@ -26,21 +26,22 @@ The full resident authentication flow is complete and connected to the backend.
 
 Stable and fully working:
 - onboarding
-- login (connected to backend, bcrypt password check)
+- resident login (connected to backend, bcrypt password check)
 - signup with barangay autocomplete and sitio dependent dropdown (connected to backend)
 - OTP validation (6-digit input, resend cooldown, backend verify/resend endpoints)
-- forgot password
-- barangay login
+- forgot password full flow: phone entry → OTP → reset password (all connected to backend)
 - resident capture page (camera access, image preview, submit UI — backend not yet connected)
 
 OTP notes:
 - Backend uses Semaphore API for SMS. Without a `SEMAPHORE_API_KEY`, OTP is printed to the server console (dev mode).
 - Real SMS delivery requires setting `SEMAPHORE_API_KEY` in `backend/.env`.
 
-Current active work is moving toward the request lifecycle and intake backend:
-- connect the capture page to a real pickup request backend endpoint
-- implement request status transitions (REQUESTED → APPROVED → IN_PROGRESS → COLLECTED)
-- replace mock data in the Collection Requests UI with real API calls
+Barangay login status:
+- UI exists at `/barangay/login` with email/username and password fields
+- Not connected to any backend endpoint yet — login button has no handler
+- This is the current implementation target
+
+After barangay login is connected, work continues with the request lifecycle backend.
 
 ---
 
