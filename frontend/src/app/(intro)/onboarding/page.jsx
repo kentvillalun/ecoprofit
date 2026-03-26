@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
-import Image from "next/image";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -21,11 +20,10 @@ export default function OnboardingPage() {
         <>
           <div className="flex flex-col items-center w-full max-w-md gap-25 p-2 justify-center">
             <div className="max-w-108 relative w-full aspect-square">
-              <Image
+              <img
                 src="../onboarding/Ecoprofit logo.svg"
                 alt="EcoProfit Logo"
-                fill
-                priority
+                
               />
             </div>
             <div className="">
@@ -47,7 +45,7 @@ export default function OnboardingPage() {
           <div className="flex flex-col justify-between min-h-svh w-full max-w-md p-4 pt-12 pb-10 overflow-x-hidden">
             <div className="flex flex-col items-center w-full max-w-md p-2 justify-center ">
               <div className="max-w-108 relative w-full aspect-square">
-                <Image src="/onboarding/step1.svg" alt="Step 1" fill />
+                <img src="/onboarding/step1.svg" alt="Step 1" />
               </div>
               <h3 className="text-[22px] max-w-88.75 text-center mb-6.25 font-medium">
                 Too Much Waste, Not Enough Proper Segregation
@@ -86,7 +84,7 @@ export default function OnboardingPage() {
           <div className="flex flex-col justify-between min-h-svh w-full max-w-md p-4 pt-12 pb-10 overflow-x-hidden">
             <div className="flex flex-col items-center w-full max-w-md p-2 justify-center ">
               <div className="max-w-108 relative w-full aspect-square">
-                <Image src="/onboarding/step2.svg" alt="Step 2" fill />
+                <img src="../onboarding/step2.svg" alt="Step 2" />
               </div>
               <h3 className="font-medium text-[22px] max-w-86 text-center mb-6.25">
                 EcoProfit Makes Community Recycling Simple
@@ -125,7 +123,7 @@ export default function OnboardingPage() {
           <div className="flex flex-col justify-between min-h-svh w-full max-w-md p-4 pt-12 pb-10 font-poppins overflow-x-hidden">
             <div className="flex flex-col items-center w-full max-w-md p-2 justify-center ">
               <div className="max-w-108 relative w-full aspect-square">
-                <Image src="/onboarding/step3.svg" alt="Step 3" fill />
+                <img src="/onboarding/step3.svg" alt="Step 3" />
               </div>
               <h3 className="font-poppins font-medium text-[22px] max-w-86 text-center mb-6.25">
                 How EcoProfit Works
