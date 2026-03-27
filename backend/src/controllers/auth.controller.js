@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { prisma } from "../config/db.js";
 import { sendOtp } from "../utils/sms.js";
 import jwt from "jsonwebtoken";
+import { generateToken } from "../utils/generateToken.js";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -620,19 +621,12 @@ const barangayLogin = async (req, res) => {
       return res.status(403).json({ error: "This account is inactive" });
     }
 
-    const payload = {
-      id: user.id,
-      role: user.role,
-      barangayId: user.barangayId,
-    };
-
     if (!process.env.JWT_SECRET) {
       throw new Error("JWT_SECRET is not configured");
     }
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    // Generate token
+    const token = generateToken(user.id, user.role, user.barangayId)
 
     return res.status(200).json({
       message: "Login successful",
