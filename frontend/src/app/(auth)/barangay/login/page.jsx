@@ -42,12 +42,12 @@ export default function BarangayLoginPage() {
                   htmlFor=""
                   className="text-gray-700 text-center md:text-start"
                 >
-                  Email / Username
+                  Phone number
                 </label>
                 <input
-                  type="email"
+                  type="text"
                   className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
-                  placeholder="Enter your email or username"
+                  placeholder="Enter your phone number"
                 />
               </div>
 
@@ -65,7 +65,7 @@ export default function BarangayLoginPage() {
                     placeholder="Enter your password"
                   />
                   <button className="hover:cursor-pointer " onClick={() => {
-                    setShowPassword((prev) => !showPassword)
+                    setShowPassword((prev) => !prev)
                   }}>Show</button>
                 </div>
               </div>

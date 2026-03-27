@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { prisma } from "../config/db.js";
 import { sendOtp } from "../utils/sms.js";
+import jwt from "jsonwebtoken";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -23,9 +24,7 @@ const listBarangays = async (req, res) => {
     const barangays = await prisma.barangay.findMany({
       where: {
         isRegistered: true,
-        ...(search
-          ? { name: { contains: search, mode: "insensitive" } }
-          : {}),
+        ...(search ? { name: { contains: search, mode: "insensitive" } } : {}),
       },
       select: {
         id: true,
@@ -94,7 +93,13 @@ const register = async (req, res) => {
     // prevents a crash when destructuring
 
     // ── Field presence check ──────────────────────────────────
-    if (!phoneNumber || !password || !confirmPassword || !barangayId || !sitioId) {
+    if (
+      !phoneNumber ||
+      !password ||
+      !confirmPassword ||
+      !barangayId ||
+      !sitioId
+    ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -110,7 +115,9 @@ const register = async (req, res) => {
     }
 
     if (termsAccepted !== true) {
-      return res.status(400).json({ error: "You must accept the Terms & Conditions" });
+      return res
+        .status(400)
+        .json({ error: "You must accept the Terms & Conditions" });
     }
 
     // ── Duplicate phone check ─────────────────────────────────
@@ -119,7 +126,9 @@ const register = async (req, res) => {
     });
 
     if (userExists) {
-      return res.status(400).json({ error: "This phone number is already registered" });
+      return res
+        .status(400)
+        .json({ error: "This phone number is already registered" });
     }
 
     // ── Validate barangay ─────────────────────────────────────
@@ -183,17 +192,13 @@ const register = async (req, res) => {
 // ─────────────────────────────────────────────
 const verifyOtp = async (req, res) => {
   try {
-    const {
-      phoneNumber,
-      code,
-      barangayId,
-      sitioId,
-      password,
-      termsAccepted,
-    } = req.body ?? {};
+    const { phoneNumber, code, barangayId, sitioId, password, termsAccepted } =
+      req.body ?? {};
 
     if (!phoneNumber || !code) {
-      return res.status(400).json({ error: "Phone number and OTP code are required" });
+      return res
+        .status(400)
+        .json({ error: "Phone number and OTP code are required" });
     }
 
     // ── Find a valid OTP record ───────────────────────────────
@@ -210,7 +215,9 @@ const verifyOtp = async (req, res) => {
     });
 
     if (!otpRecord) {
-      return res.status(400).json({ error: "Invalid or expired verification code" });
+      return res
+        .status(400)
+        .json({ error: "Invalid or expired verification code" });
     }
 
     // ── Re-validate address data ──────────────────────────────
@@ -301,12 +308,16 @@ const resendOtp = async (req, res) => {
     if (otpFlow === "forgot-password") {
       // For password reset, the user must have an account to resend to
       if (!userExists) {
-        return res.status(400).json({ error: "No account found for this phone number" });
+        return res
+          .status(400)
+          .json({ error: "No account found for this phone number" });
       }
     } else {
       // For signup, the phone must not already be registered
       if (userExists) {
-        return res.status(400).json({ error: "This phone number is already registered" });
+        return res
+          .status(400)
+          .json({ error: "This phone number is already registered" });
       }
     }
 
@@ -339,7 +350,9 @@ const login = async (req, res) => {
     const { phoneNumber, password } = req.body ?? {};
 
     if (!phoneNumber || !password) {
-      return res.status(400).json({ error: "Phone number and password are required" });
+      return res
+        .status(400)
+        .json({ error: "Phone number and password are required" });
     }
 
     const user = await prisma.user.findUnique({
@@ -351,13 +364,17 @@ const login = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(401).json({ error: "Invalid phone number or password" });
+      return res
+        .status(401)
+        .json({ error: "Invalid phone number or password" });
     }
 
     const passwordMatches = await bcrypt.compare(password, user.passwordHash);
 
     if (!passwordMatches) {
-      return res.status(401).json({ error: "Invalid phone number or password" });
+      return res
+        .status(401)
+        .json({ error: "Invalid phone number or password" });
     }
 
     if (!user.isActive) {
@@ -446,7 +463,9 @@ const verifyForgotPasswordOtp = async (req, res) => {
     const { phoneNumber, code } = req.body ?? {};
 
     if (!phoneNumber || !code) {
-      return res.status(400).json({ error: "Phone number and OTP code are required" });
+      return res
+        .status(400)
+        .json({ error: "Phone number and OTP code are required" });
     }
 
     // Find a valid, unexpired OTP for this phone number
@@ -459,7 +478,9 @@ const verifyForgotPasswordOtp = async (req, res) => {
     });
 
     if (!otpRecord) {
-      return res.status(400).json({ error: "Invalid or expired verification code" });
+      return res
+        .status(400)
+        .json({ error: "Invalid or expired verification code" });
     }
 
     // Delete the used OTP so it can't be reused
@@ -519,7 +540,9 @@ const resetPassword = async (req, res) => {
     });
 
     if (!resetRecord) {
-      return res.status(400).json({ error: "Invalid or expired reset link. Please start over." });
+      return res
+        .status(400)
+        .json({ error: "Invalid or expired reset link. Please start over." });
     }
 
     // Hash the new password with the same settings as registration
@@ -544,6 +567,91 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// Barangay Login Authentication
+
+const BARANGAY_ROLES = ["CAPTAIN", "SECRETARY", "TREASURER", "SK", "COLLECTOR"];
+
+const barangayLogin = async (req, res) => {
+  try {
+    const { phoneNumber, password } = req.body ?? {};
+
+    //  Valide both field
+    if (!phoneNumber || !password) {
+      return res
+        .status(400)
+        .json({ error: "Phone number and password are required" });
+    }
+
+    // Find user by phone number in the database
+    const user = await prisma.user.findUnique({
+      where: { phoneNumber },
+      include: {
+        barangay: { select: { id: true, name: true, code: true } },
+      },
+    });
+
+    // If the user not found -> return error
+    if (!user) {
+      return res
+        .status(401)
+        .json({ error: "Invalid phone number or password" });
+    }
+
+    // Compare password with the hashed password using bcrypt
+    const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+
+    // If password wrong -> return error
+    if (!passwordMatches) {
+      return res
+        .status(401)
+        .json({ error: "Invalid phone number or password" });
+    }
+
+    // Check if user role is a barangay role
+
+    if (!BARANGAY_ROLES.includes(user.role)) {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized access to barangay portal" });
+    }
+
+    // If not active -> return error
+    if (!user.isActive) {
+      return res.status(403).json({ error: "This account is inactive" });
+    }
+
+    const payload = {
+      id: user.id,
+      role: user.role,
+      barangayId: user.barangayId,
+    };
+
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not configured");
+    }
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        barangay: user.barangay,
+      },
+    });
+  } catch (error) {
+    console.error("Barangay login error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 export {
   listBarangays,
   listSitiosByBarangay,
@@ -554,4 +662,5 @@ export {
   forgotPassword,
   verifyForgotPasswordOtp,
   resetPassword,
+  barangayLogin,
 };

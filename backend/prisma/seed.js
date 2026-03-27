@@ -3,6 +3,10 @@ import bcrypt from "bcryptjs";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, Role } from "../src/generated/prisma/index.js";
 
+// To seed, just run this command after migrate reset
+// node prisma/seed.js
+
+
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
 });
@@ -63,7 +67,7 @@ async function main() {
     update: {
       firstName: DEV_BARANGAY.adminFirstName,
       lastName: DEV_BARANGAY.adminLastName,
-      role: Role.BARANGAY_ADMIN,
+      role: Role.CAPTAIN,
       passwordHash,
       barangayId: barangay.id,
       address: `Barangay Hall, ${DEV_BARANGAY.name}, ${DEV_BARANGAY.city}`,
@@ -75,7 +79,7 @@ async function main() {
       phoneNumber: DEV_BARANGAY.adminPhoneNumber,
       firstName: DEV_BARANGAY.adminFirstName,
       lastName: DEV_BARANGAY.adminLastName,
-      role: Role.BARANGAY_ADMIN,
+      role: Role.CAPTAIN,
       passwordHash,
       barangayId: barangay.id,
       address: `Barangay Hall, ${DEV_BARANGAY.name}, ${DEV_BARANGAY.city}`,
