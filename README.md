@@ -19,26 +19,132 @@ ecoprofit/
 
 ---
 
+## Requirements
+
+- Node.js 18+
+- PostgreSQL database
+- npm
+
+---
+
+## Setup
+
+### 1. Clone and install dependencies
+
+```bash
+# Frontend
+cd frontend
+npm install
+
+# Backend
+cd ../backend
+npm install
+```
+
+### 2. Configure environment variables
+
+Create `backend/.env`:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
+JWT_SECRET="your-jwt-secret"
+SEMAPHORE_API_KEY="your-semaphore-key"   # optional in dev — OTP prints to console if omitted
+```
+
+### 3. Set up the database
+
+```bash
+# From backend/
+npx prisma migrate dev     # Apply migrations
+npx prisma generate        # Regenerate Prisma client
+npm run seed               # Seed dev data (barangay + admin account)
+```
+
+The seed creates:
+- Barangay Beddeng Laud with 3 sitios
+- Admin account: `+639990000001` / `barangay123`
+
+---
+
 ## Running the Project
+
+**Backend** (from `backend/`):
+```bash
+npm run dev     # http://localhost:5001
+```
 
 **Frontend** (from `frontend/`):
 ```bash
 npm run dev     # http://localhost:3000
 ```
 
-**Backend** (from `backend/`):
-```bash
-npm run dev     # http://localhost:5001
-npm run seed    # Seed database with dev data
-```
+Both must be running for the app to work. The frontend calls the backend over HTTP.
 
-The backend requires a PostgreSQL database. Set `DATABASE_URL` in `backend/.env`.
+---
+
+## Tech Stack
+
+| Layer    | Technology                                      |
+|----------|-------------------------------------------------|
+| Frontend | Next.js 16, React 19, Tailwind CSS 4            |
+| Backend  | Node.js, Express 5, Prisma 7                    |
+| Database | PostgreSQL                                      |
+| Auth     | JWT (cookies), bcryptjs, SMS OTP via Semaphore  |
+| Forms    | react-hook-form + yup                           |
+
+---
+
+## API Endpoints
+
+### Auth (`/auth`)
+
+| Method | Path                                | Description                                      |
+|--------|-------------------------------------|--------------------------------------------------|
+| GET    | `/auth/barangays?search=`           | Search registered barangays (max 10)             |
+| GET    | `/auth/barangays/:id/sitios`        | List sitios for a barangay                       |
+| POST   | `/auth/register`                    | Register resident + send OTP                     |
+| POST   | `/auth/login`                       | Resident login by phone + password               |
+| POST   | `/auth/verify-otp`                  | Verify OTP + activate account                    |
+| POST   | `/auth/resend-otp`                  | Resend OTP (signup or forgot-password flow)      |
+| POST   | `/auth/forgot-password`             | Send password reset OTP                          |
+| POST   | `/auth/verify-forgot-password-otp`  | Verify password reset OTP                        |
+| POST   | `/auth/reset-password`              | Set new password after OTP verified              |
+| POST   | `/auth/barangay/login`              | Barangay staff login by phone + password         |
+
+### Dashboard (`/dashboard`)
+
+Protected routes — require `Authorization: Bearer <token>` header.
+
+| Method | Path           | Required role | Description           |
+|--------|----------------|---------------|-----------------------|
+| GET    | `/dashboard`   | CAPTAIN       | Barangay dashboard    |
+
+---
+
+## Database Models
+
+- `Barangay` — Registered barangay organizations
+- `Sitio` — Sub-divisions within a barangay (unique per barangay)
+- `User` — Residents and barangay staff; roles: `RESIDENT`, `CAPTAIN`, `SECRETARY`, `TREASURER`, `SK`, `COLLECTOR`, `SUPER_ADMIN`
+- `OtpVerification` — SMS OTP codes with expiration
+- `PasswordResetToken` — Tokens for forgot-password flow
+
+---
+
+## Frontend Pages
+
+| Route group      | Pages                                                        |
+|------------------|--------------------------------------------------------------|
+| `(intro)`        | Onboarding flow                                              |
+| `(auth)`         | Login, signup, OTP verification, forgot password, reset password, barangay login |
+| `(resident)`     | Dashboard, profile, capture, requests                        |
+| `(barangay)`     | Collection requests management                               |
 
 ---
 
 ## Current Status
 
-Resident authentication is fully working end-to-end. The current active work is connecting the barangay admin login to the backend.
+Resident authentication is fully working end-to-end (login, signup, OTP, forgot password). Barangay staff login backend endpoint is implemented; frontend connection is in progress.
 
 See `docs/current-progress.md` for a detailed breakdown of what is done and what is next.
 

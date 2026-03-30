@@ -570,7 +570,7 @@ const resetPassword = async (req, res) => {
 
 // Barangay Login Authentication
 
-const BARANGAY_ROLES = ["CAPTAIN", "SECRETARY", "TREASURER", "SK", "COLLECTOR"];
+export const BARANGAY_ROLES = ["CAPTAIN", "SECRETARY", "TREASURER", "SK", "COLLECTOR"];
 
 const barangayLogin = async (req, res) => {
   try {
@@ -626,7 +626,7 @@ const barangayLogin = async (req, res) => {
     }
 
     // Generate token
-    const token = generateToken(user.id, user.role, user.barangayId)
+    const token = generateToken({ id: user.id, role: user.role, barangayId: user.barangayId })
 
     return res.status(200).json({
       message: "Login successful",

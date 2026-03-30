@@ -37,9 +37,9 @@ OTP notes:
 - Real SMS delivery requires setting `SEMAPHORE_API_KEY` in `backend/.env`.
 
 Barangay login status:
-- UI exists at `/barangay/login` with email/username and password fields
-- Not connected to any backend endpoint yet — login button has no handler
-- This is the current implementation target
+- UI exists at `/barangay/login` with phone number and password fields
+- Backend endpoint implemented: `POST /auth/barangay/login` (phone + password, returns JWT)
+- Frontend is not yet connected — login button has no handler; wiring up the form is the current implementation target
 
 After barangay login is connected, work continues with the request lifecycle backend.
 

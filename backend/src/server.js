@@ -3,9 +3,11 @@ import { config } from "dotenv"
 import "dotenv/config";
 import { connectDB, disconnectDB } from './config/db.js'
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 
 import authRoute from "./routes/auth.route.js"
+import dashboardRoute from "./routes/dashboard.route.js"
 
 config();
 connectDB();
@@ -13,19 +15,23 @@ connectDB();
 const app = express();
 
 
-// Body parsing middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // API routes
 app.use(cors({
-  origin: "http://localhost:3000",
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: false, // keep this only if you use cookies/sessions
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true, // keep this only if you use cookies/sessions
 }));
 
+// Body parsing middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser())
+
+
 app.use("/auth", authRoute)
+app.use("/dashboard", dashboardRoute)
 
 
 

@@ -9,6 +9,7 @@ import {
   forgotPassword,
   verifyForgotPasswordOtp,
   resetPassword,
+  barangayLogin,
 } from "../controllers/auth.controller.js";
 
 const router = express.Router();
@@ -22,5 +23,6 @@ router.post("/resend-otp", resendOtp);
 router.post("/forgot-password", forgotPassword);
 router.post("/verify-forgot-password-otp", verifyForgotPasswordOtp);
 router.post("/reset-password", resetPassword);
+router.post("/barangay/login", barangayLogin)
 
 export default router;
