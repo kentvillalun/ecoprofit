@@ -48,6 +48,7 @@ Create `backend/.env`:
 ```env
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
 JWT_SECRET="your-jwt-secret"
+JWT_EXPIRES_IN="7d"                       # token lifetime, e.g. "7d", "1h"
 SEMAPHORE_API_KEY="your-semaphore-key"   # optional in dev — OTP prints to console if omitted
 ```
 
@@ -109,11 +110,12 @@ Both must be running for the app to work. The frontend calls the backend over HT
 | POST   | `/auth/forgot-password`             | Send password reset OTP                          |
 | POST   | `/auth/verify-forgot-password-otp`  | Verify password reset OTP                        |
 | POST   | `/auth/reset-password`              | Set new password after OTP verified              |
-| POST   | `/auth/barangay/login`              | Barangay staff login by phone + password         |
+| POST   | `/auth/barangay/login`              | Barangay staff login — sets `barangay_token` httpOnly cookie |
+| POST   | `/auth/logout`                      | Barangay staff logout — clears cookie, blacklists token      |
 
 ### Dashboard (`/dashboard`)
 
-Protected routes — require `Authorization: Bearer <token>` header.
+Protected routes — authenticated via `barangay_token` httpOnly cookie (set by `/auth/barangay/login`) or `Authorization: Bearer <token>` header. The token is checked against the blacklist on every request.
 
 | Method | Path           | Required role | Description           |
 |--------|----------------|---------------|-----------------------|
@@ -128,6 +130,7 @@ Protected routes — require `Authorization: Bearer <token>` header.
 - `User` — Residents and barangay staff; roles: `RESIDENT`, `CAPTAIN`, `SECRETARY`, `TREASURER`, `SK`, `COLLECTOR`, `SUPER_ADMIN`
 - `OtpVerification` — SMS OTP codes with expiration
 - `PasswordResetToken` — Tokens for forgot-password flow
+- `BlackListedToken` — Revoked JWTs; checked on every authenticated request
 
 ---
 
@@ -144,7 +147,7 @@ Protected routes — require `Authorization: Bearer <token>` header.
 
 ## Current Status
 
-Resident authentication is fully working end-to-end (login, signup, OTP, forgot password). Barangay staff login backend endpoint is implemented; frontend connection is in progress.
+Resident authentication is fully working end-to-end (login, signup, OTP, forgot password, reset password). Barangay staff authentication backend is complete: login issues a `barangay_token` httpOnly cookie, logout clears the cookie and blacklists the JWT via the `BlackListedToken` table. The `authenticate` middleware accepts both the cookie and a `Bearer` token, checking the blacklist on every request. Frontend connection for barangay login is in progress.
 
 See `docs/current-progress.md` for a detailed breakdown of what is done and what is next.
 

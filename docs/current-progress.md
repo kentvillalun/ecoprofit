@@ -19,8 +19,13 @@
 - Forgot password backend: `PasswordResetToken` model, `forgotPassword`, `verifyForgotPasswordOtp`, `resetPassword` controllers + routes
 - `resendOtp` updated to handle both signup and forgot-password flows via `otpFlow` param
 - Resident capture page: camera access via file input, image preview, submit confirmation UI
-- Barangay login backend: `POST /auth/barangay/login` accepts phone + password, validates barangay staff roles (CAPTAIN, SECRETARY, TREASURER, SK, COLLECTOR), returns JWT
+- Barangay login backend: `POST /auth/barangay/login` accepts phone + password, validates barangay staff roles (CAPTAIN, SECRETARY, TREASURER, SK, COLLECTOR), issues JWT in a `barangay_token` httpOnly cookie (7-day expiry)
+- Barangay logout: `POST /auth/logout` clears the `barangay_token` cookie and writes the token to `BlackListedToken` so it cannot be reused
 - JWT token utility (`generateToken`) and auth middleware (`authenticate`, `requireRoles`)
+- `authenticate` middleware accepts both `barangay_token` cookie and `Authorization: Bearer` header; checks every token against the `BlackListedToken` table before allowing access
+- `cookie-parser` middleware registered in `server.js` to parse httpOnly cookies
+- `BlackListedToken` model added to Prisma schema (stores revoked tokens until expiry)
+- `Role` enum in Prisma schema covers all staff roles: `CAPTAIN`, `SECRETARY`, `TREASURER`, `SK`, `COLLECTOR`, `SUPER_ADMIN`, `RESIDENT`
 - Protected dashboard route: `GET /dashboard` (requires valid JWT + CAPTAIN role)
 
 ---
