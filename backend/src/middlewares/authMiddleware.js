@@ -1,16 +1,21 @@
 import jwt from "jsonwebtoken";
+import { prisma } from "../config/db.js";
 
-const authenticate = (req, res, next) => {
+const authenticate = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
+    const barangayCookie = req.cookies.barangay_token
 
-    if (!authHeader) {
+
+    
+
+    if (!authHeader && !barangayCookie) {
       return res
         .status(401)
-        .json({ error: "Missing or invalid Authorization header" });
+        .json({ error: "No token provided" });
     }
 
-    const token = authHeader.split(" ")[1];
+    const token = barangayCookie || authHeader.split(" ")[1];
 
     if (!token) {
       return res.status(401).json({ error: "Missing or invalid token" });
@@ -22,6 +27,15 @@ const authenticate = (req, res, next) => {
       role: decoded.role,
       barangayId: decoded.barangayId,
     };
+
+    const blackListed = await prisma.blackListedToken.findUnique({
+      where: { token }
+    })
+
+    if (blackListed) {
+      return res.status(401).json({ error: "Invalid token"})
+    }
+
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {

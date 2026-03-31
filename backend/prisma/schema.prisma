@@ -13,6 +13,14 @@ datasource db {
   provider = "postgresql"
 }
 
+model BlackListedToken {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  token       String   @unique
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+}
+
+
 model PasswordResetToken {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   phoneNumber String

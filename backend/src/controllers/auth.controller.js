@@ -7,6 +7,7 @@ import { sendOtp } from "../utils/sms.js";
 import jwt from "jsonwebtoken";
 import { generateToken } from "../utils/generateToken.js";
 
+
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -628,9 +629,18 @@ const barangayLogin = async (req, res) => {
     // Generate token
     const token = generateToken({ id: user.id, role: user.role, barangayId: user.barangayId })
 
+    res.cookie("barangay_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: 'strict',
+      maxAge: 604800000
+    }
+
+    )
+
+
     return res.status(200).json({
       message: "Login successful",
-      token,
       user: {
         id: user.id,
         firstName: user.firstName,
@@ -645,6 +655,37 @@ const barangayLogin = async (req, res) => {
   }
 };
 
+const logoutBarangay = async (req, res) => {
+
+  try {
+
+    const token = req.cookies.barangay_token;
+    
+    if (!token) {
+      res.clearCookie("barangay_token")
+      return res.status(200).json({ message: "User already logged out"})
+    }
+
+    const decode = jwt.decode(token)
+    const expiresAt = new Date(decode.exp * 1000)
+    
+    await prisma.blackListedToken.create({
+      data: {
+        token,
+        expiresAt
+      }
+    })
+    
+    res.clearCookie("barangay_token")
+    
+    return res.status(200).json({
+      message: "Logout successful"
+    })
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
 
 export {
   listBarangays,
@@ -657,4 +698,5 @@ export {
   verifyForgotPasswordOtp,
   resetPassword,
   barangayLogin,
+  logoutBarangay,
 };
