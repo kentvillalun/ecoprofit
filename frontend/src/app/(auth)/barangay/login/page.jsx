@@ -38,7 +38,7 @@ export default function BarangayLoginPage() {
   });
 
   const onSubmit = async (data) => {
-    console.log("submitting", data);
+   
     try {
       setIsLoading(true);
       const response = await fetch(`${API_BASE_URL}/auth/barangay/login`, {
@@ -49,9 +49,9 @@ export default function BarangayLoginPage() {
         body: JSON.stringify(data),
         credentials: "include",
       });
-      console.log("response status:", response.status);
+      
       const result = await response.json();
-      console.log("result:", result);
+     
       if (!response.ok) {
         setErrorMessage(result.error || "Login failed");
         return;
@@ -62,8 +62,6 @@ export default function BarangayLoginPage() {
         return;
       }
 
-      console.log("role check:", result.user?.role);
-      console.log("redirecting to dashboard...");
       router.push("/dashboard");
     } catch (error) {
       setErrorMessage("There is a problem fetching the data");

@@ -14,10 +14,13 @@ import {
   ClipboardDocumentCheckIcon as RewardsIcon,
   WalletIcon as ProgramFundsIcon
 } from "@heroicons/react/24/solid";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { DrawerContext } from "@/app/(barangay)/layout.jsx";
 import Link from "next/link";
 import { Poppins } from "next/font/google";
+import { API_BASE_URL } from "@/lib/config";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -25,6 +28,7 @@ const poppins = Poppins({
 });
 export const Sidebar = () => {
   const { sidebarOpen, setSidebarOpen } = useContext(DrawerContext);
+  const router = useRouter();
 
   const sidebarItems = [
     {
@@ -89,6 +93,28 @@ export const Sidebar = () => {
     },
   ];
 
+  const handleLogout = async () => {
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      })
+
+      if (!response.ok) {
+        toast.error("Logout failed")
+        return;
+      }
+
+      router.push("/barangay/login")
+    } catch (error) {
+      toast.error("Logout failed")
+    }
+  }
+
   return (
     <aside
       className={`w-72 h-screen flex flex-col justify-between bg-[#74C857] fixed top-0 text-white left-0 z-10 md:shadow-xl ${poppins.className} overflow-y-auto sidebar`}
@@ -125,7 +151,7 @@ export const Sidebar = () => {
 
         
       </div>
-      <button className="pl-6 p-4 mb-15">
+      <button className="pl-6 p-4 mb-15" onClick={handleLogout} >
           <div className="flex flex-row gap-3 hover:cursor-pointer p-2 rounded-lg hover:bg-primary transition-all ease-in-out">
             <LogoutIcon className="h-6 w-6 md:block hidden hover:cursor-pointer" />
             <label className="font-medium text-md hover:cursor-pointer">

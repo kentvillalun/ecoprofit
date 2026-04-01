@@ -2,6 +2,7 @@
 
 import { Sidebar } from "@/components/navigation/Sidebar";
 import { useState, createContext } from "react";
+import { Toaster } from "sonner";
 
 export const DrawerContext = createContext();
 
@@ -11,6 +12,7 @@ export default function BarangayLayout({ children }) {
   return (
     <>
       <DrawerContext.Provider value={{ sidebarOpen, setSidebarOpen }}>
+        <Toaster position="top-center" />
         <main className="">{children}</main>
         {sidebarOpen && (
           <>

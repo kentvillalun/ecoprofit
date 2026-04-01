@@ -34,7 +34,7 @@
 - [x] Proxy route protection (Layer 1) — middleware in frontend/src/proxy.js
 - [x] Server component auth verification (Layer 2) — dashboard page calls GET /auth/me and redirects on failure
 - [x] Shared config: frontend/src/lib/config.js exports API_BASE_URL
-- [ ] Barangay logout (UI button)
+- [x] Barangay logout — Sidebar button calls POST /auth/logout with credentials: "include", clears cookie, redirects to /barangay/login; toast notifications via sonner
 - [ ] Resident side cookie auth
 - [ ] Pickup request module
 - [ ] Collection schedule module
@@ -50,7 +50,13 @@ to verify the token server-side, redirecting to /barangay/login on
 failure. The GET /auth/me endpoint was added to expose the decoded JWT
 payload (id, role, barangay) to server components without re-issuing a
 token.
-Next task: barangay logout UI and resident-side cookie auth.
+Barangay logout is now wired up: the Sidebar logout button POSTs to
+/auth/logout (credentials: "include"), which blacklists the token and
+clears the cookie server-side, then the client redirects to
+/barangay/login. Toast notifications (sonner) are set up in the
+barangay layout for error feedback. Debug console.log calls were also
+cleaned out of the login page.
+Next task: resident-side cookie auth.
 
 ## Key Decisions Made
 - httpOnly cookies over localStorage → XSS protection
@@ -60,6 +66,7 @@ Next task: barangay logout UI and resident-side cookie auth.
 - generateToken accepts object → cleaner, more flexible
 - cookie-parser registered before routes → cookies available everywhere
 - CORS credentials: true → required for cookie based auth
+- sonner added for toast notifications in barangay layout → consistent error UX without inline state
 
 ## Key Files
 - backend/src/controllers/auth.controller.js
@@ -72,6 +79,8 @@ Next task: barangay logout UI and resident-side cookie auth.
 - frontend/src/lib/config.js — shared API_BASE_URL constant
 - frontend/src/app/(auth)/barangay/login/page.jsx — barangay login form
 - frontend/src/app/(barangay)/dashboard/page.jsx — server component with Layer 2 auth check
+- frontend/src/app/(barangay)/layout.jsx — barangay layout with DrawerContext + Toaster
+- frontend/src/components/navigation/Sidebar.jsx — sidebar with logout handler
 
 ## Known Issues / TODO
 - Resident side: cookie auth + token blacklist still pending
