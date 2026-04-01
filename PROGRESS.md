@@ -24,26 +24,33 @@
       POST /auth/verify-forgot-password-otp
       POST /auth/reset-password
       POST /auth/logout
+      GET  /auth/me (returns id, role, barangay from JWT)
 - [x] JWT middleware: authenticate and requireRoles
 - [x] httpOnly cookie authentication
 - [x] Token blacklist (BlacklistedToken table)
 - [x] Logout endpoint (clears cookie + blacklists token)
 - [x] Protected route: GET /dashboard (CAPTAIN only)
-- [ ] Barangay frontend auth (login page, protected routes, logout)
+- [x] Barangay login page with form validation (fully integrated end-to-end)
+- [x] Proxy route protection (Layer 1) — middleware in frontend/src/proxy.js
+- [x] Server component auth verification (Layer 2) — dashboard page calls GET /auth/me and redirects on failure
+- [x] Shared config: frontend/src/lib/config.js exports API_BASE_URL
+- [ ] Barangay logout (UI button)
 - [ ] Resident side cookie auth
 - [ ] Pickup request module
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
 
 ## Current State
-Auth backend is fully complete and tested in Thunder Client. 
-barangayLogin sets an httpOnly cookie (barangay_token). 
-authenticate middleware reads from cookie or Authorization header, 
-verifies JWT, and checks against the BlacklistedToken table. 
-requireRoles is a higher-order function that accepts an array of 
-allowed roles. Logout blacklists the token and clears the cookie. 
-Next task is building the barangay login frontend in Next.js and 
-connecting it to the backend end to end.
+Barangay auth is fully integrated end-to-end. The login page posts
+credentials, receives a barangay_token httpOnly cookie, and redirects
+to /dashboard. Protected routes use two layers: a Next.js middleware
+proxy (proxy.js) checks for the cookie before the request reaches the
+page, and the dashboard server component independently calls GET /auth/me
+to verify the token server-side, redirecting to /barangay/login on
+failure. The GET /auth/me endpoint was added to expose the decoded JWT
+payload (id, role, barangay) to server components without re-issuing a
+token.
+Next task: barangay logout UI and resident-side cookie auth.
 
 ## Key Decisions Made
 - httpOnly cookies over localStorage → XSS protection
@@ -61,6 +68,10 @@ connecting it to the backend end to end.
 - backend/src/routes/dashboard.route.js
 - backend/src/utils/generateToken.js
 - backend/prisma/schema.prisma
+- frontend/src/proxy.js — Next.js middleware (Layer 1 route protection)
+- frontend/src/lib/config.js — shared API_BASE_URL constant
+- frontend/src/app/(auth)/barangay/login/page.jsx — barangay login form
+- frontend/src/app/(barangay)/dashboard/page.jsx — server component with Layer 2 auth check
 
 ## Known Issues / TODO
 - Resident side: cookie auth + token blacklist still pending

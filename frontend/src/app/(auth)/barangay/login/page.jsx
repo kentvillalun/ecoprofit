@@ -7,13 +7,12 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/lib/config";
 
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
-
-const API_BASE_URL = "http://localhost:5001";
 
 const schema = yup.object().shape({
   phoneNumber: yup.string().required("Phone number is required"),
@@ -38,10 +37,10 @@ export default function BarangayLoginPage() {
     },
   });
 
-
   const onSubmit = async (data) => {
+    console.log("submitting", data);
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const response = await fetch(`${API_BASE_URL}/auth/barangay/login`, {
         method: "POST",
         headers: {
@@ -49,10 +48,10 @@ export default function BarangayLoginPage() {
         },
         body: JSON.stringify(data),
         credentials: "include",
-      })
-
+      });
+      console.log("response status:", response.status);
       const result = await response.json();
-
+      console.log("result:", result);
       if (!response.ok) {
         setErrorMessage(result.error || "Login failed");
         return;
@@ -62,16 +61,17 @@ export default function BarangayLoginPage() {
         setErrorMessage("This page is for barangay staff login only.");
         return;
       }
-      
 
-      router.push("/dashboard")
+      console.log("role check:", result.user?.role);
+      console.log("redirecting to dashboard...");
+      router.push("/dashboard");
     } catch (error) {
-      setErrorMessage("There is a problem fetching the data")
-      return
+      setErrorMessage("There is a problem fetching the data");
+      return;
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
   return (
     <main
       className={`min-h-svh flex justify-center bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${poppins.className} `}
@@ -95,7 +95,10 @@ export default function BarangayLoginPage() {
                 Sign in to manage recycling operatins
               </p>
             </div>
-            <form className="flex flex-col gap-6 " onSubmit={handleSubmit(onSubmit)}>
+            <form
+              className="flex flex-col gap-6 "
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <div className="flex flex-col gap-1.5">
                 <label
                   htmlFor=""
@@ -131,6 +134,7 @@ export default function BarangayLoginPage() {
                     {...register("password")}
                   />
                   <button
+                    type="button"
                     className="hover:cursor-pointer "
                     onClick={() => {
                       setShowPassword((prev) => !prev);
@@ -147,11 +151,17 @@ export default function BarangayLoginPage() {
               </div>
 
               {errorMessage && (
-                <p className="text-[14px] text-red-500 text-center md:text-start">{errorMessage}</p>
+                <p className="text-[14px] text-red-500 text-center md:text-start">
+                  {errorMessage}
+                </p>
               )}
 
               <div className="flex flex-col gap-1 justify-center items-center">
-                <button className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px] max-w-63.75 text-nowrap" type="submit" disabled={isLoading}>
+                <button
+                  className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px] max-w-63.75 text-nowrap"
+                  type="submit"
+                  disabled={isLoading}
+                >
                   {isLoading ? "Logging In..." : "Log In"}
                 </button>
               </div>

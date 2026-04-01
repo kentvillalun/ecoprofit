@@ -5,6 +5,7 @@ import { Poppins } from "next/font/google";
 import { Page } from "@/components/layout/Page";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/lib/config";
 
 // Outside component — only created once, never recreated on rerender
 const poppins = Poppins({
@@ -12,7 +13,7 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
 });
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5001";
+
 
 // How many seconds the user must wait before resending
 const RESEND_COOLDOWN = 60;
