@@ -3,19 +3,78 @@
 import { Poppins } from "next/font/google";
 import Link from "next/link";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useRouter } from "next/navigation";
 
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
+const API_BASE_URL = "http://localhost:5001";
+
+const schema = yup.object().shape({
+  phoneNumber: yup.string().required("Phone number is required"),
+  password: yup.string().required("Password is required"),
+});
+
 export default function BarangayLoginPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-  const [showPassword, setShowPassword] = useState(false)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      phoneNumber: "",
+      password: "",
+    },
+  });
 
+
+  const onSubmit = async (data) => {
+    try {
+      setIsLoading(true)
+      const response = await fetch(`${API_BASE_URL}/auth/barangay/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+        credentials: "include",
+      })
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setErrorMessage(result.error || "Login failed");
+        return;
+      }
+
+      if (result.user?.role !== "CAPTAIN") {
+        setErrorMessage("This page is for barangay staff login only.");
+        return;
+      }
+      
+
+      router.push("/dashboard")
+    } catch (error) {
+      setErrorMessage("There is a problem fetching the data")
+      return
+    } finally {
+      setIsLoading(false)
+    }
+  }
   return (
     <main
-      className={`min-h-screen flex justify-center bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${poppins.className} `}
+      className={`min-h-svh flex justify-center bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${poppins.className} `}
     >
       <div className="grid md:justify-center md:items-center">
         <div className="grid">
@@ -36,7 +95,7 @@ export default function BarangayLoginPage() {
                 Sign in to manage recycling operatins
               </p>
             </div>
-            <div className="flex flex-col gap-6 ">
+            <form className="flex flex-col gap-6 " onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-1.5">
                 <label
                   htmlFor=""
@@ -48,7 +107,13 @@ export default function BarangayLoginPage() {
                   type="text"
                   className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
                   placeholder="Enter your phone number"
+                  {...register("phoneNumber")}
                 />
+                {errors.phoneNumber && (
+                  <p className="text-[14px] text-red-500 text-center md:text-start">
+                    {errors.phoneNumber?.message}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-col gap-1.5">
@@ -63,75 +128,37 @@ export default function BarangayLoginPage() {
                     type={showPassword ? `text` : `password`}
                     className="outline-none max-w-full min-w-[70%] "
                     placeholder="Enter your password"
+                    {...register("password")}
                   />
-                  <button className="hover:cursor-pointer " onClick={() => {
-                    setShowPassword((prev) => !prev)
-                  }}>Show</button>
+                  <button
+                    className="hover:cursor-pointer "
+                    onClick={() => {
+                      setShowPassword((prev) => !prev);
+                    }}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
                 </div>
+                {errors.password && (
+                  <p className="text-[14px] text-red-500 text-center md:text-start">
+                    {errors.password?.message}
+                  </p>
+                )}
               </div>
 
+              {errorMessage && (
+                <p className="text-[14px] text-red-500 text-center md:text-start">{errorMessage}</p>
+              )}
+
               <div className="flex flex-col gap-1 justify-center items-center">
-                <button className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px] max-w-63.75">
-                  Log In
+                <button className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px] max-w-63.75 text-nowrap" type="submit" disabled={isLoading}>
+                  {isLoading ? "Logging In..." : "Log In"}
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
     </main>
-    // <main
-    //   className={`min-h-screen flex flex-col items-center justify-center bg-linear-to-b from-[#FFFFFF]  from-24% to-[#89D957] ${poppins.className} `}
-    // >
-    //   <section className="flex flex-col justify-center ">
-    //     <div className="flex justify-center">
-    //       <img
-    //         src="/onboarding/step1.png"
-    //         alt="EcoProfit Logo"
-    //         className="aspect-4/2 object-cover md:w-[40%]"
-    //       />
-    //     </div>
-    //     <div className="bg-white py-7.5 px-11.5 rounded-2xl border border-[#00000007] shadow-md flex flex-col gap-10 min-w-171 m-auto">
-    //       <div className="flex flex-col gap-1.75 justify-center items-center">
-    //         <h3 className="text-[20px] font-semibold">Barangay Admin Login</h3>
-    //         <p className="text-[14px] text-[#4C5F66]">
-    //           Sign in to manage recycling operatins
-    //         </p>
-    //       </div>
-
-    //       <div className="flex flex-col gap-6">
-    //         <div className="flex flex-col gap-1.5">
-    //           <label htmlFor="" className="text-gray-700">
-    //             Email / Username
-    //           </label>
-    //           <input
-    //             type="email"
-    //             className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
-    //             placeholder="Enter your email or username"
-    //           />
-    //         </div>
-    //         <div className="flex flex-col gap-1.5">
-    //           <label htmlFor="" className="text-gray-700">
-    //             Password
-    //           </label>
-    //           <div className="flex flex-row justify-between outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors">
-    //             <input
-    //               type="password"
-    //               className="outline-none max-w-full min-w-[70%] "
-    //               placeholder="Enter your password"
-    //             />
-    //             <button className="hover:cursor-pointer">Show</button>
-    //           </div>
-    //         </div>
-    //       </div>
-
-    //       <div className="w-full">
-    //         <button className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px] w-full">
-    //           Sign in
-    //         </button>
-    //       </div>
-    //     </div>
-    //   </section>
-    // </main>
   );
 }

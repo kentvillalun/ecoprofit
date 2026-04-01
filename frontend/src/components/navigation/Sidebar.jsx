@@ -30,7 +30,7 @@ export const Sidebar = () => {
     {
       icon: DashboardIcon,
       label: "Dashboard",
-      href: "",
+      href: "/dashboard",
     },
     {
       icon: ResidentsIcon,
@@ -40,7 +40,7 @@ export const Sidebar = () => {
     {
       icon: RequestIcon,
       label: "Collection Requests",
-      href: "",
+      href: "/collection-requests",
     },
     {
       icon: CollectionSortingIcon,

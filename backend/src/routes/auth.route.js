@@ -11,7 +11,9 @@ import {
   resetPassword,
   barangayLogin,
   logoutBarangay,
+  me,
 } from "../controllers/auth.controller.js";
+import { authenticate } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
@@ -25,6 +27,7 @@ router.post("/forgot-password", forgotPassword);
 router.post("/verify-forgot-password-otp", verifyForgotPasswordOtp);
 router.post("/reset-password", resetPassword);
 router.post("/barangay/login", barangayLogin);
-router.post("/logout", logoutBarangay)
+router.post("/logout", logoutBarangay);
+router.get("/me", authenticate, me);
 
 export default router;
