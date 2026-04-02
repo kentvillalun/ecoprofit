@@ -396,7 +396,7 @@ const login = async (req, res) => {
     res.cookie("resident_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "none",
       maxAge: 604800000,
     });
 
@@ -659,7 +659,7 @@ const barangayLogin = async (req, res) => {
     res.cookie("barangay_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "none",
       maxAge: 604800000,
     });
 
