@@ -1,14 +1,27 @@
 "use client";
 
+// Flow
+// User captures photo → preview shown
+// User clicks "Next" → upload to Cloudinary → form fields appear
+// User fills fields → clicks "Submit Request" → send to backend with Cloudinary URL
+
 import { ResidentHeader } from "@/components/navigation/ResidentHeader";
-import { CameraIcon, XCircleIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
+import {
+  CameraIcon,
+  XCircleIcon,
+  CheckCircleIcon,
+} from "@heroicons/react/24/solid";
 import { useRef, useState } from "react";
+import { toast, Toaster } from "sonner";
 
 export default function CapturePage() {
   const fileInputRef = useRef(null);
   const [capturedImageUrl, setCapturedImageUrl] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [cloudinaryUrl, setCloudinaryUrl] = useState(null);
 
   const openCamera = () => {
     fileInputRef.current.click();
@@ -18,19 +31,61 @@ export default function CapturePage() {
     const file = event.target.files[0];
 
     if (!file) return;
-
+    setImageFile(file); // store the actual file
     const url = URL.createObjectURL(file);
-    setCapturedImageUrl(url);
+    setCapturedImageUrl(url); // store preview url
 
     event.target.value = "";
   };
 
+  const uploadToCloudinary = async () => {
+    if (cloudinaryUrl) return true;
+
+    try {
+      setIsLoading(true);
+      const formData = new FormData();
+
+      formData.append("file", imageFile);
+      formData.append(
+        "upload_preset",
+        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
+      );
+
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError("Photo not uploaded");
+        return;
+      }
+
+      setCloudinaryUrl(data.secure_url);
+      return true
+    } catch (error) {
+      setCloudinaryUrl(null)
+      toast.error("There is a problem uploading photo")
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <main>
+      <Toaster />
       <ResidentHeader title={"Capture Recyclables"} />
 
       {isSubmit && (
-        <section className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-100" onClick={() => setIsSubmit(false)}>
+        <section
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-100"
+          onClick={() => setIsSubmit(false)}
+        >
           <div className="bg-white shadow-lg p-4 rounded-lg flex flex-col gap-4 items-center justify-center">
             <div className="flex flex-col items-center justify-center py-4">
               <CheckCircleIcon className="fill-[#74C857] h-10 w-10" />
@@ -85,20 +140,26 @@ export default function CapturePage() {
             <div className="grid w-full max-w-md gap-3 grid-cols-2 items-center justify-center">
               <button
                 className="text-[#727272] p-3 rounded-lg text-sm shadow-md min-w-27 bg-white"
-                onClick={openCamera}
+                onClick={() => {
+                  setCloudinaryUrl(null);
+                  openCamera();
+                }}
               >
                 Retake
               </button>
               <button
-                className="bg-[#74C857] text-white p-3 rounded-lg text-sm shadow-md min-w-27"
-                onClick={() => {
-                  setIsFormVisible(true);
-                  setTimeout(() => {
-                    document
-                      .getElementById("form")
-                      ?.scrollIntoView({ behavior: "smooth" });
-                  });
-                  
+                className="bg-[#74C857] text-white p-3 rounded-lg text-sm shadow-md min-w-27 disabled:bg-[#5c9648]"
+                disabled={isLoading}
+                onClick={async () => {
+                  const url = await uploadToCloudinary();
+                  if (url) {
+                    setIsFormVisible(true);
+                    setTimeout(() => {
+                      document
+                        .getElementById("form")
+                        ?.scrollIntoView({ behavior: "smooth" });
+                    });
+                  }
                 }}
               >
                 Next
@@ -165,8 +226,8 @@ export default function CapturePage() {
             <button
               className="bg-[#74C857] text-white py-2.5 rounded-lg"
               onClick={() => {
-                setIsSubmit(true)
-                setCapturedImageUrl(null)
+                setIsSubmit(true);
+                setCapturedImageUrl(null);
               }}
             >
               Submit Request

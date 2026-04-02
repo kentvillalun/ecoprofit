@@ -36,27 +36,32 @@
 - [x] Shared config: frontend/src/lib/config.js exports API_BASE_URL
 - [x] Barangay logout — Sidebar button calls POST /auth/logout with credentials: "include", clears cookie, redirects to /barangay/login; toast notifications via sonner
 - [ ] Resident side cookie auth
-- [ ] Pickup request module
+- [x] Pickup request schema — PickupRequests model with MaterialType, WeightUnit, Status enums; migration applied (20260401174639_add_pickup_request)
+- [x] Capture page Cloudinary upload — photo uploads to Cloudinary on "Next" click; cloudinaryUrl stored for later submission; retake resets the URL; loading state disables button; sonner toast on upload error
+- [ ] Pickup request backend endpoint (POST /requests/pickup)
+- [ ] Capture page form submission wired to backend
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
 
 ## Current State
-Barangay auth is fully integrated end-to-end. The login page posts
-credentials, receives a barangay_token httpOnly cookie, and redirects
-to /dashboard. Protected routes use two layers: a Next.js middleware
-proxy (proxy.js) checks for the cookie before the request reaches the
-page, and the dashboard server component independently calls GET /auth/me
-to verify the token server-side, redirecting to /barangay/login on
-failure. The GET /auth/me endpoint was added to expose the decoded JWT
-payload (id, role, barangay) to server components without re-issuing a
-token.
-Barangay logout is now wired up: the Sidebar logout button POSTs to
-/auth/logout (credentials: "include"), which blacklists the token and
-clears the cookie server-side, then the client redirects to
-/barangay/login. Toast notifications (sonner) are set up in the
-barangay layout for error feedback. Debug console.log calls were also
-cleaned out of the login page.
-Next task: resident-side cookie auth.
+Barangay auth is fully integrated end-to-end with two-layer route
+protection and logout. The pickup request module has been started on
+two fronts:
+
+**Schema:** `PickupRequests` model added to schema.prisma with enums
+`MaterialType` (METALS, PAPERS, BOTTLES, PLASTICS), `WeightUnit`
+(KG, GRAMS, LBS), and `Status` (REQUESTED, APPROVED, IN_PROGRESS,
+COLLECTED, REJECTED). Migration applied.
+
+**Capture page frontend:** Cloudinary upload is wired into the "Next"
+button flow — photo is uploaded to Cloudinary first, and only if
+successful does the form slide into view. The `cloudinaryUrl` is stored
+in state for use when the request is eventually submitted. "Retake"
+resets the Cloudinary URL so a new upload is triggered. Sonner Toaster
+added to the capture page for upload error feedback.
+
+Next task: wire up the backend POST endpoint for pickup requests, then
+connect the capture page form submission to it.
 
 ## Key Decisions Made
 - httpOnly cookies over localStorage → XSS protection
@@ -84,9 +89,11 @@ Next task: resident-side cookie auth.
 
 ## Known Issues / TODO
 - Resident side: cookie auth + token blacklist still pending
-- BlacklistedToken cleanup job needed (periodic deletion of 
+- BlacklistedToken cleanup job needed (periodic deletion of
   expired tokens using the expiresAt field)
 - Dashboard returns placeholder response, real data pending
+- Capture page: `setError` called in `uploadToCloudinary` but `error` state is not defined — needs a `useState` or replace with `toast.error`
+- Capture page: form "Submit Request" button not yet wired to backend; currently just shows success modal
 
 ## Mentor Instructions
 Act as a senior dev mentor — guide me, don't just give me answers.

@@ -108,7 +108,55 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  pickupRequest PickupRequests[]
+
   @@index([barangayId])
   @@index([sitioId])
 }
+
+model PickupRequests {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  userId String @db.Uuid
+
+  user User @relation(fields: [userId], references: [id])
+  materialType MaterialType @default(PLASTICS)
+  estimatedWeight Float 
+  weightUnit WeightUnit @default(KG)
+  status Status @default(REQUESTED)
+  photoUrl String
+  isScheduled Boolean @default(false)
+
+  notes String?
+  actualWeight Float?
+  rewardEquivalent String?
+  rejectionReason String?
+
+  createdAt DateTime @default(now())
+  approvedAt DateTime?
+  collectedAt DateTime?
+  rejectedAt DateTime?
+}
+
+enum MaterialType {
+  METALS
+  PAPERS
+  BOTTLES
+  PLASTICS
+}
+
+enum WeightUnit {
+  KG
+  GRAMS
+  LBS
+}
+
+enum Status {
+  REQUESTED
+  APPROVED
+  IN_PROGRESS
+  COLLECTED
+  REJECTED
+}
+
 
