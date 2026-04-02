@@ -157,4 +157,3 @@ See `docs/current-progress.md` for a detailed breakdown of what is done and what
 - `docs/business-rules.md` — core rules governing the domain
 - `docs/module-boundaries.md` — what each module owns
 - `docs/current-progress.md` — completed features and next steps
-- `AGENTS.md` — instructions for AI assistants working in this codebase
