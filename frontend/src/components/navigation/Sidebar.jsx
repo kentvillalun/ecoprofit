@@ -96,7 +96,7 @@ export const Sidebar = () => {
   const handleLogout = async () => {
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+      const response = await fetch(`${API_BASE_URL}/auth/barangay/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -4,18 +4,8 @@ import { prisma } from "../config/db.js";
 const authenticate = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    const barangayCookie = req.cookies.barangay_token
 
-
-    
-
-    if (!authHeader && !barangayCookie) {
-      return res
-        .status(401)
-        .json({ error: "No token provided" });
-    }
-
-    const token = barangayCookie || authHeader.split(" ")[1];
+    const token = req.cookies.resident_token || req.cookies.barangay_token || authHeader?.split(" ")[1];
 
     if (!token) {
       return res.status(401).json({ error: "Missing or invalid token" });

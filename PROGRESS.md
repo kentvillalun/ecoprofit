@@ -35,33 +35,28 @@
 - [x] Server component auth verification (Layer 2) — dashboard page calls GET /auth/me and redirects on failure
 - [x] Shared config: frontend/src/lib/config.js exports API_BASE_URL
 - [x] Barangay logout — Sidebar button calls POST /auth/logout with credentials: "include", clears cookie, redirects to /barangay/login; toast notifications via sonner
-- [ ] Resident side cookie auth
 - [x] Pickup request schema — PickupRequests model with MaterialType, WeightUnit, Status enums; migration applied (20260401174639_add_pickup_request)
 - [x] Capture page Cloudinary upload — photo uploads to Cloudinary on "Next" click; cloudinaryUrl stored for later submission; retake resets the URL; loading state disables button; sonner toast on upload error
-- [ ] Pickup request backend endpoint (POST /requests/pickup)
-- [ ] Capture page form submission wired to backend
+- [x] Resident cookie auth — POST /auth/login sets `resident_token` httpOnly cookie (7-day); authenticate middleware reads it; proxy Layer 1 guards resident routes (/home, /capture, /requests, /profile, /announcements, /community); login page wired end-to-end with credentials: "include", RESIDENT role guard, localStorage session store, redirect to /home
+- [x] Resident logout frontend — Profile page logout button calls POST /auth/logout with credentials: "include"; redirects to /login on success; Toaster for error feedback
+- [x] Capture page form submission wired to backend — onSubmit calls POST /pickup-request with credentials: "include"; sends materialType, estimatedWeight, weightUnit, notes, photoUrl (Cloudinary); shows success modal on 200; toast on error
+- [x] Barangay sidebar logout endpoint corrected — Sidebar now calls POST /auth/barangay/logout (was /auth/logout)
+- [ ] Resident logout backend — POST /auth/logout route exists; logoutResident imported in route but not yet exported from auth.controller.js
+- [ ] Pickup request backend endpoint (POST /pickup-request)
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
 
 ## Current State
-Barangay auth is fully integrated end-to-end with two-layer route
-protection and logout. The pickup request module has been started on
-two fronts:
+Resident auth is now fully integrated end-to-end — login, cookie
+issuance, proxy route protection, and logout frontend are all wired up.
+The capture page frontend is fully built: Cloudinary upload on "Next",
+then form submission to `POST /pickup-request` with the Cloudinary URL.
 
-**Schema:** `PickupRequests` model added to schema.prisma with enums
-`MaterialType` (METALS, PAPERS, BOTTLES, PLASTICS), `WeightUnit`
-(KG, GRAMS, LBS), and `Status` (REQUESTED, APPROVED, IN_PROGRESS,
-COLLECTED, REJECTED). Migration applied.
-
-**Capture page frontend:** Cloudinary upload is wired into the "Next"
-button flow — photo is uploaded to Cloudinary first, and only if
-successful does the form slide into view. The `cloudinaryUrl` is stored
-in state for use when the request is eventually submitted. "Retake"
-resets the Cloudinary URL so a new upload is triggered. Sonner Toaster
-added to the capture page for upload error feedback.
-
-Next task: wire up the backend POST endpoint for pickup requests, then
-connect the capture page form submission to it.
+Two things remain before pickup requests work end-to-end:
+1. `logoutResident` controller function needs to be implemented and
+   exported from `auth.controller.js` (the route already imports it).
+2. `POST /pickup-request` backend endpoint needs to be created (schema
+   is already in place via the `PickupRequests` migration).
 
 ## Key Decisions Made
 - httpOnly cookies over localStorage → XSS protection
@@ -72,6 +67,7 @@ connect the capture page form submission to it.
 - cookie-parser registered before routes → cookies available everywhere
 - CORS credentials: true → required for cookie based auth
 - sonner added for toast notifications in barangay layout → consistent error UX without inline state
+- resident_token cookie mirrors barangay_token pattern → same authenticate middleware handles both; proxy distinguishes by cookie name
 
 ## Key Files
 - backend/src/controllers/auth.controller.js
@@ -88,12 +84,12 @@ connect the capture page form submission to it.
 - frontend/src/components/navigation/Sidebar.jsx — sidebar with logout handler
 
 ## Known Issues / TODO
-- Resident side: cookie auth + token blacklist still pending
-- BlacklistedToken cleanup job needed (periodic deletion of
-  expired tokens using the expiresAt field)
+- `logoutResident` is imported in `auth.route.js` but not yet defined/exported from `auth.controller.js` — resident logout will crash until this is implemented
+- Resident logout should blacklist `resident_token` (same pattern as barangay logout with `BlackListedToken`)
+- BlacklistedToken cleanup job needed (periodic deletion of expired tokens using the expiresAt field)
 - Dashboard returns placeholder response, real data pending
-- Capture page: `setError` called in `uploadToCloudinary` but `error` state is not defined — needs a `useState` or replace with `toast.error`
-- Capture page: form "Submit Request" button not yet wired to backend; currently just shows success modal
+- Capture page "Purok / Sitio" field is unregistered — not wired into react-hook-form or sent to backend
+- Resident Layer 2 auth check (server component calling GET /auth/me) still pending
 
 ## Mentor Instructions
 Act as a senior dev mentor — guide me, don't just give me answers.

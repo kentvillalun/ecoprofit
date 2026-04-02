@@ -6,13 +6,37 @@
 // User fills fields → clicks "Submit Request" → send to backend with Cloudinary URL
 
 import { ResidentHeader } from "@/components/navigation/ResidentHeader";
-import {
-  CameraIcon,
-  XCircleIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/solid";
+import { CameraIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
 import { useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { Poppins } from "next/font/google";
+import { Page } from "@/components/layout/Page";
+import { API_BASE_URL } from "@/lib/config";
+
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const schema = yup.object().shape({
+  materialType: yup
+    .string()
+    .oneOf(["METALS", "PAPERS", "BOTTLES", "PLASTICS"], "Invalid material type")
+    .required("Material type is required"),
+  estimatedWeight: yup
+    .number("Please input numbers only")
+    .required("Estimated weight is requried")
+    .positive("Please input positive numbers only"),
+  weightUnit: yup
+    .string()
+    .oneOf(["KG", "GRAMS", "LBS"], "Invalid weight unit type")
+    .required("Weight unit is required"),
+  notes: yup.string(),
+});
 
 export default function CapturePage() {
   const fileInputRef = useRef(null);
@@ -22,6 +46,7 @@ export default function CapturePage() {
   const [isSubmit, setIsSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [cloudinaryUrl, setCloudinaryUrl] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const openCamera = () => {
     fileInputRef.current.click();
@@ -67,17 +92,55 @@ export default function CapturePage() {
       }
 
       setCloudinaryUrl(data.secure_url);
-      return true
+      return true;
     } catch (error) {
-      setCloudinaryUrl(null)
-      toast.error("There is a problem uploading photo")
+      setCloudinaryUrl(null);
+      toast.error("There is a problem uploading photo");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      materialType: "",
+      estimatedWeight: "",
+      weightUnit: "",
+      notes: "",
+    },
+  });
+
+  const onSubmit = async (data) => {
+    try {
+      setIsSubmitting(true)
+
+      const response = await fetch(`${API_BASE_URL}/pickup-request`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({...data, photoUrl: cloudinaryUrl}),
+        credentials: "include"
+      })
+
+      if (!response.ok) {
+        toast.error("There is a problem submitting request")
+      }
+      setIsSubmit(true)
+    } catch (error) {
+        toast.error("There is a problem submitting request")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
-    <main>
+    <Page>
       <Toaster />
       <ResidentHeader title={"Capture Recyclables"} />
 
@@ -176,28 +239,60 @@ export default function CapturePage() {
         </div>
 
         {isFormVisible && (
-          <div className="flex flex-col gap-8" id="form">
+          <form className="flex flex-col gap-8" id="form" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-1">
                 <label className="font-medium text-sm text-[#727272] px-2">
                   Type of material
                 </label>
-                <input
-                  type="text"
+                <select
                   className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
-                  placeholder="e.g. Plastics"
-                />
+                  {...register("materialType")}
+                >
+                  <option value="" disabled hidden>
+                    Choose an option
+                  </option>
+                  <option value="METALS" className="">
+                    Metals
+                  </option>
+                  <option value="PAPERS">Papers</option>
+                  <option value="BOTTLES">Bottles</option>
+                  <option value="PLASTICS">Plastics</option>
+                </select>
+                {errors.materialType && (
+                  <p className="text-[14px] text-red-500 text-center md:text-start">
+                    {errors.materialType?.message}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-col gap-1">
                 <label className="font-medium text-sm text-[#727272] px-2">
                   Estimated weight
                 </label>
-                <input
-                  type="text"
-                  className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
-                  placeholder="e.g. 1kg"
-                />
+                <div className="outline-1 py-2.5 pl-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors flex items-center justify-between">
+                  <input
+                    type="number"
+                    className="outline-none w-full"
+                    placeholder="e.g. 1kg"
+                    {...register("estimatedWeight")}
+                  />
+                  <select className="outline-none" {...register("weightUnit")}>
+                    <option value="KG">kg</option>
+                    <option value="GRAMS">grams</option>
+                    <option value="LBS">lbs</option>
+                  </select>
+                </div>
+                {errors.estimatedWeight && (
+                  <p className="text-[14px] text-red-500 text-center md:text-start">
+                    {errors.estimatedWeight?.message}
+                  </p>
+                )}
+                {errors.weightUnit && (
+                  <p className="text-[14px] text-red-500 text-center md:text-start">
+                    {errors.weightUnit?.message}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-col gap-1">
@@ -219,22 +314,25 @@ export default function CapturePage() {
                   type="text"
                   className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
                   placeholder="Enter your notes here"
+                  {...register("notes")}
                 />
+                {errors.notes && (
+                  <p className="text-[14px] text-red-500 text-center md:text-start">
+                    {errors.notes?.message}
+                  </p>
+                )}
               </div>
             </div>
 
             <button
               className="bg-[#74C857] text-white py-2.5 rounded-lg"
-              onClick={() => {
-                setIsSubmit(true);
-                setCapturedImageUrl(null);
-              }}
+              type="submit"
             >
               Submit Request
             </button>
-          </div>
+          </form>
         )}
       </section>
-    </main>
+    </Page>
   );
 }

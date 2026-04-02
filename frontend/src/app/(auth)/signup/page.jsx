@@ -406,7 +406,7 @@ export default function SignupPage() {
                     setSubmitError("");
                   }}
                 >
-                  <option value="" disabled>
+                  <option value="" disabled hidden>
                     {!selectedBarangay?.id
                       ? "Select barangay first"
                       : isSitioLoading

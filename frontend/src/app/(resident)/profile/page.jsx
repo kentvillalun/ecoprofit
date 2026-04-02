@@ -1,3 +1,5 @@
+"use client"
+
 import { Page } from "@/components/layout/Page";
 import { PageContent } from "@/components/layout/PageContent";
 import { ResidentHeader } from "@/components/navigation/ResidentHeader";
@@ -7,21 +9,58 @@ import {
   BellIcon,
   Cog8ToothIcon,
   QuestionMarkCircleIcon,
-  ArrowLeftStartOnRectangleIcon
+  ArrowLeftStartOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { Card } from "@/components/ui/Card";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/config";
+import { toast, Toaster } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
+
+  const router = useRouter()
+
+  const handleLogout = async () => {
+
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        toast.error("Logout failed");
+        return;
+      }
+
+      router.push("/login")
+
+    } catch (error) {
+      toast.error("Logout failed")
+    }
+  }
+
+
   return (
     <Page gradient={true}>
+      <Toaster position="top-center"/>
       <ResidentHeader title={"Profile"} />
 
       <PageContent>
         <section className="flex flex-col gap-5">
           <div className="flex flex-col items-center gap-4">
             <div className="border-5 rounded-full max-h-40 max-w-40 border-[#74C857] shadow-xl overflow-hidden flex items-center justify-center">
-              <Image src={"/profile.jpg"} width={143} height={140} alt="Profile picture"/>
+              <Image
+                src={"/profile.jpg"}
+                width={143}
+                height={140}
+                alt="Profile picture"
+              />
             </div>
             <div className="text-center ">
               <p className="font-semibold text-lg">Jaymar Tabangin</p>
@@ -68,12 +107,14 @@ export default function ProfilePage() {
               </Link>
             </div>
 
-            <Card className="flex-row gap-5">
-              <div className="min-w-10 min-h-10 rounded-full bg-[#9DB2CE26] flex items-center justify-center">
-                <ArrowLeftStartOnRectangleIcon className="w-6 h-6" />
-              </div>
-              <p className="font-medium ">Log out</p>
-            </Card>
+            <button onClick={handleLogout}>
+              <Card className="flex-row gap-5">
+                <div className="min-w-10 min-h-10 rounded-full bg-[#9DB2CE26] flex items-center justify-center">
+                  <ArrowLeftStartOnRectangleIcon className="w-6 h-6" />
+                </div>
+                <p className="font-medium ">Log out</p>
+              </Card>
+            </button>
           </div>
         </section>
       </PageContent>

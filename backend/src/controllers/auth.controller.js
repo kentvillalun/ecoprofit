@@ -7,7 +7,6 @@ import { sendOtp } from "../utils/sms.js";
 import jwt from "jsonwebtoken";
 import { generateToken } from "../utils/generateToken.js";
 
-
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -383,6 +382,24 @@ const login = async (req, res) => {
       return res.status(403).json({ error: "This account is inactive" });
     }
 
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not configured");
+    }
+
+    // Generate token
+    const token = generateToken({
+      id: user.id,
+      role: user.role,
+      barangayId: user.barangayId,
+    });
+
+    res.cookie("resident_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 604800000,
+    });
+
     return res.status(200).json({
       status: "success",
       data: {
@@ -571,7 +588,13 @@ const resetPassword = async (req, res) => {
 
 // Barangay Login Authentication
 
-export const BARANGAY_ROLES = ["CAPTAIN", "SECRETARY", "TREASURER", "SK", "COLLECTOR"];
+export const BARANGAY_ROLES = [
+  "CAPTAIN",
+  "SECRETARY",
+  "TREASURER",
+  "SK",
+  "COLLECTOR",
+];
 
 const barangayLogin = async (req, res) => {
   try {
@@ -627,17 +650,18 @@ const barangayLogin = async (req, res) => {
     }
 
     // Generate token
-    const token = generateToken({ id: user.id, role: user.role, barangayId: user.barangayId })
+    const token = generateToken({
+      id: user.id,
+      role: user.role,
+      barangayId: user.barangayId,
+    });
 
     res.cookie("barangay_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: 'strict',
-      maxAge: 604800000
-    }
-
-    )
-
+      sameSite: "strict",
+      maxAge: 604800000,
+    });
 
     return res.status(200).json({
       message: "Login successful",
@@ -650,63 +674,84 @@ const barangayLogin = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Barangay login error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
 
 const logoutBarangay = async (req, res) => {
-
   try {
-
     const token = req.cookies.barangay_token;
-    
+
     if (!token) {
-      res.clearCookie("barangay_token")
-      return res.status(200).json({ message: "User already logged out"})
+      res.clearCookie("barangay_token");
+      return res.status(200).json({ message: "User already logged out" });
     }
 
-    const decode = jwt.decode(token)
-    const expiresAt = new Date(decode.exp * 1000)
-    
+    const decode = jwt.decode(token);
+    const expiresAt = new Date(decode.exp * 1000);
+
     await prisma.blackListedToken.create({
       data: {
         token,
-        expiresAt
-      }
-    })
-    
-    res.clearCookie("barangay_token")
-    
-    return res.status(200).json({
-      message: "Logout successful"
-    })
-  } catch (error) {
-    return res.status(500).json({ error: error.message })
-  }
-}
+        expiresAt,
+      },
+    });
 
+    res.clearCookie("barangay_token");
+
+    return res.status(200).json({
+      message: "Logout successful",
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 const me = async (req, res) => {
-
   try {
-    const { id, role, barangay } = req.user ?? {}
+    const { id, role, barangayId } = req.user ?? {};
 
     return res.status(200).json({
       message: "Verification successful",
       user: {
-        id, 
+        id,
         role,
-        barangay,
-      }
-    })
-
+        barangayId,
+      },
+    });
   } catch (error) {
-    return res.status(500).json({ error: error.message })
+    return res.status(500).json({ error: error.message });
   }
+};
 
-}
+const logoutResident = async (req, res) => {
+  try {
+    const token = req.cookies.resident_token;
 
+    if (!token) {
+      res.clearCookie("resident_token");
+      return res.status(200).json({ message: "User already logged out" });
+    }
+
+    const decode = jwt.decode(token);
+    const expiresAt = new Date(decode.exp * 1000);
+
+    await prisma.blackListedToken.create({
+      data: {
+        token,
+        expiresAt,
+      },
+    });
+
+    res.clearCookie("resident_token");
+
+    return res.status(200).json({
+      message: "Logout succesful",
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 export {
   listBarangays,
@@ -721,4 +766,5 @@ export {
   barangayLogin,
   logoutBarangay,
   me,
+  logoutResident
 };

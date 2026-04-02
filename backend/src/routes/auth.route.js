@@ -12,6 +12,7 @@ import {
   barangayLogin,
   logoutBarangay,
   me,
+  logoutResident,
 } from "../controllers/auth.controller.js";
 import { authenticate } from '../middlewares/authMiddleware.js';
 
@@ -27,7 +28,8 @@ router.post("/forgot-password", forgotPassword);
 router.post("/verify-forgot-password-otp", verifyForgotPasswordOtp);
 router.post("/reset-password", resetPassword);
 router.post("/barangay/login", barangayLogin);
-router.post("/logout", logoutBarangay);
+router.post("/barangay/logout", logoutBarangay);
 router.get("/me", authenticate, me);
+router.post("/logout", logoutResident)
 
 export default router;
