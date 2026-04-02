@@ -711,12 +711,22 @@ const me = async (req, res) => {
   try {
     const { id, role, barangayId } = req.user ?? {};
 
+    const user = await prisma.user.findUnique({
+      where: { id },
+      include: { sitio: { select: { name: true } } },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found"})
+    }
+  
     return res.status(200).json({
       message: "Verification successful",
       user: {
         id,
         role,
-        barangayId,
+        barangayId, 
+        sitio: user.sitio
       },
     });
   } catch (error) {
@@ -766,5 +776,5 @@ export {
   barangayLogin,
   logoutBarangay,
   me,
-  logoutResident
+  logoutResident,
 };

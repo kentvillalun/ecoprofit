@@ -39,10 +39,7 @@ export default function HomePage() {
             className="bg-[#89D957] min-h-45 min-w-45 flex flex-col items-center justify-start gap-1 pt-7 rounded-full border-2 border-white shadow-gray-400 shadow-lg"
             href={"/capture"}
           >
-            <CameraIcon className="h-21 w-21 fill-white" />
-            <p className="font-medium text-sm text-white">
-              Capture Recyclables
-            </p>
+            <CameraIcon className="h-27 w-27 fill-white" />
           </Link>
         </div>
 

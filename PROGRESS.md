@@ -41,22 +41,20 @@
 - [x] Resident logout frontend — Profile page logout button calls POST /auth/logout with credentials: "include"; redirects to /login on success; Toaster for error feedback
 - [x] Capture page form submission wired to backend — onSubmit calls POST /pickup-request with credentials: "include"; sends materialType, estimatedWeight, weightUnit, notes, photoUrl (Cloudinary); shows success modal on 200; toast on error
 - [x] Barangay sidebar logout endpoint corrected — Sidebar now calls POST /auth/barangay/logout (was /auth/logout)
-- [ ] Resident logout backend — POST /auth/logout route exists; logoutResident imported in route but not yet exported from auth.controller.js
-- [ ] Pickup request backend endpoint (POST /pickup-request)
+- [x] Resident logout backend — logoutResident implemented and exported from auth.controller.js; blacklists resident_token cookie and clears it
+- [x] Pickup request backend endpoint — POST /pickup-requests route created; controller validates required fields, reads userId from JWT, writes to PickupRequests table via Prisma; mounted in server.js at /pickup-requests; protected by authenticate + requireRoles(["RESIDENT"])
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
 
 ## Current State
-Resident auth is now fully integrated end-to-end — login, cookie
-issuance, proxy route protection, and logout frontend are all wired up.
-The capture page frontend is fully built: Cloudinary upload on "Next",
-then form submission to `POST /pickup-request` with the Cloudinary URL.
+Pickup requests are now fully end-to-end. Residents can log in, capture
+a photo (uploaded to Cloudinary), fill in material details, and submit —
+the request is persisted to the database. Resident and barangay auth
+(login, cookie issuance, proxy protection, logout) are both fully
+functional.
 
-Two things remain before pickup requests work end-to-end:
-1. `logoutResident` controller function needs to be implemented and
-   exported from `auth.controller.js` (the route already imports it).
-2. `POST /pickup-request` backend endpoint needs to be created (schema
-   is already in place via the `PickupRequests` migration).
+Next focus: barangay-side pickup request management (listing, status
+updates) and the collection schedule module.
 
 ## Key Decisions Made
 - httpOnly cookies over localStorage → XSS protection
@@ -71,8 +69,10 @@ Two things remain before pickup requests work end-to-end:
 
 ## Key Files
 - backend/src/controllers/auth.controller.js
+- backend/src/controllers/pickup-request.controller.js — pickup request creation
 - backend/src/middlewares/authMiddleware.js
 - backend/src/routes/auth.route.js
+- backend/src/routes/pickup-request.route.js — POST /pickup-requests (RESIDENT only)
 - backend/src/routes/dashboard.route.js
 - backend/src/utils/generateToken.js
 - backend/prisma/schema.prisma
@@ -81,15 +81,17 @@ Two things remain before pickup requests work end-to-end:
 - frontend/src/app/(auth)/barangay/login/page.jsx — barangay login form
 - frontend/src/app/(barangay)/dashboard/page.jsx — server component with Layer 2 auth check
 - frontend/src/app/(barangay)/layout.jsx — barangay layout with DrawerContext + Toaster
+- frontend/src/app/(resident)/capture/page.jsx — Cloudinary upload + pickup request submission
+- frontend/src/app/(resident)/profile/page.jsx — resident logout
 - frontend/src/components/navigation/Sidebar.jsx — sidebar with logout handler
 
 ## Known Issues / TODO
-- `logoutResident` is imported in `auth.route.js` but not yet defined/exported from `auth.controller.js` — resident logout will crash until this is implemented
-- Resident logout should blacklist `resident_token` (same pattern as barangay logout with `BlackListedToken`)
 - BlacklistedToken cleanup job needed (periodic deletion of expired tokens using the expiresAt field)
 - Dashboard returns placeholder response, real data pending
 - Capture page "Purok / Sitio" field is unregistered — not wired into react-hook-form or sent to backend
 - Resident Layer 2 auth check (server component calling GET /auth/me) still pending
+- Barangay-side pickup request list/management UI not yet built
+- POST /pickup-requests response has a typo: "submittion" → "submission"
 
 ## Mentor Instructions
 Act as a senior dev mentor — guide me, don't just give me answers.

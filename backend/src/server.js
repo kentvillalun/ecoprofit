@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 
 import authRoute from "./routes/auth.route.js"
 import dashboardRoute from "./routes/dashboard.route.js"
+import pickupRequestRoute from "./routes/pickup-request.route.js"
 
 config();
 connectDB();
@@ -32,6 +33,7 @@ app.use(cookieParser())
 
 app.use("/auth", authRoute)
 app.use("/dashboard", dashboardRoute)
+app.use("/pickup-requests", pickupRequestRoute)
 
 
 

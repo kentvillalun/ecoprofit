@@ -23,8 +23,7 @@ export function proxy(request) {
     pathname.startsWith(residentRoutes),
   );
 
-  console.log("isResidentRoute:", isResidentRoute);
-  console.log("residentToken:", residentToken);
+
   if (isBarangayRoute && !barangayToken) {
     return NextResponse.redirect(new URL("/barangay/login", request.url));
   }

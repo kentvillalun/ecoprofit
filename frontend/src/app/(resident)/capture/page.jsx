@@ -7,20 +7,14 @@
 
 import { ResidentHeader } from "@/components/navigation/ResidentHeader";
 import { CameraIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "sonner";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Poppins } from "next/font/google";
 import { Page } from "@/components/layout/Page";
 import { API_BASE_URL } from "@/lib/config";
-
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
+import { useRouter } from "next/navigation";
 
 const schema = yup.object().shape({
   materialType: yup
@@ -46,7 +40,11 @@ export default function CapturePage() {
   const [isSubmit, setIsSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [cloudinaryUrl, setCloudinaryUrl] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sitioLoading, setSitioLoading] = useState(false);
+  const [sitio, setSitio] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter()
 
   const openCamera = () => {
     fileInputRef.current.click();
@@ -105,6 +103,7 @@ export default function CapturePage() {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -117,37 +116,73 @@ export default function CapturePage() {
 
   const onSubmit = async (data) => {
     try {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
 
-      const response = await fetch(`${API_BASE_URL}/pickup-request`, {
+      const response = await fetch(`${API_BASE_URL}/pickup-requests`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({...data, photoUrl: cloudinaryUrl}),
-        credentials: "include"
-      })
+        body: JSON.stringify({ ...data, photoUrl: cloudinaryUrl }),
+        credentials: "include",
+      });
 
       if (!response.ok) {
-        toast.error("There is a problem submitting request")
+        toast.error("There is a problem submitting request");
       }
-      setIsSubmit(true)
+
+      if (response.ok) {
+        reset();
+        setCapturedImageUrl(null);
+        setCloudinaryUrl(null);
+        setImageFile(null);
+        setIsFormVisible(false);
+        setIsSubmit(true);
+      }
     } catch (error) {
-        toast.error("There is a problem submitting request")
+      toast.error("There is a problem submitting request");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
+
+  useEffect(() => {
+    const fetchdata = async () => {
+      setSitioLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/me`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) throw new Error("Network response was not ok");
+        const result = await response.json();
+        setSitio(result.user.sitio?.name);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setSitioLoading(false);
+      }
+    };
+
+    fetchdata();
+  }, []);
 
   return (
     <Page>
-      <Toaster />
+      <Toaster position="top-center" />
       <ResidentHeader title={"Capture Recyclables"} />
 
       {isSubmit && (
         <section
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-100"
-          onClick={() => setIsSubmit(false)}
+          onClick={() => {
+            setIsSubmit(false)
+            router.push("/home")
+          }}
         >
           <div className="bg-white shadow-lg p-4 rounded-lg flex flex-col gap-4 items-center justify-center">
             <div className="flex flex-col items-center justify-center py-4">
@@ -239,31 +274,37 @@ export default function CapturePage() {
         </div>
 
         {isFormVisible && (
-          <form className="flex flex-col gap-8" id="form" onSubmit={handleSubmit(onSubmit)}>
+          <form
+            className="flex flex-col gap-8"
+            id="form"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-1">
                 <label className="font-medium text-sm text-[#727272] px-2">
                   Type of material
                 </label>
-                <select
-                  className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
-                  {...register("materialType")}
-                >
-                  <option value="" disabled hidden>
-                    Choose an option
-                  </option>
-                  <option value="METALS" className="">
-                    Metals
-                  </option>
-                  <option value="PAPERS">Papers</option>
-                  <option value="BOTTLES">Bottles</option>
-                  <option value="PLASTICS">Plastics</option>
-                </select>
-                {errors.materialType && (
-                  <p className="text-[14px] text-red-500 text-center md:text-start">
-                    {errors.materialType?.message}
-                  </p>
-                )}
+                <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors">
+                  <select
+                    className="w-full outline-none"
+                    {...register("materialType")}
+                  >
+                    <option value="" disabled hidden>
+                      Choose an option
+                    </option>
+                    <option value="METALS" className="">
+                      Metals
+                    </option>
+                    <option value="PAPERS">Papers</option>
+                    <option value="BOTTLES">Bottles</option>
+                    <option value="PLASTICS">Plastics</option>
+                  </select>
+                  {errors.materialType && (
+                    <p className="text-[14px] text-red-500 text-center md:text-start">
+                      {errors.materialType?.message}
+                    </p>
+                  )}
+                </div>
               </div>
 
               <div className="flex flex-col gap-1">
@@ -271,17 +312,25 @@ export default function CapturePage() {
                   Estimated weight
                 </label>
                 <div className="outline-1 py-2.5 pl-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors flex items-center justify-between">
-                  <input
-                    type="number"
-                    className="outline-none w-full"
-                    placeholder="e.g. 1kg"
-                    {...register("estimatedWeight")}
-                  />
-                  <select className="outline-none" {...register("weightUnit")}>
-                    <option value="KG">kg</option>
-                    <option value="GRAMS">grams</option>
-                    <option value="LBS">lbs</option>
-                  </select>
+                  <div className="flex flex-row justify-center items-center w-full pr-4">
+                    <input
+                      type="number"
+                      className="outline-none w-full"
+                      placeholder="e.g. 1"
+                      {...register("estimatedWeight")}
+                    />
+                    <select
+                      className="outline-none"
+                      {...register("weightUnit")}
+                    >
+                      <option value="" hidden disabled>
+                        kg
+                      </option>
+                      <option value="KG">kg</option>
+                      <option value="GRAMS">grams</option>
+                      <option value="LBS">lbs</option>
+                    </select>
+                  </div>
                 </div>
                 {errors.estimatedWeight && (
                   <p className="text-[14px] text-red-500 text-center md:text-start">
@@ -300,8 +349,10 @@ export default function CapturePage() {
                   Purok / Sitio
                 </label>
                 <input
+                  value={sitio ?? "Loading..."}
+                  disabled
                   type="text"
-                  className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
+                  className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors disabled:bg-gray-100"
                   placeholder="e.g. Sitio 1"
                 />
               </div>
