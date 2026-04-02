@@ -12,9 +12,7 @@ ECOPROFIT is a barangay waste management system that allows residents to contrib
 ecoprofit/
 ├── frontend/   Next.js app (resident and barangay web UI)
 ├── backend/    Node.js + Express API
-├── docs/       System documentation and business rules
-├── AGENTS.md   AI assistant instructions
-└── CLAUDE.md   Claude Code instructions
+└── docs/       System documentation and business rules
 ```
 
 ---
