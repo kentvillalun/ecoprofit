@@ -85,6 +85,7 @@ export default function LoginPage() {
     }
     console.log("role check passed, redirecting...")
     router.push("/home");
+    router.refresh()
   };
 
   return (
