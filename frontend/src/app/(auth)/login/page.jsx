@@ -84,7 +84,7 @@ export default function LoginPage() {
       );
     }
     console.log("role check passed, redirecting...")
-    window.location.href = "/home"
+    router.push("/home");
   };
 
   return (
