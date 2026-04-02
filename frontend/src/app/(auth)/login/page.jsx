@@ -4,7 +4,6 @@ import { Poppins } from "next/font/google";
 import { PhoneIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -25,8 +24,6 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const router = useRouter();
-
   const {
     register,
     handleSubmit,
@@ -66,7 +63,6 @@ export default function LoginPage() {
     });
 
     const result = await response.json();
-    console.log("login result:", result);
     if (!response.ok) {
       setSubmitError(result.error || "Login failed");
       return;
@@ -77,15 +73,11 @@ export default function LoginPage() {
       return;
     }
 
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(
-        "ecoprofitResidentSession",
-        JSON.stringify(result.data)
-      );
-    }
-    console.log("role check passed, redirecting...")
-    router.push("/home");
-    router.refresh()
+    window.localStorage.setItem(
+      "ecoprofitResidentSession",
+      JSON.stringify(result.data)
+    );
+    window.location.href = "/home";
   };
 
   return (
