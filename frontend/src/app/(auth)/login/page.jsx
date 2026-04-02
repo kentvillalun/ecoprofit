@@ -66,7 +66,7 @@ export default function LoginPage() {
     });
 
     const result = await response.json();
-
+    console.log("login result:", result);
     if (!response.ok) {
       setSubmitError(result.error || "Login failed");
       return;
