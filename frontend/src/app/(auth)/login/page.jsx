@@ -83,7 +83,7 @@ export default function LoginPage() {
         JSON.stringify(result.data)
       );
     }
-
+    console.log("role check passed, redirecting...")
     router.push("/home");
   };
 
