@@ -19,7 +19,7 @@ const app = express();
 
 // API routes
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true, // keep this only if you use cookies/sessions
@@ -38,7 +38,7 @@ app.use("/pickup-requests", pickupRequestRoute)
 
 
 
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 const server = app.listen(PORT, () => {
     console.log("Server running on " + PORT)
 })
