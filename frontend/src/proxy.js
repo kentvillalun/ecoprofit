@@ -14,6 +14,7 @@ export function proxy(request) {
     "/home",
     "/profile",
     "/requests",
+    "/",
   ];
 
   const isBarangayRoute = barangayRoutes.some((barangayRoutes) =>
