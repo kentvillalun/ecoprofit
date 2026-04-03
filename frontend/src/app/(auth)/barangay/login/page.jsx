@@ -156,7 +156,7 @@ export default function BarangayLoginPage() {
 
               <div className="flex flex-col gap-1 justify-center items-center">
                 <button
-                  className="bg-primary text-white text-center font-medium py-3.75 px-24 rounded-[40px] max-w-63.75 text-nowrap"
+                  className="bg-primary text-white font-medium py-3.75 px-24 rounded-[40px] max-w-63.75 text-nowrap text-center"
                   type="submit"
                   disabled={isLoading}
                 >

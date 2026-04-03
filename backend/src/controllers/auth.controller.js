@@ -658,7 +658,7 @@ const barangayLogin = async (req, res) => {
 
     res.cookie("barangay_token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production" ? "none" : "lax",
       sameSite: "none",
       maxAge: 604800000,
     });

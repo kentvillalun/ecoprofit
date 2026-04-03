@@ -47,6 +47,8 @@
 - [x] Frontend API proxy — `next.config.mjs` rewrites `/api/:path*` to backend; env-based URL switches between localhost:5001 (dev) and Railway URL (prod); `allowedDevOrigins` set for LAN dev
 - [x] Proxy middleware matcher hardened — explicit `matcher` array added to `proxy.js` covering all barangay + resident routes; `"/"` included as resident-guarded root
 - [x] Onboarding step text updated — steps 2, 3, and 4 rewritten to accurately reflect the redemption/rewards model and pickup request lifecycle; removed inaccurate "weighed and paid" framing
+- [x] `<img>` → Next.js `<Image>` — signup and onboarding pages now use `next/image` for optimized image loading
+- [x] Capture page upload toast — loading toast shown while Cloudinary upload is in flight; dismissed and replaced with success toast on completion; error toast on failure
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
 
@@ -110,3 +112,5 @@ I've tried, flag shortcuts that hurt my learning. I'm a 3rd year
 BS IT student focused on becoming a full stack developer. My main 
 concern is AI over-reliance — make sure I actually understand what 
 I'm building.
+
+<!-- Read PROGRESS.md for context, then update it to reflect recent changes. -->
