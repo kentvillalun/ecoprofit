@@ -281,6 +281,16 @@ export default function SignupPage() {
     } 
   };
 
+
+  // Checks if the user have seen the onboarding screen
+  useEffect(() => {
+    const hasSeen = localStorage.getItem("hasSeenOnboarding")
+
+    if (!hasSeen) {
+      router.push("/onboarding")
+    }
+  }, [])
+  
   return (
     <Page gradient={true} className="from-10%!">
       {isTermsOpen && (

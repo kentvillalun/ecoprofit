@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -54,7 +55,7 @@ export default function OnboardingPage() {
           <div className="flex flex-col justify-between min-h-svh w-full max-w-md p-4 pt-12 pb-10 overflow-x-hidden">
             <div className="flex flex-col items-center w-full max-w-md p-2 justify-center ">
               <div className="max-w-108 relative w-full aspect-square">
-                <img src="/onboarding/step1.svg" alt="Step 1" />
+                <Image src={"/onboarding/step1.svg"} alt="Step 1" fill priority/>
               </div>
               <h3 className="text-[22px] max-w-88.75 text-center mb-6.25 font-medium">
                 Recyclables Go to Waste Without a Clear System
@@ -97,7 +98,7 @@ export default function OnboardingPage() {
           <div className="flex flex-col justify-between min-h-svh w-full max-w-md p-4 pt-12 pb-10 overflow-x-hidden">
             <div className="flex flex-col items-center w-full max-w-md p-2 justify-center ">
               <div className="max-w-108 relative w-full aspect-square">
-                <img src="../onboarding/step2.svg" alt="Step 2" />
+                <Image src={"/onboarding/step2.svg"} alt="Step 2" fill priority/>
               </div>
               <h3 className="font-medium text-[22px] max-w-86 text-center mb-6.25">
                 EcoProfit Turns Your Recyclables into Real Rewards
@@ -144,7 +145,7 @@ export default function OnboardingPage() {
           <div className="flex flex-col justify-between min-h-svh w-full max-w-md p-4 pt-12 pb-10 font-poppins overflow-x-hidden">
             <div className="flex flex-col items-center w-full max-w-md p-2 justify-center ">
               <div className="max-w-108 relative w-full aspect-square">
-                <img src="/onboarding/step3.svg" alt="Step 3" />
+                <Image src={"/onboarding/step3.svg"} alt="Step 3" fill priority/>
               </div>
               <h3 className="font-poppins font-medium text-[22px] max-w-86 text-center mb-6.25">
                 How EcoProfit Works
