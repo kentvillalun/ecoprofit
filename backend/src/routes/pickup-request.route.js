@@ -6,7 +6,8 @@ const router = express.Router()
 
 
 router.post("/", authenticate, requireRoles(["RESIDENT"]), pickupRequest)
-
+router.get("/collection-requests", authenticate, requireRoles(["CAPTAIN", "SECRETARY", "COLLECTOR"], listRequests))
+router.patch("/collection-requests/:id", authenticate, requireRoles(["CAPTAIN", "SECRETARY", "COLLECTOR"], requestStatus))
 
 
 export default router;

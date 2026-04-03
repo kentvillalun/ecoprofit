@@ -12,7 +12,7 @@ import {
   ArrowsRightLeftIcon as CollectionSortingIcon,
   GiftIcon as RedemptionProgramIcon,
   ClipboardDocumentCheckIcon as RewardsIcon,
-  WalletIcon as ProgramFundsIcon
+  WalletIcon as ProgramFundsIcon,
 } from "@heroicons/react/24/solid";
 import { useContext, useState } from "react";
 import { DrawerContext } from "@/app/(barangay)/layout.jsx";
@@ -94,7 +94,6 @@ export const Sidebar = () => {
   ];
 
   const handleLogout = async () => {
-
     try {
       const response = await fetch(`${API_BASE_URL}/auth/barangay/logout`, {
         method: "POST",
@@ -102,22 +101,22 @@ export const Sidebar = () => {
           "Content-Type": "application/json",
         },
         credentials: "include",
-      })
+      });
 
       if (!response.ok) {
-        toast.error("Logout failed")
+        toast.error("Logout failed");
         return;
       }
 
-      router.push("/barangay/login")
+      router.push("/barangay/login");
     } catch (error) {
-      toast.error("Logout failed")
+      toast.error("Logout failed");
     }
-  }
+  };
 
   return (
     <aside
-      className={`w-72 h-screen flex flex-col justify-between bg-[#74C857] fixed top-0 text-white left-0 z-10 md:shadow-xl ${poppins.className} overflow-y-auto sidebar`}
+      className={`w-72 h-svh flex flex-col justify-between bg-[#74C857] fixed top-0 text-white left-0 z-10 md:shadow-xl ${poppins.className} overflow-y-auto sidebar`}
     >
       <div className="p-4 flex flex-col gap-4 lg:gap-9">
         <div className="flex flex-row justify-between items-center">
@@ -148,17 +147,16 @@ export const Sidebar = () => {
             </Link>
           ))}
         </div>
-
-        
       </div>
-      <button className="pl-6 p-4 mb-15" onClick={handleLogout} >
-          <div className="flex flex-row gap-3 hover:cursor-pointer p-2 rounded-lg hover:bg-primary transition-all ease-in-out">
-            <LogoutIcon className="h-6 w-6 md:block hidden hover:cursor-pointer" />
-            <label className="font-medium text-md hover:cursor-pointer">
-              Logout
-            </label>
-          </div>
-        </button>
+      <button className="pl-6 p-4 mb-15" onClick={handleLogout}>
+        <div className="flex flex-row gap-3 hover:cursor-pointer p-2 rounded-lg hover:bg-primary transition-all ease-in-out">
+          <LogoutIcon className="h-6 w-6 md:block hidden hover:cursor-pointer" />
+          <label className="font-medium text-md hover:cursor-pointer">
+            Logout
+          </label>
+        </div>
+      </button>
+      <div className=""></div>
     </aside>
   );
 };

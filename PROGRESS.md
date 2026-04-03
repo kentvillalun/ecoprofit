@@ -112,5 +112,3 @@ I've tried, flag shortcuts that hurt my learning. I'm a 3rd year
 BS IT student focused on becoming a full stack developer. My main 
 concern is AI over-reliance — make sure I actually understand what 
 I'm building.
-
-<!-- Read PROGRESS.md for context, then update it to reflect recent changes. -->

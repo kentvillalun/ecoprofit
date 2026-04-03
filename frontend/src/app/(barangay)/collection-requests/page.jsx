@@ -69,7 +69,7 @@ export default function CollectionRequests() {
           }
         />
         <SearchInput />
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 scrollbar">
           <StatusChip
             STATUS_TABS={STATUS_TABS}
             currentTab={currentTab}
