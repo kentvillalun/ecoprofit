@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -11,6 +12,15 @@ const poppins = Poppins({
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
+  const router = useRouter();
+
+  useEffect(() => {
+    const hasSeen = localStorage.getItem("hasSeenOnboarding");
+
+    if (hasSeen) {
+      router.push("/login");
+    }
+  }, []);
 
   return (
     <main
@@ -23,7 +33,6 @@ export default function OnboardingPage() {
               <img
                 src="../onboarding/Ecoprofit logo.svg"
                 alt="EcoProfit Logo"
-                
               />
             </div>
             <div className="">
@@ -48,16 +57,20 @@ export default function OnboardingPage() {
                 <img src="/onboarding/step1.svg" alt="Step 1" />
               </div>
               <h3 className="text-[22px] max-w-88.75 text-center mb-6.25 font-medium">
-                Too Much Waste, Not Enough Proper Segregation
+                Recyclables Go to Waste Without a Clear System
               </h3>
               <p className="text-[14px] text-center">
-                Households want to recycle, but barangays struggle to organize
-                collection and track recyclables properly.
+                Many households want to help, but without a proper way to
+                collect and track recyclables, usable materials end up in the
+                trash instead of benefiting the community.
               </p>
             </div>
             <div className="">
               <div className="flex justify-between p-6 text-[14px]">
-                <Link className="font-medium" href="/login">
+                <Link className="font-medium" href="/login" onClick={() => {
+                  localStorage.setItem("hasSeenOnboarding", "true");
+                  document.cookie = "hasSeenOnboarding=true; path=/"
+                }}>
                   Skip
                 </Link>
                 <button
@@ -87,16 +100,24 @@ export default function OnboardingPage() {
                 <img src="../onboarding/step2.svg" alt="Step 2" />
               </div>
               <h3 className="font-medium text-[22px] max-w-86 text-center mb-6.25">
-                EcoProfit Makes Community Recycling Simple
+                EcoProfit Turns Your Recyclables into Real Rewards
               </h3>
               <p className="text-[14px] text-center">
-                Sell your recyclables directly to the barangay. Barangay
-                collects, weighs, pays, and tracks everything transparently.
+                Contribute your recyclables to your barangay and earn rewards
+                in return — like goods, medicine, or services — all recorded
+                and managed transparently.
               </p>
             </div>
             <div className="">
               <div className="flex justify-between p-6 text-[14px]">
-                <Link className="font-medium" href="/login">
+                <Link
+                  className="font-medium"
+                  href="/login"
+                  onClick={() => {
+                    localStorage.setItem("hasSeenOnboarding", "true");
+                    document.cookie = "hasSeenOnboarding=true; path=/"
+                  }}
+                >
                   Skip
                 </Link>
                 <button
@@ -129,18 +150,32 @@ export default function OnboardingPage() {
                 How EcoProfit Works
               </h3>
               <p className="text-[14px] text-center">
-                Snap a photo of your recyclables, wait for barangay approval,
-                get weighed and paid during pickup, and support a cleaner, more
-                sustainable community.
+                Submit a pickup request through the app, wait for barangay
+                approval, have your recyclables collected and sorted, then earn
+                rewards through your barangay's redemption program.
               </p>
             </div>
             <div className="">
               <div className="flex justify-between p-6 text-[14px]">
-                <Link className="font-medium" href="/login">
+                <Link
+                  className="font-medium"
+                  href="/login"
+                  onClick={() => {
+                    localStorage.setItem("hasSeenOnboarding", "true");
+                    document.cookie = "hasSeenOnboarding=true; path=/"
+                  }}
+                >
                   Skip
                 </Link>
 
-                <Link className="font-medium" href="/login">
+                <Link
+                  className="font-medium"
+                  href="/login"
+                  onClick={() => {
+                    localStorage.setItem("hasSeenOnboarding", "true");
+                    document.cookie = "hasSeenOnboarding=true; path=/"
+                  }}
+                >
                   Next
                 </Link>
               </div>

@@ -43,15 +43,19 @@
 - [x] Barangay sidebar logout endpoint corrected — Sidebar now calls POST /auth/barangay/logout (was /auth/logout)
 - [x] Resident logout backend — logoutResident implemented and exported from auth.controller.js; blacklists resident_token cookie and clears it
 - [x] Pickup request backend endpoint — POST /pickup-requests route created; controller validates required fields, reads userId from JWT, writes to PickupRequests table via Prisma; mounted in server.js at /pickup-requests; protected by authenticate + requireRoles(["RESIDENT"])
+- [x] Deployment — backend deployed to Railway; `backend/package.json` postinstall runs `prisma generate`; CORS origin via `CORS_ORIGIN` env var; cookie `sameSite: "none"` for cross-origin production auth
+- [x] Frontend API proxy — `next.config.mjs` rewrites `/api/:path*` to backend; env-based URL switches between localhost:5001 (dev) and Railway URL (prod); `allowedDevOrigins` set for LAN dev
+- [x] Proxy middleware matcher hardened — explicit `matcher` array added to `proxy.js` covering all barangay + resident routes; `"/"` included as resident-guarded root
+- [x] Onboarding step text updated — steps 2, 3, and 4 rewritten to accurately reflect the redemption/rewards model and pickup request lifecycle; removed inaccurate "weighed and paid" framing
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
 
 ## Current State
-Pickup requests are now fully end-to-end. Residents can log in, capture
-a photo (uploaded to Cloudinary), fill in material details, and submit —
-the request is persisted to the database. Resident and barangay auth
-(login, cookie issuance, proxy protection, logout) are both fully
-functional.
+App is deployed. Backend runs on Railway (`ecoprofit-production.up.railway.app`).
+Frontend proxies `/api/*` to the backend via `next.config.mjs` rewrites, switching
+between localhost and Railway based on `NODE_ENV`. CORS origin is now env-var
+controlled (`CORS_ORIGIN`). Cookies use `sameSite: "none"` so they work across
+origins in production. Pickup requests are fully end-to-end in both dev and prod.
 
 Next focus: barangay-side pickup request management (listing, status
 updates) and the collection schedule module.
@@ -66,6 +70,10 @@ updates) and the collection schedule module.
 - CORS credentials: true → required for cookie based auth
 - sonner added for toast notifications in barangay layout → consistent error UX without inline state
 - resident_token cookie mirrors barangay_token pattern → same authenticate middleware handles both; proxy distinguishes by cookie name
+- sameSite: "none" in production → required for cookies to cross the frontend/backend origin boundary on Railway
+- CORS_ORIGIN env var → avoids hardcoding the deployed frontend URL in server.js
+- next.config.mjs rewrites → frontend calls /api/* locally; Next.js proxies to backend; no CORS preflight from the browser in prod
+- postinstall: prisma generate in backend/package.json → Railway runs it automatically after npm install so the Prisma client is always fresh
 
 ## Key Files
 - backend/src/controllers/auth.controller.js
@@ -76,7 +84,9 @@ updates) and the collection schedule module.
 - backend/src/routes/dashboard.route.js
 - backend/src/utils/generateToken.js
 - backend/prisma/schema.prisma
-- frontend/src/proxy.js — Next.js middleware (Layer 1 route protection)
+- backend/package.json — postinstall: prisma generate (required for Railway deploy)
+- frontend/next.config.mjs — /api/* rewrites; env-based backend URL; allowedDevOrigins
+- frontend/src/proxy.js — Next.js middleware (Layer 1 route protection) with explicit matcher
 - frontend/src/lib/config.js — shared API_BASE_URL constant
 - frontend/src/app/(auth)/barangay/login/page.jsx — barangay login form
 - frontend/src/app/(barangay)/dashboard/page.jsx — server component with Layer 2 auth check
@@ -100,5 +110,3 @@ I've tried, flag shortcuts that hurt my learning. I'm a 3rd year
 BS IT student focused on becoming a full stack developer. My main 
 concern is AI over-reliance — make sure I actually understand what 
 I'm building.
-
-<!-- Read PROGRESS.md for context, then update it to reflect recent changes. -->

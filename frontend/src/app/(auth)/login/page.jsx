@@ -88,6 +88,16 @@ export default function LoginPage() {
    
   };
 
+
+  // Checks if the user have seen the onboarding screen
+  useEffect(() => {
+    const hasSeen = localStorage.getItem("hasSeenOnboarding")
+
+    if (!hasSeen) {
+      router.push("/onboarding")
+    }
+  }, [])
+
   return (
     <Page gradient={true}>
       <div
