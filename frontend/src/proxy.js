@@ -14,14 +14,14 @@ export function proxy(request) {
     "/home",
     "/profile",
     "/requests",
-    
+    "/",
   ];
 
   const isBarangayRoute = barangayRoutes.some((barangayRoutes) =>
     pathname.startsWith(barangayRoutes),
   );
 
-  const isResidentRoute = residentRoutes.some((residentRoutes) => pathname.startsWith(residentRoutes),
+  const isResidentRoute = residentRoutes.some((residentRoutes) => pathname === residentRoutes || pathname.startsWith(residentRoutes + "/"),
   );
 
 
@@ -37,6 +37,7 @@ export function proxy(request) {
 }
 export const config = {
   matcher: [
+    "/",
     "/dashboard/:path*",
     "/collection-requests/:path*",
     "/announcements/:path*",
