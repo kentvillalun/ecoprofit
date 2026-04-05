@@ -7,29 +7,33 @@ const poppins = Poppins({
 
 // pending || approved || in_progress || collected || rejected 
 export const Pill = ({ type }) => {
+
+
+
+
   const styles = {
-    requested: "bg-[#FCD50A25] text-[#EEB90E]",
-    approved: "bg-[#1D9BF017] text-[#1D9BF0]",
-    in_progress: "bg-[#FFF4D6] text-[#C88A00]",
-    rejected: "bg-[#FFE4E4] text-[#E54848]",
-    collected: "bg-[#89D95720] text-[#74C857]",
-    "not-scheduled": "bg-gray-200 text-gray-700",
-    scheduled: "bg-blue-100 text-blue-700",
+    REQUESTED: "bg-[#FCD50A25] text-[#EEB90E]",
+    APPROVED: "bg-[#1D9BF017] text-[#1D9BF0]",
+    IN_PROGRESS: "bg-[#FFF4D6] text-[#C88A00]",
+    REJECTED: "bg-[#FFE4E4] text-[#E54848]",
+    COLLECTED: "bg-[#89D95720] text-[#74C857]",
+    NOT_SCHEDULED: "bg-gray-200 text-gray-700",
+    SCHEDULED: "bg-blue-100 text-blue-700",
   };
 
   const labels = {
-    requested: "Pending",
-    approved: "Approved",
-    in_progress: "In Progress",
-    rejected: "Rejected",
-    collected: "Collected",
-    "not-scheduled": "Not Scheduled",
-    scheduled: "Scheduled",
+    REQUESTED : "Pending",
+    APPROVED: "Approved",
+    IN_PROGRESS: "In Progress",
+    REJECTED: "Rejected",
+    COLLECTED: "Collected",
+    NOT_SCHEDULED: "Not Scheduled",
+    SCHEDULED: "Scheduled",
   };
 
   return (
     <div
-      className={`py-1.5 px-4 text-xs rounded-3xl font-medium w-30 text-center capitalize ${
+      className={`py-1 px-4 text-xs rounded-3xl font-medium w-30 text-center ${poppins.className} capitalize ${
         styles[type] || "bg-gray-200 text-gray-700"
       }`}
     >

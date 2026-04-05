@@ -33,7 +33,7 @@ export const TermsModal = ({ setIsTermsOpen }) => {
           </div>
         </div>
 
-        <div className="text-gray-600 text-[14px] max-h-[60%] overflow-y-auto">
+        <div className="text-gray-600 text-[14px] max-h-[60%] overflow-y-auto scrollbar">
           <div className="p-5 flex flex-col gap-5 ">
             <p className="">
               Welcome to EcoProfit, a barangay-based recycling management system

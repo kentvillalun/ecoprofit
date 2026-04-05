@@ -49,6 +49,19 @@
 - [x] Onboarding step text updated — steps 2, 3, and 4 rewritten to accurately reflect the redemption/rewards model and pickup request lifecycle; removed inaccurate "weighed and paid" framing
 - [x] `<img>` → Next.js `<Image>` — signup and onboarding pages now use `next/image` for optimized image loading
 - [x] Capture page upload toast — loading toast shown while Cloudinary upload is in flight; dismissed and replaced with success toast on completion; error toast on failure
+- [x] Barangay login bug fix — corrected redirect/token handling in auth.controller.js and barangay/login/page.jsx; simplified dashboard/page.jsx (removed redundant auth logic)
+- [x] `useFetch` custom hook — `frontend/src/hooks/useFetch.js` wraps GET requests with `isLoading`, `isError`, `data`, `error` state; accepts `refetchCount` to re-trigger fetches; uses `credentials: "include"` automatically
+- [x] `useUpdate` custom hook — `frontend/src/hooks/useUpdate.js` wraps PATCH requests; exposes `updateStatus({ id, status })` function with loading/error state
+- [x] Collection requests management UI (barangay side) — tabbed page at `/collection-requests` with Pending / Approved / In Progress / Collected / Rejected tabs; `RequestCard` (mobile) and `RequestTable` (desktop) components; batch "Create Batch Collection" action for approved requests
+- [x] Pickup request backend endpoints live — `GET /pickup-requests/collection-requests` and `PATCH /pickup-requests/collection-requests/:id` uncommented and active; protected by `authenticate + requireRoles(["CAPTAIN","SECRETARY","COLLECTOR"])`
+- [x] Collection requests UI wired to real backend — `useFetch` replaces mock data; `handleRefetchCount` increments `refetchCount` to trigger re-fetch after mutations
+- [x] Approve action wired end-to-end — `PendingActions` calls `useUpdate.updateStatus({ id, status: "APPROVED" })` then `handleRefetchCount()`; table refreshes automatically
+- [x] Decline modal UI built — `Modal` component at `frontend/src/components/ui/Modal.jsx` with rejection reason textarea, Cancel/Decline buttons; not yet wired to `updateStatus`
+- [ ] Make Modal reusable with React Portal (render outside DOM tree to avoid stacking context issues)
+- [ ] Wire Decline modal: pass `id` + `handleRefetchCount` into Modal; on submit call `updateStatus({ id, status: "REJECTED", rejectionReason })` then close modal and refetch
+- [ ] View Details full page — `/collection-requests/[id]` showing full request info
+- [ ] actualWeight input UI for COLLECTED action
+- [ ] Collection schedule module
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
 
@@ -59,8 +72,12 @@ between localhost and Railway based on `NODE_ENV`. CORS origin is now env-var
 controlled (`CORS_ORIGIN`). Cookies use `sameSite: "none"` so they work across
 origins in production. Pickup requests are fully end-to-end in both dev and prod.
 
-Next focus: barangay-side pickup request management (listing, status
-updates) and the collection schedule module.
+The barangay-side collection requests management is now wired end-to-end: the list
+fetches from the real backend via `useFetch`, and the Approve action updates status
+and refetches via `useUpdate` + `handleRefetchCount`. The Decline modal UI is built
+but not yet wired — the next step is making Modal reusable with a React Portal, then
+wiring the rejection reason to `updateStatus`, and finally building the
+`/collection-requests/[id]` view details page.
 
 ## Key Decisions Made
 - httpOnly cookies over localStorage → XSS protection
@@ -93,6 +110,9 @@ updates) and the collection schedule module.
 - frontend/src/app/(auth)/barangay/login/page.jsx — barangay login form
 - frontend/src/app/(barangay)/dashboard/page.jsx — server component with Layer 2 auth check
 - frontend/src/app/(barangay)/layout.jsx — barangay layout with DrawerContext + Toaster
+- frontend/src/hooks/useFetch.js — reusable GET fetch hook; refetchCount dep triggers re-fetch
+- frontend/src/hooks/useUpdate.js — PATCH hook exposing updateStatus({ id, status, rejectionReason? })
+- frontend/src/app/(barangay)/collection-requests/page.jsx — tabbed collection requests management UI
 - frontend/src/app/(resident)/capture/page.jsx — Cloudinary upload + pickup request submission
 - frontend/src/app/(resident)/profile/page.jsx — resident logout
 - frontend/src/components/navigation/Sidebar.jsx — sidebar with logout handler
@@ -102,7 +122,8 @@ updates) and the collection schedule module.
 - Dashboard returns placeholder response, real data pending
 - Capture page "Purok / Sitio" field is unregistered — not wired into react-hook-form or sent to backend
 - Resident Layer 2 auth check (server component calling GET /auth/me) still pending
-- Barangay-side pickup request list/management UI not yet built
+- Decline modal not yet wired — clicking "Decline" calls `updateStatus` without a rejectionReason; backend rejects this with 400
+- Modal component always renders (no `isOpen` guard) — needs Portal + open/close state before it's usable
 - POST /pickup-requests response has a typo: "submittion" → "submission"
 
 ## Mentor Instructions

@@ -1,10 +1,8 @@
 "use client";
 
-
-import { API_BASE_URL } from "@/lib/config";
 import { useState, useEffect } from "react";
 
-export const useFetch = ({ url }) => {
+export const useFetch = ({ url, refetchCount }) => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
     const [isError, setIsError] = useState(false)
@@ -15,8 +13,8 @@ export const useFetch = ({ url }) => {
         const fetchData = async () => {
             try {
                 setIsLoading(true)
-
-                const response = await fetch(`${API_BASE_URL}/${url}`, {
+               
+                const response = await fetch(url, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -43,7 +41,7 @@ export const useFetch = ({ url }) => {
         }
 
         fetchData()
-    }, [url])
+    }, [url, refetchCount])
 
 
     return {isLoading, isError, data, error}

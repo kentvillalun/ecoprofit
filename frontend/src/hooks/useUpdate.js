@@ -1,0 +1,41 @@
+"use client"
+
+import { useState } from "react"
+
+export const useUpdate = () => {
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState("")
+    const [isError, setIsError] = useState(false)
+    const [data, setData] = useState(null)
+
+    const updateStatus = async ({id, status}) => {
+        try {
+            setIsLoading(true)
+
+            const response = await fetch(`/api/pickup-requests/collection-requests/${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({status}),
+                credentials: "include"
+            })
+
+            const result = await response.json()
+
+            if (!response.ok) {
+                setIsError(true)
+                setError("There is a problem fetching data")
+                return
+            }
+            
+            setIsLoading(false)
+            setData(result)
+        } catch (error) {
+            setIsError(true)
+            setError("Fetch failed")
+        }
+    }
+
+    return { data, isLoading, error, isError, updateStatus}
+}

@@ -9,8 +9,10 @@ import { SearchInput } from "@/components/ui/SearchInput";
 import { StatusChip } from "@/components/ui/StatusChip";
 import { useState } from "react";
 import { Inter } from "next/font/google";
-import { mockRequests } from "./mockRequests";
 import { RequestTable } from "@/components/requests/RequestTable";
+import { useFetch } from "@/hooks/useFetch.js";
+import { Modal } from "@/components/ui/Modal";
+
 
 const inter = Inter({
   subsets: ["latin"],
@@ -18,46 +20,58 @@ const inter = Inter({
 });
 
 export default function CollectionRequests() {
-  const [currentTab, setCurrentTab] = useState("requested");
-  const [requests, setRequests] = useState(mockRequests);
+  const [refetchCount, setRefetchCount] = useState(1)
+  const url = `/api/pickup-requests/collection-requests`;
+  const { isLoading, isError, error, data } = useFetch({ url, refetchCount });
+  const [currentTab, setCurrentTab] = useState("REQUESTED");
+
   const [selectedApprovedRequests, setSelectedApprovedRequests] = useState([]);
+  if (isLoading) return <p className="md:pl-77">Loading....</p>
+  if (isError) return <p className="md:pl-77">{error}</p>
 
   const handleApprovedRequestSelect = (requestId) => {
     setSelectedApprovedRequests((currentSelected) =>
       currentSelected.includes(requestId)
         ? currentSelected.filter((id) => id !== requestId)
-        : [...currentSelected, requestId]
+        : [...currentSelected, requestId],
     );
   };
+
+  // setter function for fecth count
+  const handleRefetchCount = () => setRefetchCount(prev => prev + 1)
+ 
 
   const handleBatchCollection = () => {
     if (selectedApprovedRequests.length === 0) return;
 
-    setRequests((currentRequests) =>
-      currentRequests.map((request) =>
-        selectedApprovedRequests.includes(request.id)
-          ? { ...request, status: "in_progress" }
-          : request
-      )
+    data.map((request) =>
+      selectedApprovedRequests.includes(request.id)
+        ? { ...request, status: "IN_PROGRESS" }
+        : request,
     );
+
     setSelectedApprovedRequests([]);
   };
 
   const STATUS_TABS = [
-    { key: "requested", label: "Pending" },
-    { key: "approved", label: "Approved" },
-    { key: "in_progress", label: "In Progress" },
-    { key: "collected", label: "Collected" },
-    { key: "rejected", label: "Rejected" },
+    { key: "REQUESTED", label: "Pending" },
+    { key: "APPROVED", label: "Approved" },
+    { key: "IN_PROGRESS", label: "In Progress" },
+    { key: "COLLECTED", label: "Collected" },
+    { key: "REJECTED", label: "Rejected" },
   ];
 
   const titles = {
-    requested: "Pending Requests",
-    approved: "Approved Requests",
-    in_progress: "In Progress Requests",
-    collected: "Collected Requests",
-    rejected: "Rejected Requests",
+    REQUESTED: "Pending Requests",
+    APPROVED: "Approved Requests",
+    IN_PROGRESS: "In Progress Requests",
+    COLLECTED: "Collected Requests",
+    REJECTED: "Rejected Requests",
   };
+
+  
+
+
   return (
     <Page>
       <BarangayTopBar title="Collection Requests" />
@@ -84,22 +98,24 @@ export default function CollectionRequests() {
 
               <div className="flex md:hidden flex-col gap-2">
                 <RequestCard
-                  data={requests}
+                  data={data?.requests}
                   status={currentTab}
                   selectedIds={selectedApprovedRequests}
                   onToggleSelect={handleApprovedRequestSelect}
                 />
               </div>
+              
               <RequestTable
-                data={requests}
+                data={data?.requests}
                 status={currentTab}
                 selectedIds={selectedApprovedRequests}
                 onToggleSelect={handleApprovedRequestSelect}
+                handleRefetchCount={handleRefetchCount}
               />
             </div>
           )}
         </div>
-        {currentTab === "approved" && selectedApprovedRequests.length > 0 && (
+        {currentTab === "APPROVED" && selectedApprovedRequests.length > 0 && (
           <div className="fixed bottom-6 left-4 right-4 z-20 md:left-auto md:right-6">
             <button
               className="w-full rounded-2xl bg-primary px-5 py-4 text-white shadow-lg transition-all duration-200 hover:cursor-pointer hover:opacity-90 md:w-auto"
@@ -109,8 +125,9 @@ export default function CollectionRequests() {
             </button>
           </div>
         )}
+
+        
       </PageContent>
     </Page>
   );
 }
- 

@@ -16,23 +16,27 @@ export const RequestTable = ({
   status,
   selectedIds = [],
   onToggleSelect,
-  handleBatchCollection
+  handleBatchCollection,
+  handleRefetchCount,
 }) => {
   const tableConfig = {
-    requested: [
+    REQUESTED: [
       { header: "Date Requested", render: (data) => data.createdAt },
       {
         header: "Household",
-        render: (data) => data.residentName,
+        render: (data) =>
+          data.user.firstName
+            ? `${data.user.firstName} ${data.user.lastName}`
+            : data.user.phoneNumber,
       },
-      { header: "Sitio", render: (data) => data.sitio },
+      { header: "Sitio", render: (data) => data.user.sitio.name },
       {
         header: "Material Type",
         render: (data) => data.materialType,
       },
       {
         header: "Est. Weight",
-        render: (data) => data.estimatedWeight,
+        render: (data) => `${data.estimatedWeight} ${data.weightUnit}`,
       },
       {
         header: "Status",
@@ -46,12 +50,15 @@ export const RequestTable = ({
         header: "Action",
         render: (data) => (
           <div className="flex items-center justify-center">
-            <PendingActions />
+            <PendingActions
+              id={data.id}
+              handleRefetchCount={handleRefetchCount}
+            />
           </div>
         ),
       },
     ],
-    approved: [
+    APPROVED: [
       {
         header: "Select",
         render: (data) => (
@@ -63,15 +70,17 @@ export const RequestTable = ({
         ),
       },
       { header: "Approved Date", render: (data) => data.approvedAt },
-      { header: "Household", render: (data) => data.residentName },
-      { header: "Sitio", render: (data) => data.sitio },
+      { header: "Household", render: (data) =>  data.user.firstName
+            ? `${data.user.firstName} ${data.user.lastName}`
+            : data.user.phoneNumber, },
+      { header: "Sitio", render: (data) => data.user.sitio.name },
       { header: "Material Type", render: (data) => data.materialType },
-      { header: "Est. Weight", render: (data) => data.estimatedWeight },
+      { header: "Est. Weight", render: (data) => `${data.estimatedWeight} ${data.weightUnit}` },
       {
         header: "Pickup Schedule",
         render: (data) => (
           <div className="flex items-center justify-center">
-            <Pill type={data.scheduleStatus} />
+            <Pill type={data.isScheduled ? "SCHEDULED" : "NOT_SCHEDULED"} />
           </div>
         ),
       },
@@ -84,7 +93,7 @@ export const RequestTable = ({
         ),
       },
     ],
-    in_progress: [
+    IN_PROGRESS: [
       { header: "Approved Date", render: (data) => data.approvedAt },
       { header: "Household", render: (data) => data.residentName },
       { header: "Sitio", render: (data) => data.sitio },
@@ -115,7 +124,7 @@ export const RequestTable = ({
         ),
       },
     ],
-    collected: [
+    COLLECTED: [
       { header: "Collection Data", render: (data) => data.collectionDate },
       { header: "Household", render: (data) => data.residentName },
       { header: "Sitio", render: (data) => data.sitio },
@@ -131,7 +140,7 @@ export const RequestTable = ({
         ),
       },
     ],
-    rejected: [
+    REJECTED: [
       { header: "Date Requested", render: (data) => data.createdAt },
       { header: "Sitio", render: (data) => data.sitio },
       {
@@ -156,7 +165,7 @@ export const RequestTable = ({
 
   const columns = tableConfig[status];
 
-  const filteredRequest = data.filter((req) => req.status === status);
+  const filteredRequest = data?.filter((req) => req.status === status);
 
   return (
     <Card
@@ -165,29 +174,48 @@ export const RequestTable = ({
       <table className="w-full text-sm border-collapse text-nowrap">
         <thead className="border-b border-[#E6EFF5]">
           <tr className="">
-            {columns.map((col) => (
+            {columns?.map((col) => (
               <th className="font-medium text-base p-4" key={col.header}>
                 {col.header}
               </th>
             ))}
           </tr>
         </thead>
+
         <tbody className="">
-          {filteredRequest.map((req) => (
-            <tr
-              className="text-center hover:bg-[#f8f8f8] transition-all transform "
-              key={req.id}
-            >
-              {columns.map((col) => (
-                <td key={col.header} className="p-3">
-                  {col.render(req)}
-                </td>
-              ))}
+          {filteredRequest?.length === 0 ? (
+            <tr className="max-w-md">
+              <td className="text-center" colSpan={9}>
+                <div className="flex flex-col items-center justify-center min-h-full p-20 gap-1">
+                  <p className="text-sm font-medium uppercase tracking-[0.2em] text-[#74C857]">
+                    EcoProfit
+                  </p>
+                  <h1 className="text-3xl font-semibold text-[#1F2937]">
+                    No items yet
+                  </h1>
+                  <p className="text-sm text-[#6B7280]">
+                    There are no items in this tab yet. Please go to the Pending
+                    tab to update status of pickup requests
+                  </p>
+                </div>
+              </td>
             </tr>
-          ))}
+          ) : (
+            filteredRequest?.map((req) => (
+              <tr
+                className="text-center hover:bg-[#f8f8f8] transition-all transform"
+                key={req.id}
+              >
+                {columns?.map((col) => (
+                  <td key={col.header} className="p-3">
+                    {col.render(req)}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
-     
     </Card>
   );
 };
