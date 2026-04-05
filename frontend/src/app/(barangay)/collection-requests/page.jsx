@@ -126,7 +126,12 @@ export default function CollectionRequests() {
           </div>
         )}
 
-        
+        <Modal title={"Decline Request"}>
+          <div className="flex flex-col gap-1 p-6">
+            <label className="text-gray-700 font-semibold">Rejection Reason</label>
+            <textarea type="text" className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors" rows={4} placeholder="Input the reason here"/>
+          </div>
+        </Modal>
       </PageContent>
     </Page>
   );
