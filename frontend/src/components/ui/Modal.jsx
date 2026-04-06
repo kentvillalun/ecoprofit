@@ -61,13 +61,13 @@ export const Modal = ({
               {/* buttons */}
               <div className="grid grid-cols-2 text-md font-semibold gap-3 p-6 border-t border-gray-200">
                 <button
-                  className="py-2.5 border border-gray-300 rounded-lg text-gray-700"
+                  className="py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:cursor-pointer"
                   onClick={onClose}
                 >
                   Cancel
                 </button>
                 <button
-                  className={`py-2.5 ${confirmClassName}  text-white rounded-lg`}
+                  className={`py-2.5 ${confirmClassName}  text-white rounded-lg hover:cursor-pointer`}
                   onClick={onConfirm}
                 >
                   {confirmLabel}

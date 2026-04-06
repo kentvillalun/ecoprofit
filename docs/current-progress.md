@@ -28,25 +28,27 @@
 - `Role` enum in Prisma schema covers all staff roles: `CAPTAIN`, `SECRETARY`, `TREASURER`, `SK`, `COLLECTOR`, `SUPER_ADMIN`, `RESIDENT`
 - Protected dashboard route: `GET /dashboard` (requires valid JWT + CAPTAIN role)
 
+- Barangay login frontend connected and bug fixed
+- Toast notifications added to the resident capture page (via `sonner`)
+- `useUpdate` custom hook: sends `PATCH /api/pickup-requests/collection-requests/:id` with `{ status, rejectionReason }`; returns `true` on success
+- Reusable `Modal` component (`components/ui/Modal.jsx`): rendered via `createPortal`, accepts `title`, `subtitle`, `icon`, `status` (for pill), `confirmLabel`, `confirmClassName`, `onConfirm`, `onClose`, and `children`
+- Pickup collection end-to-end: barangay admin can **approve** or **decline** `REQUESTED` pickups directly from the collection requests table; decline opens a modal for rejection reason input; toast feedback on success/error; list auto-refetches via `refetchCount` state
+
 ---
 
 ## In Progress
-- Barangay login frontend connection
-  - UI exists at `/barangay/login` with phone + password fields
-  - Backend endpoint is ready (`POST /auth/barangay/login`)
-  - Login button has no handler and no API call yet — needs form submission wired up
+
+- Batch collection: UI and selection logic exist, but the `handleBatchCollection` handler currently mutates a local copy and does not call the backend — needs a real API call to move selected APPROVED requests to IN_PROGRESS
 
 ---
 
 ## Next Steps
 
-1. Connect barangay login frontend to backend (add form handler to call `POST /auth/barangay/login`, store session, redirect on success)
+1. Wire batch collection to backend (PATCH selected APPROVED requests to IN_PROGRESS)
 2. Integrate real Semaphore API key so OTP sends actual SMS (currently logs to console in dev)
 3. Connect capture page to backend (submit captured image as a pickup request)
-4. Implement request lifecycle backend: create, approve, reject, move to in-progress, collect
-5. Replace mock data in Collection Requests UI with real backend data
-6. Build resident requests page backend integration (list own requests, see status)
-7. Continue with intake module after request lifecycle is stable
+4. Build resident requests page backend integration (list own requests, see status)
+5. Continue with intake module after request lifecycle is stable
 
 ---
 

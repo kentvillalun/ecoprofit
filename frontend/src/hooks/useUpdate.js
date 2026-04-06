@@ -8,7 +8,7 @@ export const useUpdate = () => {
     const [isError, setIsError] = useState(false)
     const [data, setData] = useState(null)
 
-    const updateStatus = async ({id, status}) => {
+    const updateStatus = async ({id, status, rejectionReason}) => {
         try {
             setIsLoading(true)
 
@@ -17,7 +17,7 @@ export const useUpdate = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({status}),
+                body: JSON.stringify({status, rejectionReason}),
                 credentials: "include"
             })
 
@@ -31,9 +31,11 @@ export const useUpdate = () => {
             
             setIsLoading(false)
             setData(result)
+            return true
         } catch (error) {
             setIsError(true)
             setError("Fetch failed")
+            return false
         }
     }
 
