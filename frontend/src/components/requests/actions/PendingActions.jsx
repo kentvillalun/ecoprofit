@@ -27,6 +27,7 @@ export const PendingActions = ({ id, handleRefetchCount }) => {
             onClose={() => setIsOpen(false)}
             onConfirm={async () => {
               const success = await updateStatus({ id, status: "REJECTED", rejectionReason });
+              
               if (success) {
                 toast.success("Request declined")
                 handleRefetchCount();
@@ -59,6 +60,7 @@ export const PendingActions = ({ id, handleRefetchCount }) => {
           await updateStatus({ id, status: "APPROVED" });
           handleRefetchCount()
           setIsOpen(false);
+          toast.success("Request approved")
         }}
       >
         Approve

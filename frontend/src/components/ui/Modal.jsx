@@ -35,8 +35,8 @@ export const Modal = ({
           >
             <div className="p-6 border-b border-gray-200 w-full">
               <div className="sticky flex flex-row items-center justify-between ">
-                <div className="flex flex-row gap-4">
-                  <div className="border p-3 border-gray-200 rounded-lg flex items-center">
+                <div className="flex flex-row gap-4 items-center">
+                  <div className="border p-3 border-gray-200 rounded-lg flex items-center ">
                     {/* <ExclamationTriangleIcon className="w-6 stroke-black" /> */}
                     {icon}
                   </div>
@@ -63,12 +63,14 @@ export const Modal = ({
                 <button
                   className="py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:cursor-pointer"
                   onClick={onClose}
+                  type="button"
                 >
                   Cancel
                 </button>
                 <button
-                  className={`py-2.5 ${confirmClassName}  text-white rounded-lg hover:cursor-pointer`}
+                  className={`py-2.5 ${confirmClassName}  text-white rounded-lg hover:cursor-pointer`} 
                   onClick={onConfirm}
+                  type="button"
                 >
                   {confirmLabel}
                 </button>

@@ -32,9 +32,11 @@ export const useFetch = ({ url, refetchCount }) => {
 
                 setIsLoading(false)
                 setData(result)
+                return true
             } catch (error) {
                 setIsError(true)
                 setError("Fetching failed")
+                return false
             } finally {
                 setIsLoading(false)
             }

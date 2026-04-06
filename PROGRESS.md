@@ -57,11 +57,10 @@
 - [x] Collection requests UI wired to real backend — `useFetch` replaces mock data; `handleRefetchCount` increments `refetchCount` to trigger re-fetch after mutations
 - [x] Approve action wired end-to-end — `PendingActions` calls `useUpdate.updateStatus({ id, status: "APPROVED" })` then `handleRefetchCount()`; table refreshes automatically
 - [x] Decline modal UI built — `Modal` component at `frontend/src/components/ui/Modal.jsx` with rejection reason textarea, Cancel/Decline buttons; not yet wired to `updateStatus`
-- [ ] Make Modal reusable with React Portal (render outside DOM tree to avoid stacking context issues)
-- [ ] Wire Decline modal: pass `id` + `handleRefetchCount` into Modal; on submit call `updateStatus({ id, status: "REJECTED", rejectionReason })` then close modal and refetch
+- [x] Make Modal reusable with React Portal (render outside DOM tree to avoid stacking context issues)
+- [x] Wire Decline modal: pass `id` + `handleRefetchCount` into Modal; on submit call `updateStatus({ id, status: "REJECTED", rejectionReason })` then close modal and refetch
 - [ ] View Details full page — `/collection-requests/[id]` showing full request info
-- [ ] actualWeight input UI for COLLECTED action
-- [ ] Collection schedule module
+- [x] actualWeight input UI for COLLECTED action
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
 

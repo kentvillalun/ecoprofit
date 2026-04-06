@@ -47,7 +47,11 @@ const listRequests = async (req, res) => {
         weightUnit: true,
         status: true,
         approvedAt: true,
-        isScheduled: true
+        isScheduled: true,
+        rejectionReason: true,
+        actualWeight: true,
+        rewardEquivalent: true,
+        collectedAt: true,
       },
     });
 
@@ -63,7 +67,7 @@ const listRequests = async (req, res) => {
 const updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, rejectionReason, actualWeight } = req.body ?? {};
+    const { status, rejectionReason, actualWeight, weightUnit } = req.body ?? {};
 
     if (status === "APPROVED") {
       await prisma.pickupRequests.update({
@@ -90,6 +94,7 @@ const updateStatus = async (req, res) => {
           status: "COLLECTED",
           collectedAt: new Date(),
           actualWeight: actualWeight,
+          weightUnit: weightUnit,
         },
       });
 
@@ -112,7 +117,7 @@ const updateStatus = async (req, res) => {
         },
       });
 
-      return res.status(200).json({ message: "Request Rejected " });
+      return res.status(200).json({ message: "Request Rejected" });
     }
 
     return res.status(400).json({ error: "Invalid request" });

@@ -33,22 +33,27 @@
 - `useUpdate` custom hook: sends `PATCH /api/pickup-requests/collection-requests/:id` with `{ status, rejectionReason }`; returns `true` on success
 - Reusable `Modal` component (`components/ui/Modal.jsx`): rendered via `createPortal`, accepts `title`, `subtitle`, `icon`, `status` (for pill), `confirmLabel`, `confirmClassName`, `onConfirm`, `onClose`, and `children`
 - Pickup collection end-to-end: barangay admin can **approve** or **decline** `REQUESTED` pickups directly from the collection requests table; decline opens a modal for rejection reason input; toast feedback on success/error; list auto-refetches via `refetchCount` state
+- `ApprovedActions` component: barangay admin can **schedule** an approved request, moving it from `APPROVED` → `IN_PROGRESS` (sets `isScheduled: true`)
+- `InProgressActions` component: barangay admin can **complete** an in-progress request via a modal that captures actual weight and unit, transitioning `IN_PROGRESS` → `COLLECTED` (sets `collectedAt`, `actualWeight`, `weightUnit`)
+- Batch collection wired to backend: selecting multiple approved requests and clicking "Create Batch Collection" fires `Promise.all` of `PATCH` requests, moving each to `IN_PROGRESS`; toast feedback on full success or partial failure; list auto-refetches and selection clears on success
+- `updateStatus` backend controller extended to handle all 4 status transitions: `APPROVED` (sets `approvedAt`), `IN_PROGRESS` (sets `isScheduled`), `COLLECTED` (sets `collectedAt`, `actualWeight`, `weightUnit`), `REJECTED` (sets `rejectedAt`, `rejectionReason`)
+- `useUpdate` hook extended to forward `actualWeight` and `weightUnit` to the backend
+- Full request lifecycle now wired end-to-end: `REQUESTED` → `APPROVED` → `IN_PROGRESS` → `COLLECTED` (or `REJECTED` from `REQUESTED`)
 
 ---
 
 ## In Progress
 
-- Batch collection: UI and selection logic exist, but the `handleBatchCollection` handler currently mutates a local copy and does not call the backend — needs a real API call to move selected APPROVED requests to IN_PROGRESS
+- Nothing currently active
 
 ---
 
 ## Next Steps
 
-1. Wire batch collection to backend (PATCH selected APPROVED requests to IN_PROGRESS)
-2. Integrate real Semaphore API key so OTP sends actual SMS (currently logs to console in dev)
-3. Connect capture page to backend (submit captured image as a pickup request)
-4. Build resident requests page backend integration (list own requests, see status)
-5. Continue with intake module after request lifecycle is stable
+1. Integrate real Semaphore API key so OTP sends actual SMS (currently logs to console in dev)
+2. Connect capture page to backend (submit captured image as a pickup request)
+3. Build resident requests page backend integration (list own requests, see status)
+4. Continue with intake module after request lifecycle is stable
 
 ---
 

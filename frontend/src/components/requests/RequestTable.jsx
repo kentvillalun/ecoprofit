@@ -5,6 +5,7 @@ import { ApprovedActions } from "./actions/ApprovedActions";
 import { CollectedActions } from "./actions/CollectedActions";
 import { Card } from "../ui/Card";
 import { RejectedActions } from "./actions/RejectedActions";
+import { InProgressActions } from "./actions/InProgressActions";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -70,12 +71,19 @@ export const RequestTable = ({
         ),
       },
       { header: "Approved Date", render: (data) => data.approvedAt },
-      { header: "Household", render: (data) =>  data.user.firstName
+      {
+        header: "Household",
+        render: (data) =>
+          data.user.firstName
             ? `${data.user.firstName} ${data.user.lastName}`
-            : data.user.phoneNumber, },
+            : data.user.phoneNumber,
+      },
       { header: "Sitio", render: (data) => data.user.sitio.name },
       { header: "Material Type", render: (data) => data.materialType },
-      { header: "Est. Weight", render: (data) => `${data.estimatedWeight} ${data.weightUnit}` },
+      {
+        header: "Est. Weight",
+        render: (data) => `${data.estimatedWeight} ${data.weightUnit}`,
+      },
       {
         header: "Pickup Schedule",
         render: (data) => (
@@ -88,17 +96,29 @@ export const RequestTable = ({
         header: "Action",
         render: (data) => (
           <div className="flex items-center justify-center">
-            <ApprovedActions />
+            <ApprovedActions
+              id={data.id}
+              handleRefetchCount={handleRefetchCount}
+            />
           </div>
         ),
       },
     ],
     IN_PROGRESS: [
       { header: "Approved Date", render: (data) => data.approvedAt },
-      { header: "Household", render: (data) => data.residentName },
-      { header: "Sitio", render: (data) => data.sitio },
+      {
+        header: "Household",
+        render: (data) =>
+          data.user.firstName
+            ? `${data.user.firstName} ${data.user.lastName}`
+            : data.user.phoneNumber,
+      },
+      { header: "Sitio", render: (data) => data.user.sitio.name },
       { header: "Material Type", render: (data) => data.materialType },
-      { header: "Est. Weight", render: (data) => data.estimatedWeight },
+      {
+        header: "Est. Weight",
+        render: (data) => `${data.estimatedWeight} ${data.weightUnit}`,
+      },
       {
         header: "Status",
         render: (data) => (
@@ -111,26 +131,31 @@ export const RequestTable = ({
         header: "Pickup Schedule",
         render: (data) => (
           <div className="flex items-center justify-center">
-            <Pill type={data.scheduleStatus} />
+            <Pill type={data.isScheduled ? "SCHEDULED" : "NOT_SCHEDULED"} />
           </div>
         ),
       },
       {
         header: "Action",
-        render: () => (
+        render: (data) => (
           <div className="flex items-center justify-center">
-            <ApprovedActions />
+            <InProgressActions
+              id={data.id}
+              handleRefetchCount={handleRefetchCount}
+            />
           </div>
         ),
       },
     ],
     COLLECTED: [
-      { header: "Collection Data", render: (data) => data.collectionDate },
-      { header: "Household", render: (data) => data.residentName },
-      { header: "Sitio", render: (data) => data.sitio },
+      { header: "Collection Date", render: (data) => data.collectedAt },
+      { header: "Household", render: (data) => data.user.firstName
+            ? `${data.user.firstName} ${data.user.lastName}`
+            : data.user.phoneNumber, },
+      { header: "Sitio", render: (data) => data.user.sitio.name },
       { header: "Material Type", render: (data) => data.materialType },
-      { header: "Actual Weight", render: (data) => data.actualWeight },
-      { header: "Reward Equivalent", render: (data) => data.rewardEquivalent },
+      { header: "Actual Weight", render: (data) => `${data.estimatedWeight} ${data.weightUnit}` },
+      { header: "Reward Equivalent", render: (data) => data.rewardEquivalent ?? "No equivalent reward yet" },
       {
         header: "Action",
         render: (data) => (
@@ -142,14 +167,14 @@ export const RequestTable = ({
     ],
     REJECTED: [
       { header: "Date Requested", render: (data) => data.createdAt },
-      { header: "Sitio", render: (data) => data.sitio },
+      { header: "Sitio", render: (data) => data.user.sitio.name },
       {
         header: "Material Type",
         render: (data) => data.materialType,
       },
       {
         header: "Est. Weight",
-        render: (data) => data.estimatedWeight,
+        render: (data) => `${data.estimatedWeight} ${data.weightUnit}`,
       },
       { header: "Rejection Reason", render: (data) => data.rejectionReason },
       {

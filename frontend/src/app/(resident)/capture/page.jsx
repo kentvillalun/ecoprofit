@@ -44,7 +44,7 @@ export default function CapturePage() {
   const [sitioLoading, setSitioLoading] = useState(false);
   const [sitio, setSitio] = useState("");
   const [error, setError] = useState("");
-  const router = useRouter()
+  const router = useRouter();
 
   const openCamera = () => {
     fileInputRef.current.click();
@@ -66,7 +66,7 @@ export default function CapturePage() {
 
     try {
       setIsLoading(true);
-      const toastId = toast.loading("Uploading photo...")
+      const toastId = toast.loading("Uploading photo...");
       const formData = new FormData();
 
       formData.append("file", imageFile);
@@ -90,13 +90,13 @@ export default function CapturePage() {
         return;
       }
 
-      toast.dismiss(toastId)
-      toast.success("Photo uploaded!")
+      toast.dismiss(toastId);
+      toast.success("Photo uploaded!");
       setCloudinaryUrl(data.secure_url);
       return true;
     } catch (error) {
       setCloudinaryUrl(null);
-      toast.dismiss(toastId)
+      toast.dismiss(toastId);
       toast.error("There is a problem uploading photo");
     } finally {
       setIsLoading(false);
@@ -184,8 +184,8 @@ export default function CapturePage() {
         <section
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-100"
           onClick={() => {
-            setIsSubmit(false)
-            router.push("/home")
+            setIsSubmit(false);
+            router.push("/home");
           }}
         >
           <div className="bg-white shadow-lg p-4 rounded-lg flex flex-col gap-4 items-center justify-center">
@@ -303,12 +303,12 @@ export default function CapturePage() {
                     <option value="BOTTLES">Bottles</option>
                     <option value="PLASTICS">Plastics</option>
                   </select>
-                  {errors.materialType && (
-                    <p className="text-[14px] text-red-500 text-center md:text-start">
-                      {errors.materialType?.message}
-                    </p>
-                  )}
                 </div>
+                {errors.materialType && (
+                  <p className="text-[14px] text-red-500 text-center md:text-start">
+                    {errors.materialType?.message}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-col gap-1">

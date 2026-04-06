@@ -11,7 +11,8 @@ import { useState } from "react";
 import { Inter } from "next/font/google";
 import { RequestTable } from "@/components/requests/RequestTable";
 import { useFetch } from "@/hooks/useFetch.js";
-import { Modal } from "@/components/ui/Modal";
+import { useUpdate } from "@/hooks/useUpdate";
+import { toast } from "sonner";
 
 
 const inter = Inter({
@@ -24,6 +25,9 @@ export default function CollectionRequests() {
   const url = `/api/pickup-requests/collection-requests`;
   const { isLoading, isError, error, data } = useFetch({ url, refetchCount });
   const [currentTab, setCurrentTab] = useState("REQUESTED");
+
+  const { isUpdateError, updateStatus } = useUpdate()
+  
 
   const [selectedApprovedRequests, setSelectedApprovedRequests] = useState([]);
   if (isLoading) return <p className="md:pl-77">Loading....</p>
@@ -41,16 +45,26 @@ export default function CollectionRequests() {
   const handleRefetchCount = () => setRefetchCount(prev => prev + 1)
  
 
-  const handleBatchCollection = () => {
-    if (selectedApprovedRequests.length === 0) return;
+  const handleBatchCollection = async () => {
+    try {
 
-    data.map((request) =>
-      selectedApprovedRequests.includes(request.id)
-        ? { ...request, status: "IN_PROGRESS" }
-        : request,
-    );
+      const results = await Promise.all(selectedApprovedRequests.map(async (id) => {
+        return await updateStatus({ id, status: "IN_PROGRESS"})
+      }))
 
-    setSelectedApprovedRequests([]);
+      if (results.every(Boolean)) {
+        toast.success("Batch collection created");
+        handleRefetchCount()
+        setSelectedApprovedRequests([])
+        return true
+      } else {
+        toast.error("Batch creation failed")
+        return false
+      }
+    } catch (error) {
+      toast.error("Something went wrong")
+    }
+
   };
 
   const STATUS_TABS = [
