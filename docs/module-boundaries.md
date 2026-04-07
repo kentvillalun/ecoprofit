@@ -1,36 +1,34 @@
 # Module Boundaries
 
 ## Collection Requests
-Handles override / on-demand pickup requests only.
+Handles override / on-demand pickup requests only. Responsible for the pickup workflow: REQUESTED, APPROVED, IN_PROGRESS, COLLECTED, REJECTED. Supports ASSORTED material type — finalized by collector at completion.
 
-This module is responsible for pickup workflow status changes:
-- REQUESTED
-- APPROVED
-- IN_PROGRESS
-- COLLECTED
-- REJECTED
+---
 
-## Collection & Sorting
-Handles recording of actual recyclable materials from:
-- Sunday EcoAid
-- pickup requests that are being collected
-- event-based collection
-- barangay exchange
+## Manual Collection Intake
+Records actual recyclable materials from all sources: Sunday EcoAid, pickup requests being completed, event-based collection, and barangay exchange. All materials are sorted immediately and recorded as intake transactions. Sunday EcoAid entries with no prior request are manually entered here by searching the resident. Entries are flagged with source type and hasAppRecord status.
 
-All materials are sorted immediately and recorded as intake transactions.
+---
 
 ## Material Stock
-Read-only view of recyclable materials already recorded through intake transactions.
+Read-only view of recyclable materials derived from completed intake transactions. No manual input here.
 
-## Redemption Programs
-Defines eligibility rules and exchange or reward mappings for waste-to-goods, waste-to-medicine, and waste-to-services.
+---
+
+## Redemption Management
+SK creates and manages programs (e.g. basura to school supplies). Each program has a name, allocated budget, max points, and point values per material category stored in a junction table (ProgramMaterial). Redemption transactions are recorded here and frozen to the exact ProgramMaterial row. Designed to support future programs.
+
+---
 
 ## Reward Inventory
-Tracks goods, medicine, supplies, and service outputs available for claim or release.
+Tracks goods, medicine, supplies, and service outputs available for release. Releasing of rewards happens here. Plant inventory is managed here with expenses logged in Program Funds.
+
+---
 
 ## Program Funds
-Tracks financial records such as:
-- expenses
-- income/proceeds
-- profits
-- fund-related summaries
+Tracks all financial records: expenses, junkshop sale proceeds, profits, and fund summaries. Junkshop receipts are inputted here as income.
+
+---
+
+## Leaderboard
+Ranks residents by total recyclable contribution. Includes both app-based and manual entries. Serves as recognition for the barangay and motivation for residents.

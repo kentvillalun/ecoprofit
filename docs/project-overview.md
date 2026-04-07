@@ -22,30 +22,11 @@ The system supports:
 
 ## Current Development Status
 
-The full resident authentication flow is complete and connected to the backend.
+Full resident authentication flow is complete and stable. Barangay authentication is complete and stable. The full collection request lifecycle is wired end-to-end: REQUESTED → APPROVED → IN_PROGRESS → COLLECTED (or REJECTED), including batch collection, decline modal with rejection reason, and actual weight input at collection.
 
-Stable and fully working:
-- onboarding
-- resident login (connected to backend, bcrypt password check)
-- signup with barangay autocomplete and sitio dependent dropdown (connected to backend)
-- OTP validation (6-digit input, resend cooldown, backend verify/resend endpoints)
-- forgot password full flow: phone entry → OTP → reset password (all connected to backend)
-- resident capture page (camera access, image preview, submit UI — backend not yet connected)
+The system is deployed. Backend runs on Railway. Frontend proxies via next.config.mjs rewrites.
 
-OTP notes:
-- Backend uses Semaphore API for SMS. Without a `SEMAPHORE_API_KEY`, OTP is printed to the server console (dev mode).
-- Real SMS delivery requires setting `SEMAPHORE_API_KEY` in `backend/.env`.
-
-Barangay auth status:
-- UI exists at `/barangay/login` with phone number and password fields
-- Backend is fully implemented:
-  - `POST /auth/barangay/login` — validates credentials, issues JWT in a `barangay_token` httpOnly cookie
-  - `POST /auth/logout` — clears the cookie and blacklists the token in the `BlackListedToken` table
-  - `authenticate` middleware reads the cookie (or a `Bearer` header), verifies the JWT, and checks it against the blacklist
-  - `requireRoles` middleware enforces role-based access control on protected routes
-- Frontend is not yet connected — login button has no handler; wiring up the form is the current implementation target
-
-After barangay login frontend is connected, work continues with the request lifecycle backend.
+Active development focus: barangay-side collection request management and the upcoming Manual Collection Intake module.
 
 ---
 

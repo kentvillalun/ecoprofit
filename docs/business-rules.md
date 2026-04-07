@@ -2,96 +2,95 @@
 
 ## 1. Immediate Sorting
 
-All materials are sorted during collection or intake.
-
-There is no delayed sorting process and no pending sorting workflow.
+All materials are sorted immediately during collection or intake. No delayed sorting.
 
 ---
 
 ## 2. Contribution / Intake as the Core Entity
 
-All recyclable materials must be recorded as a **Contribution / Intake Transaction**.
-
-This applies to:
-- Sunday EcoAid household collection
-- pickup requests
-- event-based collection
-- barangay exchange programs
-- other direct submissions
-
----
-
-## 3. Unified Intake Model
-
-Each contribution must have a source type:
+All recyclable material intake must be recorded as a **Contribution / Intake Transaction** with a source type:
 
 - SUNDAY_ECOAID
 - PICKUP_REQUEST
 - EVENT_COLLECTION
 - BARANGAY_EXCHANGE
 
-These source types are part of one unified intake model.
+---
+
+## 3. Collection Requests Scope
+
+Collection Requests handles pickup workflow only (override / on-demand). Sunday EcoAid, events, and barangay exchange do NOT create requests.
 
 ---
 
-## 4. Separation of Concerns
+## 4. Pickup Request Lifecycle
 
-- Collection Requests -> handles pickup workflow only
-- Collection & Sorting -> records actual material intake
-- Redemption Programs -> defines exchange and reward rules
-- Reward Inventory -> tracks goods, medicine, supplies, and service outputs
-- Material Stock -> read-only derived data from intake
-- Program Funds -> tracks expenses, income/proceeds, and profits
+REQUESTED → APPROVED → IN_PROGRESS → COLLECTED, or REQUESTED → REJECTED.
+
+COLLECTED means materials are already picked up, sorted, and recorded as intake.
 
 ---
 
-## 5. Material Stock is Read-Only
+## 5. ASSORTED Material Type
 
-Material Stock is automatically derived from completed intake transactions.
-
-Staff do NOT manually add materials in this module.
+The ASSORTED material type is valid for pickup requests. During collection, the collector finalizes the actual breakdown by category.
 
 ---
 
-## 6. Reward Eligibility
+## 6. Sunday EcoAid Manual Entries
 
-- Rewards are based on verified and sorted contributions
-- Users can see eligible rewards after intake
-- Rewards are claimed later through the appropriate releasing process
+Sunday EcoAid manual entries (no prior request) are recorded directly in the Manual Collection Intake module by searching the resident and inputting their contribution. These entries are flagged as source: MANUAL_ENTRY and hasAppRecord: false.
 
 ---
 
-## 7. Pickup Request Scope
+## 7. Leaderboard Inclusivity
 
-Only actual override / on-demand pickup scenarios use Collection Requests.
-
-Barangay hall exchange and event contributions do NOT create requests.
-
-Sunday EcoAid is a regular household collection activity, not a request flow.
+All contributions — including manual entries — count toward the leaderboard. Effort is recognized regardless of app usage.
 
 ---
 
-## 8. Request Lifecycle and Batch Collection
+## 8. Pickup Requests Are Not Rewarded
 
-Override / on-demand pickup requests follow this lifecycle:
-
-REQUESTED -> APPROVED -> IN_PROGRESS -> COLLECTED
-           ->
-            REJECTED
-
-Definitions:
-- APPROVED = ready for pickup
-- IN_PROGRESS = selected for batch collection or ongoing pickup activity
-- COLLECTED = materials already picked up, sorted, and recorded as intake
-
-Batch collection is the step that moves approved requests into IN_PROGRESS.
+Pickup request contributions are community participation obligations. There is no reward equivalent for completing a pickup request.
 
 ---
 
-## 9. Financial Tracking
+## 9. Redemption Program Structure
 
-Program Funds must support:
-- recording expenses
-- recording sales proceeds or income
-- computing or displaying profits
-- documenting financial activity for transparency and reporting
+The Redemption Program (SK project) allows the SK to create programs, assign point values per material category, set a maximum point cap, and set an allocated budget. Point values are stored per program per material type (not globally) so they are never overwritten across programs.
+
+---
+
+## 10. Frozen Redemption Transactions
+
+RedemptionTransaction records are frozen to the exact ProgramMaterial row at the time of redemption. Past transactions are unaffected by future point value changes.
+
+---
+
+## 11. Reward Releasing
+
+Releasing of rewards happens in the Reward Inventory module, not in Redemption Programs.
+
+---
+
+## 12. Material Stock is Read-Only
+
+Material Stock is read-only and derived from completed intake transactions. Staff do not manually add materials here.
+
+---
+
+## 13. Program Funds
+
+Program Funds tracks expenses, income/proceeds, and profits. Plant distribution expenses are recorded here. No resident linking is required for plant distribution.
+
+---
+
+## 14. Junkshop Sales
+
+The barangay sells recyclables to junkshops. Receipts from these sales are recorded as income in Program Funds.
+
+---
+
+## 15. Leaderboard
+
+The leaderboard ranks residents by total contribution (kg or points) to provide recognition and motivation for active participants.

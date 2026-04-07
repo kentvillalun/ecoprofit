@@ -48,12 +48,17 @@
 
 ---
 
-## Next Steps
+## Next Steps (priority order)
 
-1. Integrate real Semaphore API key so OTP sends actual SMS (currently logs to console in dev)
-2. Connect capture page to backend (submit captured image as a pickup request)
-3. Build resident requests page backend integration (list own requests, see status)
-4. Continue with intake module after request lifecycle is stable
+1. Build `/collection-requests/[id]` view details page (barangay side)
+2. Add ASSORTED to MaterialType enum in Prisma schema and update backend validation
+3. Build Manual Collection Intake module (Sunday EcoAid manual entry flow with resident search)
+4. Build Redemption Management module (Program → ProgramMaterial → RedemptionTransaction schema and UI)
+5. Build Leaderboard (resident ranking by total contribution)
+6. Build Reward Inventory module
+7. Build Program Funds module (expenses, junkshop income, profits)
+8. Build Material Stock read-only view
+9. Reports module
 
 ---
 

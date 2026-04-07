@@ -1,28 +1,20 @@
 # Request Lifecycle
 
 ## Scope
-
-This applies only to **override / on-demand pickup requests**.
-
-It does NOT apply to:
-- Sunday EcoAid household collection
-- event-based collection
-- barangay hall exchange
+Applies only to override / on-demand pickup requests. Does NOT apply to Sunday EcoAid, events, or barangay exchange.
 
 ---
 
 ## Status Flow
-
-REQUESTED -> APPROVED -> IN_PROGRESS -> COLLECTED
-           ->
-            REJECTED
+REQUESTED → APPROVED → IN_PROGRESS → COLLECTED
+REQUESTED → REJECTED
 
 ---
 
 ## Definitions
 
 ### REQUESTED
-Resident submits a pickup request.
+Resident submits a pickup request. Material type can be ASSORTED if recyclables are mixed.
 
 ---
 
@@ -32,34 +24,24 @@ Barangay accepts the request and marks it ready for pickup.
 ---
 
 ### IN_PROGRESS
-Request has been selected for batch collection or is part of ongoing pickup work.
+Request selected for batch collection or part of ongoing pickup activity.
 
 ---
 
 ### COLLECTED
-Materials have been:
-- picked up
-- sorted
-- recorded as an intake transaction
+Materials have been picked up, sorted, and recorded as an intake transaction. If material type was ASSORTED, the collector finalizes the actual breakdown by category at this step.
 
 ---
 
 ### REJECTED
-Request is declined.
-
----
-
-## Important Rule
-
-COLLECTED means:
-- materials are already sorted
-- materials are already recorded
-- contribution transaction has been created
+Request is declined with a rejection reason.
 
 ---
 
 ## Batch Collection
+Moves one or more APPROVED requests into IN_PROGRESS simultaneously.
 
-Batch collection is used to move one or more approved requests into IN_PROGRESS.
+---
 
-IN_PROGRESS is used to track ongoing collection before completion.
+## Sunday EcoAid Gap
+If a resident contributes during Sunday EcoAid without having made a prior request, the collector manually inputs the record in the Manual Collection Intake module by searching the resident. No request is created for this flow.
