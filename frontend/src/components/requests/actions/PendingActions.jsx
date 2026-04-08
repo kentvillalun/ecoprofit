@@ -7,7 +7,7 @@ import { Modal } from "@/components/ui/Modal";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { toast } from "sonner";
 
-export const PendingActions = ({ id, handleRefetchCount }) => {
+export const PendingActions = ({ id, handleRefetchCount = () => {}, onSuccess }) => {
   const { data, isLoading, error, isError, updateStatus } = useUpdate();
   const [isOpen, setIsOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
@@ -27,14 +27,15 @@ export const PendingActions = ({ id, handleRefetchCount }) => {
             onClose={() => setIsOpen(false)}
             onConfirm={async () => {
               const success = await updateStatus({ id, status: "REJECTED", rejectionReason });
-              
+
               if (success) {
                 toast.success("Request declined")
                 handleRefetchCount();
                 setIsOpen(false)
+                onSuccess?.();
               } else {
                 toast.error("Someting went wrong")
-                
+
               }
             }}
           >
@@ -57,10 +58,11 @@ export const PendingActions = ({ id, handleRefetchCount }) => {
       <button
         className="text-green-600 hover:underline"
         onClick={async () => {
-          await updateStatus({ id, status: "APPROVED" });
-          handleRefetchCount()
+          const success = await updateStatus({ id, status: "APPROVED" });
+          handleRefetchCount();
           setIsOpen(false);
-          toast.success("Request approved")
+          toast.success("Request approved");
+          if (success) onSuccess?.();
         }}
       >
         Approve

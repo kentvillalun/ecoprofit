@@ -31,6 +31,9 @@ const pickupRequest = async (req, res) => {
 const listRequests = async (req, res) => {
   try {
     const requests = await prisma.pickupRequests.findMany({
+      orderBy: {
+        createdAt: "asc",
+      },
       select: {
         user: {
           select: {
@@ -67,7 +70,8 @@ const listRequests = async (req, res) => {
 const updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, rejectionReason, actualWeight, weightUnit } = req.body ?? {};
+    const { status, rejectionReason, actualWeight, weightUnit } =
+      req.body ?? {};
 
     if (status === "APPROVED") {
       await prisma.pickupRequests.update({

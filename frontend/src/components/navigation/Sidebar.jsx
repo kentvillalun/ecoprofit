@@ -48,7 +48,7 @@ export const Sidebar = () => {
     },
     {
       icon: CollectionSortingIcon,
-      label: "Collection & Sorting",
+      label: "Manual Collection Intake",
       href: "",
     },
     {
@@ -58,7 +58,7 @@ export const Sidebar = () => {
     },
     {
       icon: RedemptionProgramIcon,
-      label: "Redemption Programs",
+      label: "Redemption Management",
       href: "",
     },
     {
