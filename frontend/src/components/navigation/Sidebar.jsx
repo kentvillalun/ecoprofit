@@ -136,7 +136,7 @@ export const Sidebar = () => {
         <div className="flex flex-col gap-2 pl-2 lg:gap-3">
           {sidebarItems.map((items) => (
             <Link
-              className="flex flex-row gap-3 hover:cursor-pointer p-2 rounded-lg hover:bg-primary transition-all ease-in-out"
+              className="flex flex-row gap-3 hover:cursor-pointer p-2 rounded-lg hover:bg-primary transition-all ease-in-out items-center"
               key={items.label}
               href={items.href}
             >

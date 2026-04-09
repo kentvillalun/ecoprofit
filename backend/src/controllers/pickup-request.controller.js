@@ -53,7 +53,6 @@ const listRequests = async (req, res) => {
         isScheduled: true,
         rejectionReason: true,
         actualWeight: true,
-        rewardEquivalent: true,
         collectedAt: true,
       },
     });
@@ -130,4 +129,49 @@ const updateStatus = async (req, res) => {
   }
 };
 
-export { pickupRequest, listRequests, updateStatus };
+const getRequest = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const request = await prisma.pickupRequests.findUnique({
+      where: { id },
+      select: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            phoneNumber: true,
+            sitio: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        materialType: true,
+        estimatedWeight: true,
+        weightUnit: true,
+        notes: true,
+        photoUrl: true,
+        createdAt: true,
+        approvedAt: true,
+        rejectedAt: true,
+        collectedAt: true,
+        status: true,
+      },
+    });
+
+    if (!request) {
+      return res.status(400).json({ error: "Request does not exist" });
+    }
+
+    return res.status(200).json({
+      message: "Fetching request detail success",
+      request,
+    });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
+
+export { pickupRequest, listRequests, updateStatus, getRequest };

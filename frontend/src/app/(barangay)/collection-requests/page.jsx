@@ -47,12 +47,13 @@ export default function CollectionRequests() {
 
   const handleBatchCollection = async () => {
     try {
-
+      toast.loading("Creating batch collection...")
       const results = await Promise.all(selectedApprovedRequests.map(async (id) => {
         return await updateStatus({ id, status: "IN_PROGRESS"})
       }))
 
       if (results.every(Boolean)) {
+        toast.dismiss()
         toast.success("Batch collection created");
         handleRefetchCount()
         setSelectedApprovedRequests([])
@@ -62,6 +63,7 @@ export default function CollectionRequests() {
         return false
       }
     } catch (error) {
+      toast.dismiss()
       toast.error("Something went wrong")
     }
 

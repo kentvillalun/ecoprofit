@@ -6,6 +6,8 @@ import { CollectedActions } from "./actions/CollectedActions";
 import { Card } from "../ui/Card";
 import { RejectedActions } from "./actions/RejectedActions";
 import { InProgressActions } from "./actions/InProgressActions";
+import { formatDate } from "@/lib/formatDate";
+import { useRouter } from "next/navigation";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,9 +22,13 @@ export const RequestTable = ({
   handleBatchCollection,
   handleRefetchCount,
 }) => {
+
+  const router = useRouter()
+
+
   const tableConfig = {
     REQUESTED: [
-      { header: "Date Requested", render: (data) => data.createdAt },
+      { header: "Date Requested", render: (data) => formatDate(data.createdAt) },
       {
         header: "Household",
         render: (data) =>
@@ -50,10 +56,18 @@ export const RequestTable = ({
       {
         header: "Action",
         render: (data) => (
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center flex-row gap-3">
+            <button
+              className="text-gray-600 hover:underline"
+              onClick={() => {
+                router.push(`/collection-requests/${data.id}`);
+              }}
+            >
+              View
+            </button>
             <PendingActions
               id={data.id}
-              handleRefetchCount={handleRefetchCount}
+              onSuccess={() => handleRefetchCount()}
             />
           </div>
         ),
@@ -70,7 +84,7 @@ export const RequestTable = ({
           />
         ),
       },
-      { header: "Approved Date", render: (data) => data.approvedAt },
+      { header: "Approved Date", render: (data) => formatDate(data.approvedAt) },
       {
         header: "Household",
         render: (data) =>
@@ -95,17 +109,18 @@ export const RequestTable = ({
       {
         header: "Action",
         render: (data) => (
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center flex-row gap-3">
+             <button className="text-gray-600 hover:underline" onClick={() => router.push(`/collection-requests/${data.id}`)}>View</button>
             <ApprovedActions
               id={data.id}
-              handleRefetchCount={handleRefetchCount}
+              onSuccess={() => handleRefetchCount()}
             />
           </div>
         ),
       },
     ],
     IN_PROGRESS: [
-      { header: "Approved Date", render: (data) => data.approvedAt },
+      { header: "Approved Date", render: (data) => formatDate(data.approvedAt) },
       {
         header: "Household",
         render: (data) =>
@@ -138,35 +153,42 @@ export const RequestTable = ({
       {
         header: "Action",
         render: (data) => (
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center flex-row gap-3">
+            <button className="text-gray-600 hover:underline" onClick={() => router.push(`/collection-requests/${data.id}`)}>View</button>
             <InProgressActions
               id={data.id}
-              handleRefetchCount={handleRefetchCount}
+              onSuccess={() => handleRefetchCount()}
             />
           </div>
         ),
       },
     ],
     COLLECTED: [
-      { header: "Collection Date", render: (data) => data.collectedAt },
-      { header: "Household", render: (data) => data.user.firstName
+      { header: "Collection Date", render: (data) => formatDate(data.collectedAt) },
+      {
+        header: "Household",
+        render: (data) =>
+          data.user.firstName
             ? `${data.user.firstName} ${data.user.lastName}`
-            : data.user.phoneNumber, },
+            : data.user.phoneNumber,
+      },
       { header: "Sitio", render: (data) => data.user.sitio.name },
       { header: "Material Type", render: (data) => data.materialType },
-      { header: "Actual Weight", render: (data) => `${data.estimatedWeight} ${data.weightUnit}` },
-      { header: "Reward Equivalent", render: (data) => data.rewardEquivalent ?? "No equivalent reward yet" },
+      {
+        header: "Actual Weight",
+        render: (data) => `${data.estimatedWeight} ${data.weightUnit}`,
+      },
       {
         header: "Action",
         render: (data) => (
           <div className="flex items-center justify-center">
-            <CollectedActions />
+            <button className="text-gray-600 hover:underline" onClick={() => router.push(`/collection-requests/${data.id}`)}>View Details</button>
           </div>
         ),
       },
     ],
     REJECTED: [
-      { header: "Date Requested", render: (data) => data.createdAt },
+      { header: "Date Requested", render: (data) => formatDate(data.createdAt) },
       { header: "Sitio", render: (data) => data.user.sitio.name },
       {
         header: "Material Type",
@@ -181,7 +203,7 @@ export const RequestTable = ({
         header: "Action",
         render: (data) => (
           <div className="flex items-center justify-center">
-            <RejectedActions />
+            <button className="text-gray-600 hover:underline" onClick={() => router.push(`/collection-requests/${data.id}`)}>View Details</button>
           </div>
         ),
       },

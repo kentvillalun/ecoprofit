@@ -5,36 +5,45 @@ import { ScaleIcon } from "@heroicons/react/24/outline";
 import { useUpdate } from "@/hooks/useUpdate";
 import { toast } from "sonner";
 
-export const InProgressActions = ({ id, handleRefetchCount = () => {}, onSuccess }) => {
+export const InProgressActions = ({ id, onSuccess, variant }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [actualWeight, setActualWeight] = useState(null);
-  const [weightUnit, setWeightUnit] = useState("KG")
+  const [weightUnit, setWeightUnit] = useState("KG");
 
-  const { updateStatus } = useUpdate()
+  const { updateStatus } = useUpdate();
 
   return (
-    <div className="flex items-center gap-3 text-sm">
+    <div
+      className={` ${variant === "detail" ? "grid grid-cols-1 w-full" : "flex items-center gap-3 text-sm"}`}
+    >
       {isOpen &&
         createPortal(
           <Modal
             isOpen={isOpen}
-            title={"Finalizing Record"}
+            title={"Finalize Record"}
             subtitle={"Please input the actual weight of the recyclable"}
             icon={<ScaleIcon className="w-6 stroke-black" />}
             status={"IN_PROGRESS"}
             confirmLabel={"Confirm"}
-            confirmClassName={"bg-[#74C857]"}
+            confirmClassName={"bg-[#74C857] hover:bg-primary transition-all duration-200 ease-in-out"}
             onClose={() => setIsOpen(false)}
             onConfirm={async () => {
-              const success = await updateStatus({id, status: "COLLECTED", actualWeight, weightUnit})
+              toast.loading("Finalizing Record ");
+              const success = await updateStatus({
+                id,
+                status: "COLLECTED",
+                actualWeight,
+                weightUnit,
+              });
 
               if (success) {
-                toast.success("Request collected!")
-                handleRefetchCount();
+                toast.dismiss();
+                toast.success("Record finalize! Request collected!");
                 setIsOpen(false);
-                onSuccess?.();
+                onSuccess();
               } else {
-                toast.error("Something went wrong")
+                toast.dismiss();
+                toast.error("Something went wrong");
               }
             }}
           >
@@ -50,11 +59,15 @@ export const InProgressActions = ({ id, handleRefetchCount = () => {}, onSuccess
                     placeholder="e.g. 1"
                     min={0}
                     onChange={(event) => {
-                      const value = parseFloat(event.target.value)
-                      setActualWeight(value)
+                      const value = parseFloat(event.target.value);
+                      setActualWeight(value);
                     }}
                   />
-                  <select className="outline-none" onChange={(event) => setWeightUnit(event.target.value)} value={weightUnit}>
+                  <select
+                    className="outline-none"
+                    onChange={(event) => setWeightUnit(event.target.value)}
+                    value={weightUnit}
+                  >
                     <option value="" hidden disabled>
                       kg
                     </option>
@@ -68,9 +81,9 @@ export const InProgressActions = ({ id, handleRefetchCount = () => {}, onSuccess
           </Modal>,
           document.body,
         )}
-      <button className="text-gray-600 hover:underline">View</button>
+
       <button
-        className="text-green-600 hover:underline"
+        className={` ${variant === "detail" ? "py-2.5 text-white rounded-lg hover:cursor-pointer hover:bg-primary bg-[#74C857] transition-all duration-200 ease-in-out" : "text-green-600 hover:underline"}`}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         Complete

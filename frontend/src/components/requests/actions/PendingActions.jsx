@@ -6,14 +6,16 @@ import { createPortal } from "react-dom";
 import { Modal } from "@/components/ui/Modal";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-export const PendingActions = ({ id, handleRefetchCount = () => {}, onSuccess }) => {
+export const PendingActions = ({ id, onSuccess, variant }) => {
   const { data, isLoading, error, isError, updateStatus } = useUpdate();
   const [isOpen, setIsOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
+  const router = useRouter()
 
   return (
-    <div className="flex items-center gap-3 text-sm">
+    <div className={` ${variant === "detail" ? "grid grid-cols-2 text-md font-semibold gap-3 w-full" : "flex items-center gap-3 text-sm"}`}>
       {isOpen &&
         createPortal(
           <Modal
@@ -23,17 +25,18 @@ export const PendingActions = ({ id, handleRefetchCount = () => {}, onSuccess })
             status={"REQUESTED"}
             icon={<ExclamationTriangleIcon className="w-6 stroke-black" />}
             confirmLabel={"Decline"}
-            confirmClassName={"bg-red-500"}
+            confirmClassName={"bg-red-500 hover:bg-red-600 duration-300 ease-in-out transition-all"}
             onClose={() => setIsOpen(false)}
             onConfirm={async () => {
+              toast.loading("Declining request...")
               const success = await updateStatus({ id, status: "REJECTED", rejectionReason });
-
               if (success) {
+                toast.dismiss()
                 toast.success("Request declined")
-                handleRefetchCount();
                 setIsOpen(false)
-                onSuccess?.();
+                onSuccess();
               } else {
+                toast.dismiss()
                 toast.error("Someting went wrong")
 
               }
@@ -54,24 +57,30 @@ export const PendingActions = ({ id, handleRefetchCount = () => {}, onSuccess })
           </Modal>,
           document.body,
         )}
-      <button className="text-gray-600 hover:underline">View</button>
       <button
-        className="text-green-600 hover:underline"
-        onClick={async () => {
-          const success = await updateStatus({ id, status: "APPROVED" });
-          handleRefetchCount();
-          setIsOpen(false);
-          toast.success("Request approved");
-          if (success) onSuccess?.();
-        }}
-      >
-        Approve
-      </button>
-      <button
-        className="text-red-500 hover:underline"
+        className={` ${variant === "detail" ? "py-2.5 text-white rounded-lg hover:cursor-pointer bg-red-500 transition-all duration-200 ease-in-out hover:bg-red-600" : "text-red-500 hover:underline"}`}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         Decline
+      </button>
+      <button
+        className={` ${variant === "detail" ? "py-2.5 text-white rounded-lg hover:cursor-pointer hover:bg-primary bg-[#74C857] transition-all duration-200 ease-in-out" : "text-green-600 hover:underline"}` }
+        onClick={async () => {
+          toast.loading("Approving request...")
+          const success = await updateStatus({ id, status: "APPROVED" });
+          if (success) {
+            setIsOpen(false);
+            toast.dismiss()
+            toast.success("Request approved");
+            onSuccess()
+          } else {
+            toast.dismiss
+            toast.error("Someting went wrong")
+          }
+        }}
+        
+      >
+        Approve
       </button>
     </div>
   );
