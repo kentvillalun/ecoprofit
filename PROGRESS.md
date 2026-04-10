@@ -59,8 +59,12 @@
 - [x] Decline modal UI built — `Modal` component at `frontend/src/components/ui/Modal.jsx` with rejection reason textarea, Cancel/Decline buttons; not yet wired to `updateStatus`
 - [x] Make Modal reusable with React Portal (render outside DOM tree to avoid stacking context issues)
 - [x] Wire Decline modal: pass `id` + `handleRefetchCount` into Modal; on submit call `updateStatus({ id, status: "REJECTED", rejectionReason })` then close modal and refetch
-- [ ] View Details full page — `/collection-requests/[id]` showing full request info
 - [x] actualWeight input UI for COLLECTED action
+- [x] `GET /pickup-requests/collection-requests/:id` backend endpoint — `getRequest` controller fetches single request with full user/sitio/timeline fields; added to route and exported
+- [x] `formatDate` utility — `frontend/src/lib/formatDate.js` formats ISO date strings to human-readable locale strings (e.g. "Apr 10, 2026, 3:00 PM")
+- [x] `LabelValue` component — `frontend/src/components/ui/LabelValue.jsx` renders a label + value pair used across detail cards
+- [x] `RequestDetailHeader` component — card with back button (`history.back()`), clipboard icon, title, and status `Pill`
+- [x] View Details full page — `/collection-requests/[id]` fetches via `useFetch`; shows Resident Info, Request Info, Photo Evidence, and Timeline cards (timeline entries shown conditionally per status); renders `PendingActions` / `ApprovedActions` / `InProgressActions` card based on current status; `onSuccess` navigates back to list
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
 
@@ -71,12 +75,10 @@ between localhost and Railway based on `NODE_ENV`. CORS origin is now env-var
 controlled (`CORS_ORIGIN`). Cookies use `sameSite: "none"` so they work across
 origins in production. Pickup requests are fully end-to-end in both dev and prod.
 
-The barangay-side collection requests management is now wired end-to-end: the list
-fetches from the real backend via `useFetch`, and the Approve action updates status
-and refetches via `useUpdate` + `handleRefetchCount`. The Decline modal UI is built
-but not yet wired — the next step is making Modal reusable with a React Portal, then
-wiring the rejection reason to `updateStatus`, and finally building the
-`/collection-requests/[id]` view details page.
+The full pickup request lifecycle is now end-to-end on the barangay side: list view,
+approve/decline/schedule/collect actions, and the individual detail page
+(`/collection-requests/[id]`) are all wired to the real backend. Next focus:
+collection schedule module and real dashboard data.
 
 ## Key Decisions Made
 - httpOnly cookies over localStorage → XSS protection
@@ -98,7 +100,7 @@ wiring the rejection reason to `updateStatus`, and finally building the
 - backend/src/controllers/pickup-request.controller.js — pickup request creation
 - backend/src/middlewares/authMiddleware.js
 - backend/src/routes/auth.route.js
-- backend/src/routes/pickup-request.route.js — POST /pickup-requests (RESIDENT only)
+- backend/src/routes/pickup-request.route.js — POST /pickup-requests; GET/PATCH/GET-by-id collection-requests routes
 - backend/src/routes/dashboard.route.js
 - backend/src/utils/generateToken.js
 - backend/prisma/schema.prisma
@@ -112,6 +114,10 @@ wiring the rejection reason to `updateStatus`, and finally building the
 - frontend/src/hooks/useFetch.js — reusable GET fetch hook; refetchCount dep triggers re-fetch
 - frontend/src/hooks/useUpdate.js — PATCH hook exposing updateStatus({ id, status, rejectionReason? })
 - frontend/src/app/(barangay)/collection-requests/page.jsx — tabbed collection requests management UI
+- frontend/src/app/(barangay)/collection-requests/[id]/page.jsx — full request detail page with timeline and action cards
+- frontend/src/lib/formatDate.js — ISO date → readable locale string
+- frontend/src/components/requests/RequestDetailHeader.jsx — header card with back button and status pill
+- frontend/src/components/ui/LabelValue.jsx — label/value pair display component
 - frontend/src/app/(resident)/capture/page.jsx — Cloudinary upload + pickup request submission
 - frontend/src/app/(resident)/profile/page.jsx — resident logout
 - frontend/src/components/navigation/Sidebar.jsx — sidebar with logout handler

@@ -192,6 +192,9 @@ export default function OtpPage() {
         sitioId: pendingData.sitioId,
         password: pendingData.password,
         termsAccepted: pendingData.termsAccepted,
+        username: pendingData.username,
+        lastName: pendingData.lastName,
+        firstName: pendingData.firstName
       }),
     });
 

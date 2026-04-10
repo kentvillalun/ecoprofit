@@ -1,7 +1,7 @@
 "use client";
 
 import { Poppins } from "next/font/google";
-import { PhoneIcon, LockClosedIcon } from "@heroicons/react/24/outline";
+import { LockClosedIcon, UserIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -17,7 +17,7 @@ const poppins = Poppins({
 });
 
 const schema = yup.object().shape({
-  phoneNumber: yup.string().required("Phone number is required"),
+  username: yup.string().required("Username is required"),
   password: yup.string().required("Password is required"),
 });
 
@@ -34,7 +34,7 @@ export default function LoginPage() {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      phoneNumber: "",
+      username: "",
       password: "",
     },
   });
@@ -121,16 +121,16 @@ export default function LoginPage() {
           <div className="flex flex-col gap-6 text-[#717680]">
             <div className="flex flex-col gap-2">
               <div className=" flex flex-row gap-3 border-b border-[#E7E3E0] p-2.5">
-                <PhoneIcon className="h-6 w-6 stroke-[#4C5F66]" />
+                <UserIcon className="h-6 w-6 stroke-[#4C5F66]" />
                 <input
                   type="text"
-                  placeholder="Phone number"
+                  placeholder="Username"
                   className="outline-none max-w-full w-full"
-                  {...register("phoneNumber")}
+                  {...register("username")}
                 />
               </div>
               <p className="text-[14px] text-red-500">
-                {errors.phoneNumber?.message}
+                {errors.username?.message}
               </p>
             </div>
 

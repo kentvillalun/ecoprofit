@@ -89,6 +89,9 @@ const register = async (req, res) => {
       password,
       confirmPassword,
       termsAccepted,
+      username,
+      lastName,
+      firstName
     } = req.body ?? {};
     // ?? {} means "if req.body is null or undefined, use empty object"
     // prevents a crash when destructuring
@@ -99,7 +102,10 @@ const register = async (req, res) => {
       !password ||
       !confirmPassword ||
       !barangayId ||
-      !sitioId
+      !sitioId ||
+      !username ||
+      !lastName ||
+      !firstName
     ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -131,6 +137,17 @@ const register = async (req, res) => {
         .status(400)
         .json({ error: "This phone number is already registered" });
     }
+
+    // Duplicate username check
+    
+    const usernameExist = await prisma.user.findUnique({
+      where: { username },
+    })
+
+    if (usernameExist) {
+      return res.status(400).json({error: "Username is already taken"})
+    }
+
 
     // ── Validate barangay ─────────────────────────────────────
     const barangayRecord = await prisma.barangay.findFirst({
@@ -193,13 +210,13 @@ const register = async (req, res) => {
 // ─────────────────────────────────────────────
 const verifyOtp = async (req, res) => {
   try {
-    const { phoneNumber, code, barangayId, sitioId, password, termsAccepted } =
+    const { phoneNumber, code, barangayId, sitioId, password, termsAccepted, username, lastName, firstName } =
       req.body ?? {};
 
-    if (!phoneNumber || !code) {
+    if (!phoneNumber || !code || !username || !lastName || !firstName) {
       return res
         .status(400)
-        .json({ error: "Phone number and OTP code are required" });
+        .json({ error: "Missing required fields" });
     }
 
     // ── Find a valid OTP record ───────────────────────────────
@@ -263,6 +280,9 @@ const verifyOtp = async (req, res) => {
         sitio: { connect: { id: sitioRecord.id } },
         termsAccepted: true,
         termsAcceptedAt: new Date(),
+        username,
+        lastName,
+        firstName,
       },
       select: {
         id: true,
@@ -348,16 +368,16 @@ const resendOtp = async (req, res) => {
 // ─────────────────────────────────────────────
 const login = async (req, res) => {
   try {
-    const { phoneNumber, password } = req.body ?? {};
+    const { username, password } = req.body ?? {};
 
-    if (!phoneNumber || !password) {
+    if (!username || !password) {
       return res
         .status(400)
-        .json({ error: "Phone number and password are required" });
+        .json({ error: "Username and password are required" });
     }
 
     const user = await prisma.user.findUnique({
-      where: { phoneNumber },
+      where: { username },
       include: {
         barangay: { select: { id: true, name: true, code: true } },
         sitio: { select: { id: true, name: true } },
@@ -367,7 +387,7 @@ const login = async (req, res) => {
     if (!user) {
       return res
         .status(401)
-        .json({ error: "Invalid phone number or password" });
+        .json({ error: "Invalid username or password" });
     }
 
     const passwordMatches = await bcrypt.compare(password, user.passwordHash);
@@ -375,7 +395,7 @@ const login = async (req, res) => {
     if (!passwordMatches) {
       return res
         .status(401)
-        .json({ error: "Invalid phone number or password" });
+        .json({ error: "Invalid username or password" });
     }
 
     if (!user.isActive) {
@@ -405,6 +425,7 @@ const login = async (req, res) => {
       data: {
         id: user.id,
         role: user.role,
+        username: user.username,
         phoneNumber: user.phoneNumber,
         firstName: user.firstName,
         lastName: user.lastName,
@@ -598,18 +619,18 @@ export const BARANGAY_ROLES = [
 
 const barangayLogin = async (req, res) => {
   try {
-    const { phoneNumber, password } = req.body ?? {};
+    const { username, password } = req.body ?? {};
 
     //  Valide both field
-    if (!phoneNumber || !password) {
+    if (!username || !password) {
       return res
         .status(400)
-        .json({ error: "Phone number and password are required" });
+        .json({ error: "Username and password are required" });
     }
 
     // Find user by phone number in the database
     const user = await prisma.user.findUnique({
-      where: { phoneNumber },
+      where: { username },
       include: {
         barangay: { select: { id: true, name: true, code: true } },
       },
@@ -619,7 +640,7 @@ const barangayLogin = async (req, res) => {
     if (!user) {
       return res
         .status(401)
-        .json({ error: "Invalid phone number or password" });
+        .json({ error: "Invalid username or password" });
     }
 
     // Compare password with the hashed password using bcrypt
@@ -629,7 +650,7 @@ const barangayLogin = async (req, res) => {
     if (!passwordMatches) {
       return res
         .status(401)
-        .json({ error: "Invalid phone number or password" });
+        .json({ error: "Invalid username or password" });
     }
 
     // Check if user role is a barangay role
@@ -667,6 +688,7 @@ const barangayLogin = async (req, res) => {
       message: "Login successful",
       user: {
         id: user.id,
+        username: user.username,
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,

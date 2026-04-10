@@ -8,6 +8,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/lib/config";
+import { BARANGAY_ROLES } from "@/lib/roles";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -15,7 +16,7 @@ const poppins = Poppins({
 });
 
 const schema = yup.object().shape({
-  phoneNumber: yup.string().required("Phone number is required"),
+  username: yup.string().required("Username is required"),
   password: yup.string().required("Password is required"),
 });
 
@@ -32,7 +33,7 @@ export default function BarangayLoginPage() {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      phoneNumber: "",
+      username: "",
       password: "",
     },
   });
@@ -57,7 +58,7 @@ export default function BarangayLoginPage() {
         return;
       }
 
-      if (result.user?.role !== "CAPTAIN") {
+      if (!BARANGAY_ROLES.includes(result.user?.role)) {
         setErrorMessage("This page is for barangay staff login only.");
         return;
       }
@@ -102,17 +103,17 @@ export default function BarangayLoginPage() {
                   htmlFor=""
                   className="text-gray-700 text-center md:text-start"
                 >
-                  Phone number
+                  Username
                 </label>
                 <input
                   type="text"
                   className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
-                  placeholder="Enter your phone number"
-                  {...register("phoneNumber")}
+                  placeholder="Enter your username"
+                  {...register("username")} 
                 />
-                {errors.phoneNumber && (
+                {errors.username && (
                   <p className="text-[14px] text-red-500 text-center md:text-start">
-                    {errors.phoneNumber?.message}
+                    {errors.username?.message}
                   </p>
                 )}
               </div>

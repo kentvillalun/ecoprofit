@@ -6,6 +6,8 @@ import {
   LockClosedIcon,
   MapPinIcon,
   BuildingOffice2Icon,
+  UserIcon,
+  AtSymbolIcon
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -24,6 +26,9 @@ const poppins = Poppins({
 });
 
 const schema = yup.object().shape({
+  username: yup.string().required("Username is required").min(4, "Username must be at least 4 characters").max(20, "Username must be at most 20 characters").matches(/^[a-zA-Z0-9_-]+$/, "Username can only contain letters, numbers, underscores, and hyphens"),
+  firstName: yup.string().required("First name is required"),
+  lastName: yup.string().required("Last name is required"),
   phoneNumber: yup.string().required("Phone number is required"),
 
   barangayName: yup.string().required("Barangay is required"),
@@ -81,6 +86,9 @@ export default function SignupPage() {
       password: "",
       confirmPassword: "",
       termsAccepted: false,
+      username: "",
+      firstName: "",
+      lastName: "",
     },
   });
 
@@ -247,6 +255,9 @@ export default function SignupPage() {
         headers: { "Content-Type": "application/json" },
 
         body: JSON.stringify({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          username: data.username,
           phoneNumber: data.phoneNumber,
           barangayId: selectedBarangay.id,
           sitioId: data.sitioId,
@@ -267,6 +278,9 @@ export default function SignupPage() {
       sessionStorage.setItem(
         "pendingRegistration",
         JSON.stringify({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          username: data.username,
           phoneNumber: data.phoneNumber,
           barangayId: selectedBarangay.id,
           sitioId: data.sitioId,
@@ -320,6 +334,50 @@ export default function SignupPage() {
             </h3>
 
             <div className="flex flex-col gap-2 text-[#717680]">
+              {/* First name */}
+              <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
+                <UserIcon className="h-5.75 w-5.75 shrink-0 stroke-[#4C5F66]" />
+                <input
+                  type="text"
+                  placeholder="First name"
+                  className="outline-none max-w-full w-full min-w-0"
+                  {...register("firstName")}
+                />
+              </div>
+              <p className="text-[14px] text-red-500">
+                {errors.firstName?.message}
+              </p>
+              
+              {/* Last name */}
+              <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
+                <UserIcon className="h-5.75 w-5.75 shrink-0 stroke-[#4C5F66]" />
+                <input
+                  type="text"
+                  placeholder="Last name"
+                  className="outline-none max-w-full w-full min-w-0"
+                  {...register("lastName")}
+                />
+              </div>
+              <p className="text-[14px] text-red-500">
+                {errors.lastName?.message}
+              </p>
+
+              {/* Username */}
+              <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
+                <AtSymbolIcon className="h-5.75 w-5.75 shrink-0 stroke-[#4C5F66]" />
+                <input
+                  type="text"
+                  placeholder="Username"
+                  className="outline-none max-w-full w-full min-w-0"
+                  {...register("username")}
+                />
+              </div>
+              <p className="text-[14px] text-red-500">
+                {errors.username?.message}
+              </p>
+              
+              
+              
               {/* Phone number */}
               <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
                 <PhoneIcon className="h-5.75 w-5.75 shrink-0 stroke-[#4C5F66]" />
