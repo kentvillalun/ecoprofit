@@ -69,7 +69,7 @@ const listRequests = async (req, res) => {
 const updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, rejectionReason, actualWeight, weightUnit } =
+    const { status, rejectionReason, actualWeight, weightUnit, items } =
       req.body ?? {};
 
     if (status === "APPROVED") {
@@ -91,13 +91,21 @@ const updateStatus = async (req, res) => {
     }
 
     if (status === "COLLECTED") {
+      await prisma.collectionItem.createMany({
+        data: items.map((item) => ({
+          requestId: id,
+          materialType: item.materialType,
+          actualWeight: item.actualWeight,
+          weightUnit: item.weightUnit
+        })),
+        skipDuplicates: true
+      })
+
       await prisma.pickupRequests.update({
         where: { id },
         data: {
           status: "COLLECTED",
           collectedAt: new Date(),
-          actualWeight: actualWeight,
-          weightUnit: weightUnit,
         },
       });
 

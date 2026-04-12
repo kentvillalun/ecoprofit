@@ -288,6 +288,7 @@ export default function SignupPage() {
           termsAccepted: true,
         }),
       );
+      sessionStorage.setItem("otpFlow", "signup")
 
       router.push("/otp");
     } catch {
@@ -381,6 +382,7 @@ export default function SignupPage() {
               {/* Phone number */}
               <div className="flex flex-row gap-3.25 border-b border-[#E7E3E0] p-2.5">
                 <PhoneIcon className="h-5.75 w-5.75 shrink-0 stroke-[#4C5F66]" />
+               
                 <input
                   type="text"
                   placeholder="Phone number"

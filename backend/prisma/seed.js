@@ -22,6 +22,7 @@ const DEV_BARANGAY = {
   adminFirstName: "Beddeng",
   adminLastName: "Laud Admin",
   sitios: ["Sitio 1", "Sitio 2", "Sitio 3"],
+  adminUsername: "barangayadmin"
 };
 
 async function main() {
@@ -74,6 +75,7 @@ async function main() {
       isActive: true,
       termsAccepted: true,
       termsAcceptedAt: new Date(),
+      username: DEV_BARANGAY.adminUsername
     },
     create: {
       phoneNumber: DEV_BARANGAY.adminPhoneNumber,
@@ -86,6 +88,7 @@ async function main() {
       isActive: true,
       termsAccepted: true,
       termsAcceptedAt: new Date(),
+      username: DEV_BARANGAY.adminUsername
     },
   });
 

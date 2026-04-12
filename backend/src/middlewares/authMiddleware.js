@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
 import { prisma } from "../config/db.js";
 
-const authenticate = async (req, res, next) => {
+const authenticateBarangay = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
-    const token = req.cookies.resident_token || req.cookies.barangay_token || authHeader?.split(" ")[1];
+    const token = req.cookies.barangay_token || authHeader?.split(" ")[1];
 
     if (!token) {
       return res.status(401).json({ error: "Missing or invalid token" });
@@ -35,6 +35,42 @@ const authenticate = async (req, res, next) => {
   }
 };
 
+const authenticateResident = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    const token = req.cookies.resident_token || authHeader?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({ error: "Missing or invalid token"})
+    }
+
+    const decode = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.user = {
+      id: decode.id,
+      role: decode.role,
+      barangayId: decode.barangayId,
+    }
+
+    const blackListed = await prisma.blackListedToken.findUnique({
+      where: { token }
+    })
+
+    if (blackListed) {
+      return res.status(401).json({ error: "Invalid token"})
+    }
+
+    next();
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ error: "Access token expired"})
+    }
+    return res.status(401).json({ error: "Invalid token"})
+  }
+
+}
+
 const requireRoles = (allowedRoles) => {
   return (req, res, next) => {
   
@@ -45,4 +81,5 @@ const requireRoles = (allowedRoles) => {
   };
 };
 
-export { authenticate, requireRoles };
+
+export { authenticateResident, requireRoles, authenticateBarangay };

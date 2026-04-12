@@ -28,6 +28,15 @@
 - `Role` enum in Prisma schema covers all staff roles: `CAPTAIN`, `SECRETARY`, `TREASURER`, `SK`, `COLLECTOR`, `SUPER_ADMIN`, `RESIDENT`
 - Protected dashboard route: `GET /dashboard` (requires valid JWT + CAPTAIN role)
 
+- **Username/password auth system**: `username` field added to `User` model (unique, optional for backward compat); login for both residents and barangay staff now accepts `username` instead of `phoneNumber`
+- Signup flow now collects `firstName`, `lastName`, and `username` upfront; backend validates uniqueness and passes them through `register` → `verifyOtp` → `prisma.user.create`
+- `authenticateResident` and `authenticateBarangay` split from the single `authenticate` middleware — each only accepts its own cookie (`resident_token` / `barangay_token`), preventing cross-role token acceptance
+- `GET /auth/me` now uses `authenticateResident`; new `GET /auth/barangay/me` added using `authenticateBarangay`
+- All pickup-request routes updated: resident routes use `authenticateResident`, barangay collection-request routes use `authenticateBarangay`
+- `frontend/src/lib/roles.js` created — exports `BARANGAY_ROLES` array for reuse across frontend
+- Seed updated: dev admin account now seeded with `username: "barangayadmin"`
+- Signup page stores `otpFlow: "signup"` in `sessionStorage` before pushing to `/otp`
+
 - Barangay login frontend connected and bug fixed
 - Toast notifications added to the resident capture page (via `sonner`)
 - `useUpdate` custom hook: sends `PATCH /api/pickup-requests/collection-requests/:id` with `{ status, rejectionReason }`; returns `true` on success
@@ -50,8 +59,7 @@
 
 ## Next Steps (priority order)
 
-1. Build `/collection-requests/[id]` view details page (barangay side)
-2. Add ASSORTED to MaterialType enum in Prisma schema and update backend validation
+1. Add ASSORTED to MaterialType enum in Prisma schema and update backend validation
 3. Build Manual Collection Intake module (Sunday EcoAid manual entry flow with resident search)
 4. Build Redemption Management module (Program → ProgramMaterial → RedemptionTransaction schema and UI)
 5. Build Leaderboard (resident ranking by total contribution)
@@ -65,6 +73,7 @@
 ## Notes
 
 - Auth frontend bugs are no longer an active work area
+- Login is now username-based (not phone number) for both residents and barangay staff
 - Avoid unnecessary refactoring of stable auth pages unless required by a new feature
 - Barangay options must come only from registered barangays in the system
 - No third-party or external address API should be used for signup address selection

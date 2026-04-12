@@ -5,7 +5,7 @@ import { ScaleIcon } from "@heroicons/react/24/outline";
 import { useUpdate } from "@/hooks/useUpdate";
 import { toast } from "sonner";
 
-export const InProgressActions = ({ id, onSuccess, variant }) => {
+export const InProgressActions = ({ id, onSuccess, variant, materialType }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [actualWeight, setActualWeight] = useState(null);
   const [weightUnit, setWeightUnit] = useState("KG");

@@ -157,6 +157,7 @@ export const RequestTable = ({
             <button className="text-gray-600 hover:underline" onClick={() => router.push(`/collection-requests/${data.id}`)}>View</button>
             <InProgressActions
               id={data.id}
+              materialType={data.materialType}
               onSuccess={() => handleRefetchCount()}
             />
           </div>

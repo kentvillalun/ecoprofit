@@ -66,7 +66,7 @@ export default function CapturePage() {
 
     try {
       setIsLoading(true);
-      const toastId = toast.loading("Uploading photo...");
+      toast.loading("Uploading photo...");
       const formData = new FormData();
 
       formData.append("file", imageFile);
@@ -90,13 +90,13 @@ export default function CapturePage() {
         return;
       }
 
-      toast.dismiss(toastId);
+      toast.dismiss();
       toast.success("Photo uploaded!");
       setCloudinaryUrl(data.secure_url);
       return true;
     } catch (error) {
       setCloudinaryUrl(null);
-      toast.dismiss(toastId);
+      toast.dismiss();
       toast.error("There is a problem uploading photo");
     } finally {
       setIsLoading(false);

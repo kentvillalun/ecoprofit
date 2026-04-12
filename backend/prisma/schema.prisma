@@ -137,6 +137,8 @@ model PickupRequests {
   approvedAt DateTime?
   collectedAt DateTime?
   rejectedAt DateTime?
+
+  collectionItems CollectionItem[]
 }
 
 enum MaterialType {
@@ -144,6 +146,7 @@ enum MaterialType {
   PAPERS
   BOTTLES
   PLASTICS
+  ASSORTED
 }
 
 enum WeightUnit {
@@ -160,4 +163,18 @@ enum Status {
   REJECTED
 }
 
+model CollectionItem {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  requestId String @db.Uuid
+
+  request PickupRequests @relation(fields: [requestId], references: [id])
+
+  materialType MaterialType 
+  actualWeight Float
+  weightUnit WeightUnit
+
+
+  
+}
 
