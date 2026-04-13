@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 const schema = yup.object().shape({
   materialType: yup
     .string()
-    .oneOf(["METALS", "PAPERS", "BOTTLES", "PLASTICS"], "Invalid material type")
+    .oneOf(["METALS", "PAPERS", "BOTTLES", "PLASTICS", "ASSORTED"], "Invalid material type")
     .required("Material type is required"),
   estimatedWeight: yup
     .number("Please input numbers only")
@@ -302,6 +302,7 @@ export default function CapturePage() {
                     <option value="PAPERS">Papers</option>
                     <option value="BOTTLES">Bottles</option>
                     <option value="PLASTICS">Plastics</option>
+                    <option value="ASSORTED">Assorted</option>
                   </select>
                 </div>
                 {errors.materialType && (

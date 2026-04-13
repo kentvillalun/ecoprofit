@@ -8,16 +8,15 @@ export const useUpdate = () => {
     const [isError, setIsError] = useState(false)
     const [data, setData] = useState(null)
 
-    const updateStatus = async ({id, status, rejectionReason, actualWeight, weightUnit}) => {
+    const updateStatus = async ({id, status, rejectionReason, items}) => {
         try {
             setIsLoading(true)
-            console.log( typeof actualWeight)
             const response = await fetch(`/api/pickup-requests/collection-requests/${id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({status, rejectionReason, actualWeight, weightUnit}),
+                body: JSON.stringify({status, rejectionReason, items}),
                 credentials: "include"
             })
 

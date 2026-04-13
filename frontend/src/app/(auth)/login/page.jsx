@@ -98,6 +98,16 @@ export default function LoginPage() {
     }
   }, [])
 
+  // Checks if the user has already logged in, if yes redirect to home
+  useEffect(() => {
+    const session = localStorage.getItem("ecoprofitResidentSession");
+
+    if (session) {
+      router.push('/home')
+    }
+
+  })
+
   return (
     <Page gradient={true}>
       <div

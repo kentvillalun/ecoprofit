@@ -18,7 +18,7 @@ export default function RequestDetails() {
   const { id } = useParams();
   const url = `/api/pickup-requests/collection-requests/${id}`;
   const { isLoading, isError, data, error } = useFetch({ url });
-
+  console.log(data?.request?.collectionItems);
   if (isLoading) return <p className="md:pl-77">Loading....</p>;
   if (isError) return <p className="md:pl-77">{error}</p>;
 
@@ -31,7 +31,7 @@ export default function RequestDetails() {
         <RequestDetailHeader type={data?.request?.status} />
 
         <div className="grid grid-cols-1 gap-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className={`grid grid-cols-1 md:grid-cols-2 gap-3 lg:grid-cols-3`}>
             <Card className="flex flex-col items-start gap-3">
               <h3 className="font-medium uppercase text-gray-600 text-sm">
                 Resident Information
@@ -66,6 +66,25 @@ export default function RequestDetails() {
                 value={`${data?.request?.notes ? data?.request?.notes : "No notes available"}`}
               />
             </Card>
+            {data?.request?.status === "COLLECTED" && (
+              <Card className="flex flex-col items-start gap-3 md:col-span-2 lg:col-span-1">
+                <h3 className="font-medium uppercase text-gray-600 text-sm">
+                  Finalized Collection
+                </h3>
+                <div className="grid grid-cols-3 gap-2 w-full">
+                  <LabelValue name={"Material type"} />
+                  <LabelValue name={"Actual weight"} />
+                  <LabelValue name={"Weight unit"} />
+                </div>
+                {data?.request?.collectionItems.map((item, index) => (
+                  <div className="grid grid-cols-3 gap-2 w-full" key={index}>
+                    <div className="">{item.materialType}</div>
+                    <div className="">{item.actualWeight}</div>
+                    <div className="">{item.weightUnit}</div>
+                  </div>
+                ))}
+              </Card>
+            )}
           </div>
           <Card className="flex flex-col items-start gap-3">
             <h3 className="font-medium uppercase text-gray-600 text-sm">
@@ -95,7 +114,8 @@ export default function RequestDetails() {
                 value={formatDate(data?.request?.createdAt)}
               />
             )}
-            {(data?.request?.status === "APPROVED" || data?.request?.status === "IN_PROGRESS") && (
+            {(data?.request?.status === "APPROVED" ||
+              data?.request?.status === "IN_PROGRESS") && (
               <div className="flex flex-col gap-2">
                 <LabelValue
                   name={"Submitted"}
@@ -107,7 +127,7 @@ export default function RequestDetails() {
                 />
               </div>
             )}
-           
+
             {data?.request?.status === "COLLECTED" && (
               <div className="flex flex-col gap-2">
                 <LabelValue
@@ -135,10 +155,8 @@ export default function RequestDetails() {
                   name={"Rejected"}
                   value={formatDate(data?.request?.rejectedAt)}
                 />
-                
               </div>
             )}
-
           </Card>
           {data?.request?.status === "REQUESTED" ? (
             <Card className="flex flex-col gap-3 items-start">
@@ -171,12 +189,12 @@ export default function RequestDetails() {
                 id={id}
                 variant={"detail"}
                 onSuccess={() => router.push("/collection-requests")}
+                materialType={data?.request?.materialType}
               />
             </Card>
           ) : (
             " "
           )}
-
         </div>
       </PageContent>
     </Page>

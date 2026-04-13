@@ -166,6 +166,13 @@ const getRequest = async (req, res) => {
         rejectedAt: true,
         collectedAt: true,
         status: true,
+        collectionItems: {
+          select: {
+            materialType: true,
+            actualWeight: true,
+            weightUnit: true,
+          }
+        }
       },
     });
 

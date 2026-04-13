@@ -1,6 +1,7 @@
 import { Card } from "../ui/Card";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Pill } from "../ui/Pill";
+import { formatDate } from "@/lib/formatDate";
 
 // Juan Dela Cruz         [Pending]
 // Sitio 3 • Plastic Bottles
@@ -15,7 +16,7 @@ export const RequestCard = ({
   onToggleSelect,
 }) => {
   const filteredRequest = data?.filter((req) => req.status === status);
-
+  const router = useRouter()
   return (
     <>
       {filteredRequest?.length === 0 ? (
@@ -27,7 +28,8 @@ export const RequestCard = ({
             No items yet
           </h1>
           <p className="text-sm text-[#6B7280]">
-            There are no item in this tab yet. Please go to the Pending tab to update status of pickup requests
+            There are no item in this tab yet. Please go to the Pending tab to
+            update status of pickup requests
           </p>
         </div>
       ) : (
@@ -61,15 +63,20 @@ export const RequestCard = ({
                   </h3>
                   <div className="text-[#727272] text-sm">
                     <p>{`${d.user.sitio.name} • ${d.materialType}`}</p>
-                    <p>Est. Qty: {d.estimatedWeight} {d.weightUnit}</p>
-                    <p>{d.createdAt}</p>
+                    <p>
+                      Est. Qty: {d.estimatedWeight} {d.weightUnit}
+                    </p>
+                    <p>{formatDate(d.createdAt)}</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-center justify-between min-h-full">
                   <Pill type={d.status} />
-                  <Link href={""} className="text-sm italic ">
+                  <button
+                    className="text-gray-600 italic"
+                    onClick={() => router.push(`/collection-requests/${d.id}`)}
+                  >
                     View Details
-                  </Link>
+                  </button>
                 </div>
               </Card>
             </label>

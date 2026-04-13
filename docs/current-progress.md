@@ -49,6 +49,16 @@
 - `useUpdate` hook extended to forward `actualWeight` and `weightUnit` to the backend
 - Full request lifecycle now wired end-to-end: `REQUESTED` → `APPROVED` → `IN_PROGRESS` → `COLLECTED` (or `REJECTED` from `REQUESTED`)
 
+- `ASSORTED` MaterialType — added to `MaterialType` enum in schema; capture page dropdown and yup validation updated to include it
+- `CollectionItem` Prisma model — per-material breakdown stored at collection time (`requestId`, `materialType`, `actualWeight`, `weightUnit`)
+- `updateStatus` COLLECTED handler upgraded — creates `CollectionItem` records before updating request status; replaces single `actualWeight`/`weightUnit` fields on the request row
+- `useUpdate` hook — now forwards `items` array to the backend for the COLLECTED transition
+- `InProgressActions` redesigned — simple mode (single weight input) for non-ASSORTED requests; ASSORTED mode shows a dynamic table of rows (materialType/actualWeight/weightUnit) with add/remove row support
+- "Finalized Collection" card — detail page `/collection-requests/[id]` shows a breakdown table of `collectionItems` when status is `COLLECTED`; `getRequest` controller now selects `collectionItems` relation
+- Capture page sitio auto-fetch — fetches resident's sitio from `GET /auth/me` on mount; displays it as a read-only field
+- Login page session guards — redirects to `/home` if already logged in; redirects to `/onboarding` if user hasn't seen it
+- Root page redirect — `app/page.js` redirects `/` to `/login`
+
 ---
 
 ## In Progress
@@ -59,14 +69,13 @@
 
 ## Next Steps (priority order)
 
-1. Add ASSORTED to MaterialType enum in Prisma schema and update backend validation
-3. Build Manual Collection Intake module (Sunday EcoAid manual entry flow with resident search)
-4. Build Redemption Management module (Program → ProgramMaterial → RedemptionTransaction schema and UI)
-5. Build Leaderboard (resident ranking by total contribution)
-6. Build Reward Inventory module
-7. Build Program Funds module (expenses, junkshop income, profits)
-8. Build Material Stock read-only view
-9. Reports module
+1. Build Manual Collection Intake module (Sunday EcoAid manual entry flow with resident search)
+2. Build Redemption Management module (Program → ProgramMaterial → RedemptionTransaction schema and UI)
+3. Build Leaderboard (resident ranking by total contribution)
+4. Build Reward Inventory module
+5. Build Program Funds module (expenses, junkshop income, profits)
+6. Build Material Stock read-only view
+7. Reports module
 
 ---
 

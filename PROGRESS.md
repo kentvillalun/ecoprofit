@@ -65,6 +65,15 @@
 - [x] `LabelValue` component — `frontend/src/components/ui/LabelValue.jsx` renders a label + value pair used across detail cards
 - [x] `RequestDetailHeader` component — card with back button (`history.back()`), clipboard icon, title, and status `Pill`
 - [x] View Details full page — `/collection-requests/[id]` fetches via `useFetch`; shows Resident Info, Request Info, Photo Evidence, and Timeline cards (timeline entries shown conditionally per status); renders `PendingActions` / `ApprovedActions` / `InProgressActions` card based on current status; `onSuccess` navigates back to list
+- [x] `ASSORTED` MaterialType — added to `MaterialType` enum in `schema.prisma`; capture page dropdown and yup schema updated to include `ASSORTED`
+- [x] `CollectionItem` Prisma model — stores per-material breakdown at collection time (`requestId`, `materialType`, `actualWeight`, `weightUnit`); related to `PickupRequests` via `collectionItems` relation
+- [x] `updateStatus` COLLECTED handler upgraded — now creates `CollectionItem` records via `prisma.collectionItem.createMany` before updating request status; replaces the old single `actualWeight`/`weightUnit` fields on the request row
+- [x] `useUpdate` hook updated — `updateStatus` now accepts and forwards an `items` array to the backend for the COLLECTED transition
+- [x] `InProgressActions` redesigned — two modes based on `materialType` prop: simple mode (single actual weight + unit input) and ASSORTED mode (dynamic table with add/remove rows, each row has materialType/actualWeight/weightUnit fields)
+- [x] "Finalized Collection" card on detail page — `/collection-requests/[id]` shows a collection items breakdown table (materialType, actualWeight, weightUnit) when status is `COLLECTED`; backend `getRequest` now selects the `collectionItems` relation
+- [x] Capture page sitio auto-fetch — on mount, page calls `GET /auth/me` and displays the resident's sitio name as a read-only field; removes the "unregistered field" known issue
+- [x] Login page session guards — `useEffect` added to redirect to `/home` if localStorage session exists; `useEffect` added to redirect to `/onboarding` if user hasn't seen onboarding
+- [x] Root page redirect — `app/page.js` redirects `/` to `/login`
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
 
@@ -100,7 +109,7 @@ collection schedule module and real dashboard data.
 - backend/src/controllers/pickup-request.controller.js — pickup request creation
 - backend/src/middlewares/authMiddleware.js
 - backend/src/routes/auth.route.js
-- backend/src/routes/pickup-request.route.js — POST /pickup-requests; GET/PATCH/GET-by-id collection-requests routes
+- backend/src/routes/pickup-request.route.js — POST /pickup-requests; GET/PATCH/GET-by-id collection-requests routes; COLLECTED transition creates CollectionItem records
 - backend/src/routes/dashboard.route.js
 - backend/src/utils/generateToken.js
 - backend/prisma/schema.prisma
@@ -125,11 +134,9 @@ collection schedule module and real dashboard data.
 ## Known Issues / TODO
 - BlacklistedToken cleanup job needed (periodic deletion of expired tokens using the expiresAt field)
 - Dashboard returns placeholder response, real data pending
-- Capture page "Purok / Sitio" field is unregistered — not wired into react-hook-form or sent to backend
 - Resident Layer 2 auth check (server component calling GET /auth/me) still pending
-- Decline modal not yet wired — clicking "Decline" calls `updateStatus` without a rejectionReason; backend rejects this with 400
-- Modal component always renders (no `isOpen` guard) — needs Portal + open/close state before it's usable
 - POST /pickup-requests response has a typo: "submittion" → "submission"
+- `InProgressActions` ASSORTED modal: minimum 2 rows enforced (removeRow disabled when `items.length === 2`) but rows start empty — no validation before submit (empty materialType/weight are silently sent to backend)
 
 ## Mentor Instructions
 Act as a senior dev mentor — guide me, don't just give me answers.
