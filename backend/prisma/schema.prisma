@@ -174,7 +174,47 @@ model CollectionItem {
   actualWeight Float
   weightUnit WeightUnit
 
+}
 
+model Program {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String
+  allotedBudget Float
+  maxPoints Float
+  createdAt DateTime @default(now()) 
   
+  programMaterial ProgramMaterial[]
+}
+
+model ProgramMaterial {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  programId String @db.Uuid
+  program Program @relation(fields: [programId], references: [id])
+
+  materialType MaterialType
+  pointValue Float
+  createdAt DateTime @default(now())
+
+  redemptionTransaction RedemptionTransaction[]
+
+  @@unique([programId, materialType])
+}
+
+model RedemptionTransaction {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  programMaterialId String @db.Uuid
+  programMaterial ProgramMaterial @relation(fields: [programMaterialId], references: [id])
+  quantity Int
+  collectorName String
+  beneficiaryName String
+  createdAt DateTime @default(now())
+  currentPointValue Float
+  educationalLevel EducationalLevel
+}
+
+enum EducationalLevel {
+  PRIMARY
+  SECONDARY
+  TERTIARY
 }
 
