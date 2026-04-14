@@ -59,6 +59,15 @@
 - Login page session guards — redirects to `/home` if already logged in; redirects to `/onboarding` if user hasn't seen it
 - Root page redirect — `app/page.js` redirects `/` to `/login`
 
+- **Redemption module — backend foundation**:
+  - `Program` model — stores redemption program name, allotted budget, and max points
+  - `ProgramMaterial` model — per-material point value scoped to a program; unique constraint on `(programId, materialType)`
+  - `RedemptionTransaction` model — records each redemption event: `programMaterialId`, `quantity`, `collectorName`, `beneficiaryName`, `educationalLevel` (`PRIMARY`/`SECONDARY`/`TERTIARY`), and `currentPointValue` snapshot (preserves value at time of transaction)
+  - `EducationalLevel` enum added to schema
+  - `redemption.controller.js` — `createProgram`, `getPrograms`, `getProgram`, `createTransaction`, `getTransactions`; `createTransaction` snapshots the current `pointValue` from `ProgramMaterial` before writing the record
+  - `redemption.route.js` — all routes protected by `authenticateBarangay` + `requireRoles(["CAPTAIN", "SECRETARY", "SK"])`; registered at `/redemption` in `server.js`
+  - Endpoints: `POST /redemption/programs`, `GET /redemption/programs`, `GET /redemption/programs/:id`, `POST /redemption/transactions`, `GET /redemption/transactions`
+
 ---
 
 ## In Progress
@@ -70,7 +79,7 @@
 ## Next Steps (priority order)
 
 1. Build Manual Collection Intake module (Sunday EcoAid manual entry flow with resident search)
-2. Build Redemption Management module (Program → ProgramMaterial → RedemptionTransaction schema and UI)
+2. Build Redemption Management frontend (program list/create UI, transaction recording form, tied to existing backend)
 3. Build Leaderboard (resident ranking by total contribution)
 4. Build Reward Inventory module
 5. Build Program Funds module (expenses, junkshop income, profits)

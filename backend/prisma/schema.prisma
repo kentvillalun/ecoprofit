@@ -202,8 +202,10 @@ model ProgramMaterial {
 
 model RedemptionTransaction {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  
   programMaterialId String @db.Uuid
   programMaterial ProgramMaterial @relation(fields: [programMaterialId], references: [id])
+
   quantity Int
   collectorName String
   beneficiaryName String
