@@ -74,6 +74,21 @@
 - [x] Capture page sitio auto-fetch — on mount, page calls `GET /auth/me` and displays the resident's sitio name as a read-only field; removes the "unregistered field" known issue
 - [x] Login page session guards — `useEffect` added to redirect to `/home` if localStorage session exists; `useEffect` added to redirect to `/onboarding` if user hasn't seen onboarding
 - [x] Root page redirect — `app/page.js` redirects `/` to `/login`
+- [x] Username/password auth system — `username` field added to `User` model (unique, optional for backward compat); both resident and barangay login now accept `username`; signup collects `firstName`, `lastName`, `username` upfront; backend validates uniqueness; seed updated with `username: "barangayadmin"`
+- [x] Split authenticate middleware — `authenticateResident` and `authenticateBarangay` separated; each only accepts its own cookie, preventing cross-role token acceptance; all pickup-request routes updated accordingly
+- [x] `GET /auth/barangay/me` endpoint added using `authenticateBarangay`; existing `GET /auth/me` now uses `authenticateResident`
+- [x] `frontend/src/lib/roles.js` — exports `BARANGAY_ROLES` array for reuse across frontend
+- [x] Signup page stores `otpFlow: "signup"` in `sessionStorage` before pushing to `/otp`
+- [x] Redemption module backend foundation:
+      - `Program` model — name, allotted budget, max points
+      - `ProgramMaterial` model — per-material point value scoped to a program; unique on `(programId, materialType)`
+      - `RedemptionTransaction` model — records each redemption event with `programMaterialId`, `quantity`, `collectorName`, `beneficiaryName`, `educationalLevel`, and `currentPointValue` snapshot
+      - `EducationalLevel` enum (`PRIMARY` / `SECONDARY` / `TERTIARY`) added to schema
+      - `redemption.controller.js` — `createProgram`, `getPrograms`, `getProgram`, `createTransaction`, `getTransactions`; `createTransaction` snapshots `pointValue` before writing
+      - `redemption.route.js` — protected by `authenticateBarangay + requireRoles(["CAPTAIN","SECRETARY","SK"])`; registered at `/redemption` in `server.js`
+      - Endpoints: `POST /redemption/programs`, `GET /redemption/programs`, `GET /redemption/programs/:id`, `POST /redemption/transactions`, `GET /redemption/transactions`
+- [ ] Redemption Management frontend (program list/create UI, transaction recording form)
+- [ ] Manual Collection Intake module (Sunday EcoAid manual entry with resident search)
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
 
@@ -84,10 +99,15 @@ between localhost and Railway based on `NODE_ENV`. CORS origin is now env-var
 controlled (`CORS_ORIGIN`). Cookies use `sameSite: "none"` so they work across
 origins in production. Pickup requests are fully end-to-end in both dev and prod.
 
-The full pickup request lifecycle is now end-to-end on the barangay side: list view,
-approve/decline/schedule/collect actions, and the individual detail page
-(`/collection-requests/[id]`) are all wired to the real backend. Next focus:
-collection schedule module and real dashboard data.
+Auth is now username-based for both residents and barangay staff. The `authenticate`
+middleware is split into `authenticateResident` and `authenticateBarangay` to prevent
+cross-role token acceptance.
+
+The full pickup request lifecycle is end-to-end on the barangay side (list, approve,
+decline, schedule, collect, detail page with ASSORTED breakdown). The redemption
+backend foundation is in place (Program, ProgramMaterial, RedemptionTransaction models
++ controllers + routes). Next focus: Redemption Management frontend and Manual
+Collection Intake module.
 
 ## Key Decisions Made
 - httpOnly cookies over localStorage → XSS protection
@@ -107,10 +127,13 @@ collection schedule module and real dashboard data.
 ## Key Files
 - backend/src/controllers/auth.controller.js
 - backend/src/controllers/pickup-request.controller.js — pickup request creation
-- backend/src/middlewares/authMiddleware.js
+- backend/src/controllers/redemption.controller.js — createProgram, getPrograms, getProgram, createTransaction, getTransactions
+- backend/src/middlewares/authMiddleware.js — authenticateResident, authenticateBarangay, requireRoles
 - backend/src/routes/auth.route.js
 - backend/src/routes/pickup-request.route.js — POST /pickup-requests; GET/PATCH/GET-by-id collection-requests routes; COLLECTED transition creates CollectionItem records
+- backend/src/routes/redemption.route.js — redemption program and transaction endpoints
 - backend/src/routes/dashboard.route.js
+- frontend/src/lib/roles.js — BARANGAY_ROLES array
 - backend/src/utils/generateToken.js
 - backend/prisma/schema.prisma
 - backend/package.json — postinstall: prisma generate (required for Railway deploy)

@@ -1,0 +1,36 @@
+"use client";
+
+import { PlusIcon } from "@heroicons/react/24/outline";
+
+export const SectionHeader = ({
+  icon,
+  title,
+  subtitle,
+  buttonLabel,
+  onAction,
+}) => {
+  return (
+    <header className="">
+      <div className="flex flex-row items-center justify-between">
+        <div className="flex flex-row gap-4 items-center">
+          <div className="border p-3 border-gray-200 rounded-lg md:flex items-center hidden bg-white">
+            {icon}
+          </div>
+          <div className="flex flex-col">
+            <div className="flex flex-row gap-4 items-center">
+              <h4 className="font-semibold text-[16px]">{title}</h4>
+            </div>
+            <p className="text-gray-600 text-[14px]">{subtitle}</p>
+          </div>
+        </div>
+        <button
+          className="bg-[#74C857] text-white px-3.5 rounded-lg py-2.5 flex flex-row items-center gap-2 justify-center hover:cursor-pointer hover:bg-primary transition-all duration-200 ease-in-out"
+          onClick={onAction}
+        >
+          <PlusIcon className="w-5 hidden md:flex" />
+          <p className="md:text-md text-sm ">{buttonLabel}</p>
+        </button>
+      </div>
+    </header>
+  );
+};
