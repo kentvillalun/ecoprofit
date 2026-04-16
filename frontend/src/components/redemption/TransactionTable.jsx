@@ -3,6 +3,7 @@
 import { formatDate } from "@/lib/formatDate";
 import { Card } from "../ui/Card";
 import { Inter } from "next/font/google";
+import { MaterialPill } from "../ui/MateriaPill";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,21 +24,29 @@ export const TransactionTable = ({ data }) => {
       ),
     },
     {
-      header: "Program · Material",
+      header: "Program",
       render: (data) => (
-        <div className=""><span className="font-semibold">{data.program.name}</span> · {data.materialType}</div>
+        <div className="font-semibold">{data.program.name}</div>
+      ),
+    },
+    {
+      header: "Material",
+      render: (data) => (
+        <div className="flex items-center w-full flex-col">
+          <MaterialPill type={data.materialType} />
+        </div>
       ),
     },
     {
       header: "Qty",
-      render: (data) => (
-        <span className="font-semibold">{data.quantity}</span>
-      ),
+      render: (data) => <span className="font-semibold">{data.quantity}</span>,
     },
     {
       header: "Points",
       render: (data) => (
-        <span className="text-green-600 font-bold">{data.quantity * data.currentPointValue} pts</span>
+        <span className="text-green-600 font-bold">
+          {data.quantity * data.currentPointValue} pts
+        </span>
       ),
     },
     {
@@ -63,7 +72,7 @@ export const TransactionTable = ({ data }) => {
         <tbody>
           {data?.length === 0 ? (
             <tr className="max-w-md">
-              <td className="text-center" colSpan={9}>
+              <td className="text-center" colSpan={6}>
                 <div className="flex flex-col items-center justify-center min-h-full p-20 gap-1">
                   <p className="text-sm font-medium uppercase tracking-[0.2em] text-[#74C857]">
                     EcoProfit

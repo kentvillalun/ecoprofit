@@ -3,12 +3,6 @@ import { useRouter } from "next/navigation";
 import { Pill } from "../ui/Pill";
 import { formatDate } from "@/lib/formatDate";
 
-// Juan Dela Cruz         [Pending]
-// Sitio 3 • Plastic Bottles
-// Est. Qty: 2 sacks
-// March 14, 2026
-
-// [ View Details ]
 export const RequestCard = ({
   data,
   status,
@@ -16,7 +10,8 @@ export const RequestCard = ({
   onToggleSelect,
 }) => {
   const filteredRequest = data?.filter((req) => req.status === status);
-  const router = useRouter()
+  const router = useRouter();
+
   return (
     <>
       {filteredRequest?.length === 0 ? (
@@ -72,7 +67,7 @@ export const RequestCard = ({
                 <div className="flex flex-col items-center justify-between min-h-full">
                   <Pill type={d.status} />
                   <button
-                    className="text-gray-600 italic"
+                    className="text-sm font-medium text-primary hover:underline"
                     onClick={() => router.push(`/collection-requests/${d.id}`)}
                   >
                     View Details

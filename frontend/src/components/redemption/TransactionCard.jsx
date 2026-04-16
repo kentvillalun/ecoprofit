@@ -25,7 +25,7 @@ export const TransactionCard = ({ data }) => {
         data?.map((d) => (
           <Card className="flex flex-col md:hidden items-start gap-3" key={d?.id}>
             <div className="flex flex-row justify-between w-full">
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col">
                 <h3 className="font-semibold">{d?.beneficiaryName}</h3>
                 <p className="text-sm text-gray-500">{d?.program.name}</p>
                 <p className="text-sm text-gray-400">By: {d?.collectorName}</p>

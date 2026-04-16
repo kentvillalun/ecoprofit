@@ -32,7 +32,7 @@ export const MaterialPill = ({ type, points }) => {
         styles[type] || "bg-gray-200 text-gray-700"
       }`}
     >
-      {labels[type] || type} {points}pts
+      {labels[type] || type} {points != null ? `${points} pts` : ""}
     </div>
   );
 };
