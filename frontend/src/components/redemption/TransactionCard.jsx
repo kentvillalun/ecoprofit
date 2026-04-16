@@ -23,25 +23,23 @@ export const TransactionCard = ({ data }) => {
         </div>
       ) : (
         data?.map((d) => (
-          <Card className="flex flex-col md:hidden items-start" key={d?.id}>
+          <Card className="flex flex-col md:hidden items-start gap-3" key={d?.id}>
             <div className="flex flex-row justify-between w-full">
-              <div className="">
-                <h3 className="font-medium">{d?.beneficiaryName}</h3>
-                <div className="flex flex-col text-[#727272] text-sm">
-                  <p className="">{d?.program.name}</p>
-                  <p className="">Collected By: {d?.collectorName}</p>
-                  <p className="">{formatDate(d?.createdAt)}</p>
-                </div>
+              <div className="flex flex-col gap-1">
+                <h3 className="font-semibold">{d?.beneficiaryName}</h3>
+                <p className="text-sm text-gray-500">{d?.program.name}</p>
+                <p className="text-sm text-gray-400">By: {d?.collectorName}</p>
               </div>
-              <div className="">
-                <div className="flex flex-col gap-1 ">
-                  <MaterialPill
-                    type={`${d?.materialType}`}
-                    points={`${d?.quantity * d?.currentPointValue}`}
-                    
-                  />
-                </div>
+              <div className="flex flex-col items-end gap-2">
+                <MaterialPill
+                  type={`${d?.materialType}`}
+                  points={`${d?.quantity * d?.currentPointValue}`}
+                />
               </div>
+            </div>
+            <div className="flex flex-row items-center justify-between w-full pt-2 border-t border-gray-100">
+              <p className="text-xs text-gray-400">{formatDate(d?.createdAt)}</p>
+              <p className="text-xs text-gray-500 font-medium">Qty: {d?.quantity}</p>
             </div>
           </Card>
         ))

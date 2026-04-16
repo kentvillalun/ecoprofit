@@ -55,21 +55,21 @@ export default function RedemptionProgramPage() {
             buttonLabel={"Add Program"}
             onAction={() => setIsProgramModalOpen(true)}
           />
-          <div className={`grid gap-2 ${data?.programs.length === 1 && "grid-cols-1"}  ${data?.programs.length === 2 && "md:grid-cols-2"}  ${data?.programs.length >= 3 && "md:grid-cols-3"}`}>
+          <div className={`grid gap-3 ${data?.programs.length === 1 && "grid-cols-1"} ${data?.programs.length === 2 && "md:grid-cols-2"} ${data?.programs.length >= 3 && "md:grid-cols-3"}`}>
             {data?.programs.map((p) => (
-              <Card className="flex flex-col items-center justify-center border-b-3  border-primary hover:-translate-y-0.5 transition-all duration-200 ease-in-out hover:cursor-pointer min-h-30" key={p.id}>
-                <h4 className="md:text-xl text-lg font-medium">{p.name}</h4>
-                <div className=" flex flex-col items-center justify-center">
-                  <LabelValue
-                    name={" Total budget"}
-                    value={`₱ ${p.allotedBudget}`}
-                    className="flex-row! items-center gap-2"
-                  />
-                  <div className="flex flex-row gap-1">
-                    {p.programMaterial.map((m) => (
-                      <MaterialPill type={m.materialType} points={m.pointValue} key={m.id}/>
-                    ))}
-                  </div>
+              <Card className="flex flex-col items-start gap-4 p-5! border-l-4 border-primary hover:-translate-y-0.5 transition-all duration-200 ease-in-out hover:cursor-pointer" key={p.id}>
+                <div className="flex flex-row items-center justify-between w-full">
+                  <h4 className="text-base font-semibold">{p.name}</h4>
+                  <span className="text-xs font-medium bg-green-100 text-green-700 px-3 py-1 rounded-full">Active</span>
+                </div>
+                <div className="flex flex-row gap-6">
+                  <LabelValue name="Budget" value={`₱ ${p.allotedBudget}`} />
+                  <LabelValue name="Max Points" value={`${p.maxPoints} pts`} />
+                </div>
+                <div className="flex flex-row flex-wrap gap-2 pt-3 border-t border-gray-100 w-full">
+                  {p.programMaterial.map((m) => (
+                    <MaterialPill type={m.materialType} points={m.pointValue} key={m.id} />
+                  ))}
                 </div>
               </Card>
             ))}
