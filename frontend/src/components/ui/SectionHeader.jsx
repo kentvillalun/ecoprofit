@@ -24,7 +24,7 @@ export const SectionHeader = ({
           </div>
         </div>
         <button
-          className="bg-[#74C857] text-white px-3.5 rounded-lg py-2.5 flex flex-row items-center gap-2 justify-center hover:cursor-pointer hover:bg-primary transition-all duration-200 ease-in-out"
+          className="bg-[#74C857] text-white px-3.5 rounded-lg py-2.5 flex flex-row items-center gap-2 justify-center hover:cursor-pointer hover:bg-primary transition-all duration-200 ease-in-out min-w-45.5"
           onClick={onAction}
         >
           <PlusIcon className="w-5 hidden md:flex" />

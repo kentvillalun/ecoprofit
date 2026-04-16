@@ -4,6 +4,7 @@ import { formatDate } from "@/lib/formatDate";
 import { Badge } from "../ui/Badge";
 import { Card } from "../ui/Card";
 import { Pill } from "../ui/Pill";
+import { MaterialPill } from "../ui/MateriaPill";
 
 export const TransactionCard = ({ data }) => {
   return (
@@ -34,13 +35,10 @@ export const TransactionCard = ({ data }) => {
               </div>
               <div className="">
                 <div className="flex flex-col gap-1 ">
-                  <Badge
-                    label={`${d?.materialType}`}
-                    color={"bg-[#FFF4D6] text-[#C88A00] px-2! w-30"}
-                  />
-                  <Badge
-                    label={`${d?.quantity * d?.currentPointValue} pts`}
-                    color={"bg-[#89D95720] text-[#74C857] px-2! w-30"}
+                  <MaterialPill
+                    type={`${d?.materialType}`}
+                    points={`${d?.quantity * d?.currentPointValue}`}
+                    
                   />
                 </div>
               </div>

@@ -13,11 +13,19 @@ import { GiftIcon, Bars3BottomLeftIcon } from "@heroicons/react/24/outline";
 import { mockdata } from "./mockdata";
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Modal } from "@/components/ui/Modal";
 import { AddProgramModal } from "@/components/redemption/modals/AddProgramModal";
+import { useFetch } from "@/hooks/useFetch";
+import { Badge } from "@/components/ui/Badge";
+import { MaterialPill } from "@/components/ui/MateriaPill";
 
 export default function RedemptionProgramPage() {
   const [isProgramModalOpen, setIsProgramModalOpen] = useState(false);
+  const url = "/api/redemption/programs";
+  const [refetchCount, setRefetchCount] = useState(0);
+  const { data, isError, isLoading, error } = useFetch({ url, refetchCount });
+
+  if (isLoading) return <p className="md:pl-77">Loading....</p>;
+  if (isError) return <p className="md:pl-77">{error}</p>;
 
   return (
     <Page>
@@ -27,9 +35,17 @@ export default function RedemptionProgramPage() {
           title={"Redemption Management"}
           subtitle={"Create and manage redemption programs and transactions"}
         />
-        
+
         {/* Add Program modal */}
-        {isProgramModalOpen && createPortal(<AddProgramModal isProgramModalOpen={isProgramModalOpen} setIsProgramModalOpen={setIsProgramModalOpen}/>, document.body)}
+        {isProgramModalOpen &&
+          createPortal(
+            <AddProgramModal
+              isProgramModalOpen={isProgramModalOpen}
+              setIsProgramModalOpen={setIsProgramModalOpen}
+              setRefetchCount={setRefetchCount}
+            />,
+            document.body,
+          )}
 
         <section className="flex flex-col gap-3">
           <SectionHeader
@@ -39,19 +55,24 @@ export default function RedemptionProgramPage() {
             buttonLabel={"Add Program"}
             onAction={() => setIsProgramModalOpen(true)}
           />
-          <div className="grid">
-            <Card className="flex flex-col items-center justify-center border-b-3  border-primary hover:-translate-y-0.5 transition-all duration-200 ease-in-out hover:cursor-pointer min-h-30">
-              <h4 className="md:text-xl text-lg font-medium">
-                Back to School Drive 2026{" "}
-              </h4>
-              <div className=" flex flex-row items-center justify-center">
-                <LabelValue
-                  name={" Total budget"}
-                  value={"P 20,000"}
-                  className="flex-row! items-center gap-2"
-                />
-              </div>
-            </Card>
+          <div className={`grid gap-2 ${data?.programs.length === 1 && "grid-cols-1"}  ${data?.programs.length === 2 && "md:grid-cols-2"}  ${data?.programs.length >= 3 && "md:grid-cols-3"}`}>
+            {data?.programs.map((p) => (
+              <Card className="flex flex-col items-center justify-center border-b-3  border-primary hover:-translate-y-0.5 transition-all duration-200 ease-in-out hover:cursor-pointer min-h-30" key={p.id}>
+                <h4 className="md:text-xl text-lg font-medium">{p.name}</h4>
+                <div className=" flex flex-col items-center justify-center">
+                  <LabelValue
+                    name={" Total budget"}
+                    value={`₱ ${p.allotedBudget}`}
+                    className="flex-row! items-center gap-2"
+                  />
+                  <div className="flex flex-row gap-1">
+                    {p.programMaterial.map((m) => (
+                      <MaterialPill type={m.materialType} points={m.pointValue} key={m.id}/>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+            ))}
           </div>
         </section>
 
