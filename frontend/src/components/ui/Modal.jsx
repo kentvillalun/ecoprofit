@@ -24,6 +24,7 @@ export const Modal = ({
   confirmClassName,
   onConfirm,
   status,
+  isPill,
 }) => {
   return (
     // blur background
@@ -31,7 +32,7 @@ export const Modal = ({
       {isOpen && (
         <section className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
           <div
-            className={`fixed flex flex-col justify-center  z-100 bg-white  rounded-2xl m-4 min-w-[90%] md:min-w-[45%] ${poppins.className} max-h-[90%]`}
+            className={`fixed flex flex-col justify-center z-100 bg-white  rounded-2xl m-4 min-w-[90%] md:min-w-[45%] ${poppins.className} max-h-[90%]`}
           >
             <div className="p-6 border-b border-gray-200 w-full">
               <div className="sticky flex flex-row items-center justify-between ">
@@ -43,7 +44,7 @@ export const Modal = ({
                   <div className="flex flex-col gap-1">
                     <div className="flex flex-row gap-4 items-center">
                       <h4 className="font-semibold text-[16px]">{title}</h4>
-                      <Pill type={status} />
+                      {isPill && <Pill type={status} />}
                     </div>
                     <p className="text-gray-600 text-[14px]">{subtitle}</p>
                   </div>
@@ -54,12 +55,16 @@ export const Modal = ({
               </div>
             </div>
 
-            <form className=" flex flex-col gap-5">
-              {/* Fields */}
-              {children}
+            <form className="flex flex-col overflow-hidden">
+              <div className="overflow-y-auto flex-1 min-h-0">
+
+                {/* Fields */}
+                {children}
+              </div>
+              
 
               {/* buttons */}
-              <div className="grid grid-cols-2 text-md font-semibold gap-3 p-6 border-t border-gray-200">
+              <div className="grid grid-cols-2 text-md font-semibold gap-3 p-6 border-t border-gray-200 ">
                 <button
                   className="py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:cursor-pointer"
                   onClick={onClose}
@@ -68,7 +73,7 @@ export const Modal = ({
                   Cancel
                 </button>
                 <button
-                  className={`py-2.5 ${confirmClassName}  text-white rounded-lg hover:cursor-pointer`} 
+                  className={`py-2.5 ${confirmClassName}  text-white rounded-lg hover:cursor-pointer`}
                   onClick={onConfirm}
                   type="button"
                 >

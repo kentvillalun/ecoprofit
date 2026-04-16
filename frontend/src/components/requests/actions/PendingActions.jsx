@@ -41,6 +41,7 @@ export const PendingActions = ({ id, onSuccess, variant }) => {
 
               }
             }}
+            isPill={true}
           >
             <div className="flex flex-col gap-1 p-6">
               <label className="text-gray-700 font-semibol">

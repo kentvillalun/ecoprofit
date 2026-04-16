@@ -68,18 +68,26 @@
   - `redemption.route.js` — all routes protected by `authenticateBarangay` + `requireRoles(["CAPTAIN", "SECRETARY", "SK"])`; registered at `/redemption` in `server.js`
   - Endpoints: `POST /redemption/programs`, `GET /redemption/programs`, `GET /redemption/programs/:id`, `POST /redemption/transactions`, `GET /redemption/transactions`
 
+- **Redemption Management frontend scaffold**:
+  - `app/(barangay)/redemption-programs/page.jsx` — page with Programs section (cards) and Transaction History section; "Add Program" button opens `AddProgramModal` via `createPortal`; currently driven by mock data
+  - `TransactionTable` — desktop table showing beneficiary, program·material, quantity, computed points (`quantity × currentPointValue`), and date; hidden on mobile
+  - `TransactionCard` — mobile card view of the same data; hidden on desktop
+  - `AddProgramModal` — modal form for creating a new program (name, allotted budget, max points, per-material point values for Plastics/Metals/Bottles/Papers); UI complete, **not yet wired to backend**
+  - `Badge` — reusable pill badge component accepting `label` and `color` props (used in `TransactionCard`)
+  - `Modal` — added `isPill` prop; when true, renders a `Pill` status chip next to the modal title (used by `PendingActions` and `InProgressActions`)
+
 ---
 
 ## In Progress
 
-- Nothing currently active
+- Redemption Management frontend: wire `AddProgramModal` to `POST /redemption/programs`; add "Record Transaction" modal wired to `POST /redemption/transactions`; replace mock data with real API calls
 
 ---
 
 ## Next Steps (priority order)
 
-1. Build Manual Collection Intake module (Sunday EcoAid manual entry flow with resident search)
-2. Build Redemption Management frontend (program list/create UI, transaction recording form, tied to existing backend)
+1. Finish wiring Redemption Management frontend to backend (create program, record transaction, fetch real data)
+2. Build Manual Collection Intake module (Sunday EcoAid manual entry flow with resident search)
 3. Build Leaderboard (resident ranking by total contribution)
 4. Build Reward Inventory module
 5. Build Program Funds module (expenses, junkshop income, profits)

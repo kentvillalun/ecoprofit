@@ -99,6 +99,8 @@ export const InProgressActions = ({ id, onSuccess, variant, materialType }) => {
                 ? handleAssortedConfirm
                 : handleSimpleConfirm
             }
+            
+            isPill={true}
           >
             {materialType === "ASSORTED" ? (
               <div className="flex flex-col gap-2 p-6">
