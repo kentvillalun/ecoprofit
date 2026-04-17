@@ -14,13 +14,18 @@ import { ApprovedActions } from "@/components/requests/actions/ApprovedActions";
 import { InProgressActions } from "@/components/requests/actions/InProgressActions";
 import { useRouter } from "next/navigation";
 import { CameraIcon } from "@heroicons/react/24/outline";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
+import { Spinner } from "@/components/ui/Spinner";
 
 export default function RequestDetails() {
   const { id } = useParams();
   const url = `/api/pickup-requests/collection-requests/${id}`;
   const { isLoading, isError, data, error } = useFetch({ url });
   console.log(data?.request?.collectionItems);
-  if (isLoading) return <p className="md:pl-77">Loading....</p>;
+  if (isLoading) return <div className="">
+    <div className="md:hidden"><SkeletonCard /></div>
+    <div className="md:pl-77 flex items-center min-h-screen justify-center"><Spinner /></div>
+  </div>
   if (isError) return <p className="md:pl-77">{error}</p>;
 
   const router = useRouter();

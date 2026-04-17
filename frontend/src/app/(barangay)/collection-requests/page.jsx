@@ -25,13 +25,12 @@ export default function CollectionRequests() {
   const url = `/api/pickup-requests/collection-requests`;
   const { isLoading, isError, error, data } = useFetch({ url, refetchCount });
   const [currentTab, setCurrentTab] = useState("REQUESTED");
-
-  const { isUpdateError, updateStatus } = useUpdate()
+  console.log(refetchCount)
+  const { updateStatus } = useUpdate()
   
 
   const [selectedApprovedRequests, setSelectedApprovedRequests] = useState([]);
-  if (isLoading) return <p className="md:pl-77">Loading....</p>
-  if (isError) return <p className="md:pl-77">{error}</p>
+
 
   const handleApprovedRequestSelect = (requestId) => {
     setSelectedApprovedRequests((currentSelected) =>
@@ -99,7 +98,7 @@ export default function CollectionRequests() {
           }
         />
         <SearchInput />
-        <div className="flex flex-col gap-3 scrollbar">
+        <div className="flex flex-col gap-3">
           <StatusChip
             STATUS_TABS={STATUS_TABS}
             currentTab={currentTab}
@@ -118,6 +117,10 @@ export default function CollectionRequests() {
                   status={currentTab}
                   selectedIds={selectedApprovedRequests}
                   onToggleSelect={handleApprovedRequestSelect}
+                  isLoading={isLoading}
+                  isError={isError}
+                  error={error}
+                  handleRefetchCount={handleRefetchCount}
                 />
               </div>
               
@@ -127,6 +130,9 @@ export default function CollectionRequests() {
                 selectedIds={selectedApprovedRequests}
                 onToggleSelect={handleApprovedRequestSelect}
                 handleRefetchCount={handleRefetchCount}
+                isLoading={isLoading}
+                isError={isError}
+                error={error}
               />
             </div>
           )}

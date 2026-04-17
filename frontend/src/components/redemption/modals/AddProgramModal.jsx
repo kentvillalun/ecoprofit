@@ -96,7 +96,7 @@ export const AddProgramModal = ({
     >
       <div className="p-6 flex flex-col gap-3">
         <div className="flex flex-col gap-1">
-          <label className="text-gray-700 font-semibol">Program name</label>
+          <label className="text-gray-700 font-medium">Program name</label>
           <input
             type="text"
             className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
@@ -113,7 +113,7 @@ export const AddProgramModal = ({
 
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-1 ">
-            <label className="text-gray-700 font-semibol">
+            <label className="text-gray-700 font-medium">
               Allotted budget
             </label>
             <input
@@ -130,7 +130,7 @@ export const AddProgramModal = ({
             )}
           </div>
           <div className="flex flex-col gap-1 ">
-            <label className="text-gray-700 font-semibol">Maximum points</label>
+            <label className="text-gray-700 font-medium">Maximum points</label>
             <input
               type="number"
               className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
@@ -148,7 +148,7 @@ export const AddProgramModal = ({
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-gray-700 font-semibol">Material Section</label>
+          <label className="text-gray-700 font-medium">Material Section</label>
 
           <div className="flex flex-col gap-3 items-start">
             <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors flex flex-row gap-2 w-full">

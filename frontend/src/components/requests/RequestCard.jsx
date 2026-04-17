@@ -2,31 +2,36 @@ import { Card } from "../ui/Card";
 import { useRouter } from "next/navigation";
 import { Pill } from "../ui/Pill";
 import { formatDate } from "@/lib/formatDate";
+import { SkeletonCard } from "../ui/SkeletonCard";
+import { Error } from "../ui/Error";
+import { Empty } from "../ui/Empty";
 
 export const RequestCard = ({
   data,
   status,
   selectedIds = [],
   onToggleSelect,
+  isLoading,
+  isError,
+  handleRefetchCount
 }) => {
   const filteredRequest = data?.filter((req) => req.status === status);
   const router = useRouter();
 
+
+  if (isLoading)
+    return (
+      <SkeletonCard rowsCount={4}/>
+    );
+
+  if (isError) return (
+    <Error handleRefetchCount={handleRefetchCount}/>
+  )
+
   return (
     <>
       {filteredRequest?.length === 0 ? (
-        <div className="flex flex-col items-center justify-center min-h-full p-20 gap-1 text-center">
-          <p className="text-sm font-medium uppercase tracking-[0.2em] text-[#74C857]">
-            EcoProfit
-          </p>
-          <h1 className="text-3xl font-semibold text-[#1F2937]">
-            No items yet
-          </h1>
-          <p className="text-sm text-[#6B7280]">
-            There are no item in this tab yet. Please go to the Pending tab to
-            update status of pickup requests
-          </p>
-        </div>
+        <Empty text={"No items"} subtext={"There are no item in this tab yet. Please go to the Pending tab to update status of pickup requests"}/>
       ) : (
         filteredRequest?.map((d) => {
           const isApproved = status === "APPROVED";

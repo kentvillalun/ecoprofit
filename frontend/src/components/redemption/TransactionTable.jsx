@@ -4,13 +4,16 @@ import { formatDate } from "@/lib/formatDate";
 import { Card } from "../ui/Card";
 import { Inter } from "next/font/google";
 import { MaterialPill } from "../ui/MateriaPill";
+import { Spinner } from "../ui/Spinner";
+import { Empty } from "../ui/Empty";
+import { Error } from "../ui/Error";
 
 const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
-export const TransactionTable = ({ data }) => {
+export const TransactionTable = ({ data, isLoading, isError, handleRefetchCount }) => {
   const tableConfig = [
     {
       header: "Beneficiary",
@@ -26,14 +29,14 @@ export const TransactionTable = ({ data }) => {
     {
       header: "Program",
       render: (data) => (
-        <div className="font-semibold">{data.program.name}</div>
+        <div className="font-semibold">{data?.programMaterial?.program?.name}</div>
       ),
     },
     {
       header: "Material",
       render: (data) => (
         <div className="flex items-center w-full flex-col">
-          <MaterialPill type={data.materialType} />
+          <MaterialPill type={data?.programMaterial?.materialType} />
         </div>
       ),
     },
@@ -70,24 +73,29 @@ export const TransactionTable = ({ data }) => {
           </tr>
         </thead>
         <tbody>
+          {isLoading && (
+            <tr className="max-w-md">
+              <td className="text-center" colSpan={6}>
+                <Spinner />
+              </td>
+            </tr>
+          )}
+
+          {isError && (
+            <tr className="max-w-md">
+              <td className="text-center" colSpan={6}>
+                <Error handleRefetchCount={handleRefetchCount}/>
+              </td>
+            </tr>
+          )}
           {data?.length === 0 ? (
             <tr className="max-w-md">
               <td className="text-center" colSpan={6}>
-                <div className="flex flex-col items-center justify-center min-h-full p-20 gap-1">
-                  <p className="text-sm font-medium uppercase tracking-[0.2em] text-[#74C857]">
-                    EcoProfit
-                  </p>
-                  <h1 className="text-3xl font-semibold text-[#1F2937]">
-                    No transactions yet
-                  </h1>
-                  <p className="text-sm text-[#6B7280]">
-                    There are no redemption trasaction yet.
-                  </p>
-                </div>
+                <Empty text={"No transaction yet"} subtext={"There are no redemption transaction yet"}/>
               </td>
             </tr>
           ) : (
-            data?.map((t) => (
+            data?.transactions?.map((t) => (
               <tr
                 className="text-center hover:bg-[#f8f8f8] transition-all transform"
                 key={t.id}

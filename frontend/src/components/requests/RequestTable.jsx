@@ -2,12 +2,14 @@ import { Inter } from "next/font/google";
 import { Pill } from "../ui/Pill";
 import { PendingActions } from "./actions/PendingActions";
 import { ApprovedActions } from "./actions/ApprovedActions";
-import { CollectedActions } from "./actions/CollectedActions";
 import { Card } from "../ui/Card";
-import { RejectedActions } from "./actions/RejectedActions";
 import { InProgressActions } from "./actions/InProgressActions";
 import { formatDate } from "@/lib/formatDate";
 import { useRouter } from "next/navigation";
+import { Spinner } from "../ui/Spinner";
+import { Empty } from "../ui/Empty";
+import { Error } from "../ui/Error";
+
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,10 +23,13 @@ export const RequestTable = ({
   onToggleSelect,
   handleBatchCollection,
   handleRefetchCount,
+  isLoading, 
+  isError,
 }) => {
 
   const router = useRouter()
 
+  
 
   const tableConfig = {
     REQUESTED: [
@@ -215,6 +220,8 @@ export const RequestTable = ({
 
   const filteredRequest = data?.filter((req) => req.status === status);
 
+  
+
   return (
     <Card
       className={`${inter.className} hidden md:flex md:flex-col px-8  overflow-x-auto md:gap-3 md:items-start`}
@@ -231,21 +238,24 @@ export const RequestTable = ({
         </thead>
 
         <tbody className="">
+          {isLoading && (
+            <tr className="max-w-md">
+              <td className="text-center" colSpan={9}>
+                <Spinner />
+              </td>
+            </tr>
+          )}
+          {isError && (
+            <tr className="max-w-md">
+              <td className="text-center" colSpan={9}>
+                <Error handleRefetchCount={handleRefetchCount}/>
+              </td>
+            </tr>
+          )}
           {filteredRequest?.length === 0 ? (
             <tr className="max-w-md">
               <td className="text-center" colSpan={9}>
-                <div className="flex flex-col items-center justify-center min-h-full p-20 gap-1">
-                  <p className="text-sm font-medium uppercase tracking-[0.2em] text-[#74C857]">
-                    EcoProfit
-                  </p>
-                  <h1 className="text-3xl font-semibold text-[#1F2937]">
-                    No items yet
-                  </h1>
-                  <p className="text-sm text-[#6B7280]">
-                    There are no items in this tab yet. Please go to the Pending
-                    tab to update status of pickup requests
-                  </p>
-                </div>
+                <Empty text={"No items"} subtext={"There are no item in this tab yet. Please go to the Pending tab to update status of pickup requests"}/>
               </td>
             </tr>
           ) : (

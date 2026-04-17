@@ -13,6 +13,7 @@ export const useFetch = ({ url, refetchCount }) => {
         const fetchData = async () => {
             try {
                 setIsLoading(true)
+                setIsError(false)
                
                 const response = await fetch(url, {
                     method: "GET",
