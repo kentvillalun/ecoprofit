@@ -1,6 +1,7 @@
 import { Card } from "../ui/Card";
 import { useRouter } from "next/navigation";
 import { Pill } from "../ui/Pill";
+import { MaterialPill } from "../ui/MateriaPill";
 import { formatDate } from "@/lib/formatDate";
 import { SkeletonCard } from "../ui/SkeletonCard";
 import { Error } from "../ui/Error";
@@ -13,25 +14,24 @@ export const RequestCard = ({
   onToggleSelect,
   isLoading,
   isError,
-  handleRefetchCount
+  handleRefetchCount,
 }) => {
   const filteredRequest = data?.filter((req) => req.status === status);
   const router = useRouter();
 
+  if (isLoading) return <SkeletonCard rowsCount={4} />;
 
-  if (isLoading)
-    return (
-      <SkeletonCard rowsCount={4}/>
-    );
-
-  if (isError) return (
-    <Error handleRefetchCount={handleRefetchCount}/>
-  )
+  if (isError) return <Error handleRefetchCount={handleRefetchCount} />;
 
   return (
     <>
       {filteredRequest?.length === 0 ? (
-        <Empty text={"No items"} subtext={"There are no item in this tab yet. Please go to the Pending tab to update status of pickup requests"}/>
+        <Empty
+          text={"No items"}
+          subtext={
+            "There are no item in this tab yet. Please go to the Pending tab to update status of pickup requests"
+          }
+        />
       ) : (
         filteredRequest?.map((d) => {
           const isApproved = status === "APPROVED";
@@ -51,28 +51,37 @@ export const RequestCard = ({
                 />
               )}
               <Card
-                className={`flex flex-row items-stretch justify-between transition-colors ${
-                  isSelected ? "bg-[#E8F7E3]!" : ""
+                className={`flex flex-col items-start gap-3 transition-all ${
+                  isSelected ? "bg-[#F0FAF0] ring-2 ring-[#74C857]" : ""
                 }`}
               >
-                <div className="flex flex-col gap-1">
-                  <h3 className="font-medium">
-                    {d.user.firstName
-                      ? `${d.user.firstName} ${d.user.lastName}`
-                      : d?.user.phoneNumber}
-                  </h3>
-                  <div className="text-[#727272] text-sm">
-                    <p>{`${d.user.sitio.name} • ${d.materialType}`}</p>
-                    <p>
-                      Est. Qty: {d.estimatedWeight} {d.weightUnit}
+                {/* Top row */}
+                <div className="flex flex-row justify-between w-full">
+                  <div className="flex flex-col gap-0.5">
+                    <h3 className="font-semibold text-[#1F2937]">
+                      {d.user.firstName
+                        ? `${d.user.firstName} ${d.user.lastName}`
+                        : d?.user.phoneNumber}
+                    </h3>
+                    <p className="text-sm text-gray-500">{d.user.sitio.name}</p>
+                    <p className="text-sm text-gray-400">
+                      Estimated weight:{" "}
+                      <span className="font-medium text-gray-600">
+                        {d.estimatedWeight} {d.weightUnit}
+                      </span>
                     </p>
-                    <p>{formatDate(d.createdAt)}</p>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <Pill type={d.status} />
+                    <MaterialPill type={d.materialType} />
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-between min-h-full">
-                  <Pill type={d.status} />
+
+                {/* Footer row */}
+                <div className="flex flex-row items-center justify-between w-full pt-2 border-t border-gray-100">
+                  <p className="text-xs text-gray-400">{formatDate(d.createdAt)}</p>
                   <button
-                    className="text-sm font-medium text-primary hover:underline"
+                    className="text-xs font-semibold text-[#74C857] hover:underline"
                     onClick={() => router.push(`/collection-requests/${d.id}`)}
                   >
                     View Details

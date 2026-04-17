@@ -87,7 +87,19 @@
       - `redemption.controller.js` — `createProgram`, `getPrograms`, `getProgram`, `createTransaction`, `getTransactions`; `createTransaction` snapshots `pointValue` before writing
       - `redemption.route.js` — protected by `authenticateBarangay + requireRoles(["CAPTAIN","SECRETARY","SK"])`; registered at `/redemption` in `server.js`
       - Endpoints: `POST /redemption/programs`, `GET /redemption/programs`, `GET /redemption/programs/:id`, `POST /redemption/transactions`, `GET /redemption/transactions`
-- [ ] Redemption Management frontend (program list/create UI, transaction recording form)
+- [x] `useMutation` custom hook — `frontend/src/hooks/useMutation.js` wraps POST/PATCH requests; exposes `makeRequest({ url, method, body })` with `isLoading`, `isError`, `error` state; returns `true` on success
+- [x] `useFetch` bug fix — `setIsError(false)` now resets before each fetch attempt so stale error state no longer persists across refetches
+- [x] `SkeletonCard` component — accepts `rowsCount` prop; renders grey animated placeholder rows while data loads
+- [x] `Spinner` component — inline loading spinner for button/modal loading states
+- [x] `Error` component — error state card with a "Try again" button that calls `handleRefetchCount` callback
+- [x] `Empty` component — empty state card with title and subtext props
+- [x] Redemption Management frontend — fully wired to backend:
+      - `AddProgramModal` wired to `POST /redemption/programs` via `useMutation`; form validated with `react-hook-form` + `yup`; success triggers program list refetch
+      - `RecordTransactionModal` — dependent dropdowns (program → filtered materials); fields: program, material, beneficiary name, collector name, quantity, educational level; wired to `POST /redemption/transactions`; success triggers transaction list refetch
+      - `redemption-programs/page.jsx` — mock data replaced with `useFetch`; separate `refetchCount` states for programs and transactions; "Record Transaction" button passes fetched programs into modal
+      - `TransactionTable` and `TransactionCard` — now receive live data with loading/error states
+- [ ] `/redemption-programs/[id]` detail page (program detail with material breakdown and transaction history)
+- [ ] Collection requests 500 error — investigation pending
 - [ ] Manual Collection Intake module (Sunday EcoAid manual entry with resident search)
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
@@ -104,10 +116,11 @@ middleware is split into `authenticateResident` and `authenticateBarangay` to pr
 cross-role token acceptance.
 
 The full pickup request lifecycle is end-to-end on the barangay side (list, approve,
-decline, schedule, collect, detail page with ASSORTED breakdown). The redemption
-backend foundation is in place (Program, ProgramMaterial, RedemptionTransaction models
-+ controllers + routes). Next focus: Redemption Management frontend and Manual
-Collection Intake module.
+decline, schedule, collect, detail page with ASSORTED breakdown). The Redemption
+Management module is now fully wired end-to-end — programs and transactions are fetched
+from real API data, `AddProgramModal` and `RecordTransactionModal` submit to the backend
+via `useMutation`. Next focus: `/redemption-programs/[id]` detail page, investigating
+collection requests 500 error, and Manual Collection Intake module.
 
 ## Key Decisions Made
 - httpOnly cookies over localStorage → XSS protection
@@ -143,8 +156,15 @@ Collection Intake module.
 - frontend/src/app/(auth)/barangay/login/page.jsx — barangay login form
 - frontend/src/app/(barangay)/dashboard/page.jsx — server component with Layer 2 auth check
 - frontend/src/app/(barangay)/layout.jsx — barangay layout with DrawerContext + Toaster
-- frontend/src/hooks/useFetch.js — reusable GET fetch hook; refetchCount dep triggers re-fetch
+- frontend/src/hooks/useFetch.js — reusable GET fetch hook; refetchCount dep triggers re-fetch; resets isError on each attempt
 - frontend/src/hooks/useUpdate.js — PATCH hook exposing updateStatus({ id, status, rejectionReason? })
+- frontend/src/hooks/useMutation.js — POST/PATCH hook exposing makeRequest({ url, method?, body }); returns true on success
+- frontend/src/components/ui/SkeletonCard.jsx — skeleton loader with rowsCount prop
+- frontend/src/components/ui/Spinner.jsx — inline loading spinner
+- frontend/src/components/ui/Error.jsx — error state with handleRefetchCount callback
+- frontend/src/components/ui/Empty.jsx — empty state with title and subtext
+- frontend/src/components/redemption/modals/AddProgramModal.jsx — create program form wired to backend
+- frontend/src/components/redemption/modals/RecordTransactionModal.jsx — record transaction form with dependent selects, wired to backend
 - frontend/src/app/(barangay)/collection-requests/page.jsx — tabbed collection requests management UI
 - frontend/src/app/(barangay)/collection-requests/[id]/page.jsx — full request detail page with timeline and action cards
 - frontend/src/lib/formatDate.js — ISO date → readable locale string
@@ -160,6 +180,8 @@ Collection Intake module.
 - Resident Layer 2 auth check (server component calling GET /auth/me) still pending
 - POST /pickup-requests response has a typo: "submittion" → "submission"
 - `InProgressActions` ASSORTED modal: minimum 2 rows enforced (removeRow disabled when `items.length === 2`) but rows start empty — no validation before submit (empty materialType/weight are silently sent to backend)
+- Collection requests page returning 500 error — root cause not yet investigated
+- `/redemption-programs/[id]` detail page not yet built
 
 ## Mentor Instructions
 Act as a senior dev mentor — guide me, don't just give me answers.

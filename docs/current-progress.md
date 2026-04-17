@@ -68,25 +68,34 @@
   - `redemption.route.js` — all routes protected by `authenticateBarangay` + `requireRoles(["CAPTAIN", "SECRETARY", "SK"])`; registered at `/redemption` in `server.js`
   - Endpoints: `POST /redemption/programs`, `GET /redemption/programs`, `GET /redemption/programs/:id`, `POST /redemption/transactions`, `GET /redemption/transactions`
 
-- **Redemption Management frontend scaffold**:
-  - `app/(barangay)/redemption-programs/page.jsx` — page with Programs section (cards) and Transaction History section; "Add Program" button opens `AddProgramModal` via `createPortal`; currently driven by mock data
-  - `TransactionTable` — desktop table showing beneficiary, program·material, quantity, computed points (`quantity × currentPointValue`), and date; hidden on mobile
-  - `TransactionCard` — mobile card view of the same data; hidden on desktop
-  - `AddProgramModal` — modal form for creating a new program (name, allotted budget, max points, per-material point values for Plastics/Metals/Bottles/Papers); UI complete, **not yet wired to backend**
+- **Redemption Management frontend — fully wired**:
+  - `AddProgramModal` — wired to `POST /redemption/programs`; on success triggers program list refetch
+  - `RecordTransactionModal` — new modal (replaces `AddTransactionModal`); form fields: program (select), material (dependent select filtered by chosen program), beneficiary name, collector name, quantity, educational level; wired to `POST /redemption/transactions` via `useMutation`; on success triggers transaction list refetch
+  - `redemption-programs/page.jsx` — mock data replaced with real API calls; `useFetch` drives both programs list (`GET /redemption/programs`) and transaction history (`GET /redemption/transactions`); separate `refetchCount` states for each; "Record Transaction" button opens `RecordTransactionModal` passing fetched programs as `data` prop
+  - `TransactionTable` and `TransactionCard` — now receive live data from `useFetch` with `isLoading`/`isError` states
+  - `mockRequests.js` deleted — collection requests page now fully driven by `useFetch` against `GET /api/pickup-requests/collection-requests`
   - `Badge` — reusable pill badge component accepting `label` and `color` props (used in `TransactionCard`)
   - `Modal` — added `isPill` prop; when true, renders a `Pill` status chip next to the modal title (used by `PendingActions` and `InProgressActions`)
+
+- **Shared UI components added**:
+  - `Empty.jsx` — empty state with title and subtext
+  - `Error.jsx` — error state with a refetch trigger callback
+  - `SkeletonCard.jsx` — skeleton loading placeholder; accepts `rowsCount` prop
+  - `Spinner.jsx` — inline loading spinner
+
+- **RequestCard redesigned** — layout now mirrors `TransactionCard`: top row (name, sitio, estimated weight on left; status pill + material pill on right) + footer row (date on left, "View Details" on right) separated by a `border-t`; selected state uses `ring-2 ring-[#74C857] bg-[#F0FAF0]` instead of the old `!important` override
 
 ---
 
 ## In Progress
 
-- Redemption Management frontend: wire `AddProgramModal` to `POST /redemption/programs`; add "Record Transaction" modal wired to `POST /redemption/transactions`; replace mock data with real API calls
+- Nothing actively in progress
 
 ---
 
 ## Next Steps (priority order)
 
-1. Finish wiring Redemption Management frontend to backend (create program, record transaction, fetch real data)
+1. Build Manual Collection Intake module (Sunday EcoAid manual entry flow with resident search)
 2. Build Manual Collection Intake module (Sunday EcoAid manual entry flow with resident search)
 3. Build Leaderboard (resident ranking by total contribution)
 4. Build Reward Inventory module

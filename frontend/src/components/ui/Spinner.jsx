@@ -3,7 +3,7 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 export const Spinner = () => {
   return (
    
-        <div className="flex flex-col items-center justify-center min-h-full p-20">
+        <div className="flex flex-col items-center justify-center min-h-full p-20 text-center">
           <div className="animate-spin">
             <ArrowPathIcon className="w-9 stroke-[#74c857]" />
           </div>
