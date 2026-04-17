@@ -18,6 +18,7 @@ import { MaterialPill } from "@/components/ui/MateriaPill";
 import { RecordTransactionModal } from "@/components/redemption/modals/RecordTransactionModal";
 import { Error } from "@/components/ui/Error";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
+import { Spinner } from "@/components/ui/Spinner";
 
 export default function RedemptionProgramPage() {
   const [isProgramModalOpen, setIsProgramModalOpen] = useState(false);
@@ -25,16 +26,21 @@ export default function RedemptionProgramPage() {
   const url = "/api/redemption/programs";
   const [refetchCount, setRefetchCount] = useState(0);
   const [transactionRefetchCount, setTransactionRefetchCount] = useState(0);
-  const { data, isError, isLoading, error } = useFetch({ url, refetchCount });
+  const { data, isError, isLoading } = useFetch({ url, refetchCount });
 
   const transactionUrl = "/api/redemption/transactions";
-  const { data: transactionData, isLoading: transactionIsLoading, isError: transactionIsError } = useFetch({
+  const {
+    data: transactionData,
+    isLoading: transactionIsLoading,
+    isError: transactionIsError,
+  } = useFetch({
     url: transactionUrl,
     refetchCount: transactionRefetchCount,
   });
 
-  const handleTransactionRefetch = () => setTransactionRefetchCount((prev) => prev + 1)
-  const handleProgramRefetch = () => setRefetchCount((prev) => prev + 1)
+  const handleTransactionRefetch = () =>
+    setTransactionRefetchCount((prev) => prev + 1);
+  const handleProgramRefetch = () => setRefetchCount((prev) => prev + 1);
 
   return (
     <Page>
@@ -79,12 +85,8 @@ export default function RedemptionProgramPage() {
           <div
             className={`grid gap-3 ${data?.programs.length === 1 && "grid-cols-1"} ${data?.programs.length === 2 && "md:grid-cols-2"} ${data?.programs.length >= 3 && "md:grid-cols-3"}`}
           >
-           {isError && (
-            <Error handleRefetchCount={handleProgramRefetch}/>
-           )}
-           {isLoading && (
-            <SkeletonCard rowsCount={1}/>
-           )}
+            {isLoading && <Spinner className="p-7!"/>}
+            {isError && <Error handleRefetchCount={handleProgramRefetch} />}
             {data?.programs.map((p) => (
               <Card
                 className="flex flex-col items-start gap-2 p-5! hover:-translate-y-0.5 transition-all duration-200 ease-in-out hover:cursor-pointer"
@@ -131,7 +133,12 @@ export default function RedemptionProgramPage() {
             isError={transactionIsError}
             handleRefetchCount={handleTransactionRefetch}
           />
-          <TransactionCard data={transactionData} isLoading={transactionIsLoading} isError={transactionIsError} handleRefetchCount={handleTransactionRefetch}/>
+          <TransactionCard
+            data={transactionData}
+            isLoading={transactionIsLoading}
+            isError={transactionIsError}
+            handleRefetchCount={handleTransactionRefetch}
+          />
         </section>
       </PageContent>
     </Page>

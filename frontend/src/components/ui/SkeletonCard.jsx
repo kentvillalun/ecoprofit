@@ -1,6 +1,6 @@
-export const SkeletonCard = ({rowsCount}) => {
+export const SkeletonCard = ({rowsCount, className = ""}) => {
   return (
-    <div className="md:pl-77 flex flex-col md:hidden">
+    <div className={`md:pl-77 flex flex-col md:hidden ${className}`}>
       {Array.from({ length: rowsCount }).map((_, i) => (
         <div className="rounded-md p-4 max-w-sm w-full" key={i}>
         <div className="animate-pulse flex space-x-4">
