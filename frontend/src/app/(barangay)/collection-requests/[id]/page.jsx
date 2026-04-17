@@ -16,17 +16,31 @@ import { useRouter } from "next/navigation";
 import { CameraIcon } from "@heroicons/react/24/outline";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { Spinner } from "@/components/ui/Spinner";
+import { useState } from "react";
+import { Error } from "@/components/ui/Error";
 
 export default function RequestDetails() {
+  const [refetchCount, setRefetchCount] = useState(0)
   const { id } = useParams();
   const url = `/api/pickup-requests/collection-requests/${id}`;
-  const { isLoading, isError, data, error } = useFetch({ url });
-  console.log(data?.request?.collectionItems);
-  if (isLoading) return <div className="">
-    <div className="md:hidden"><SkeletonCard /></div>
-    <div className="md:pl-77 flex items-center min-h-screen justify-center"><Spinner /></div>
-  </div>
-  if (isError) return <p className="md:pl-77">{error}</p>;
+  const { isLoading, isError, data } = useFetch({ url, refetchCount });
+  
+  const handleRefetchCount = () => setRefetchCount((prev) =>  prev + 1)
+
+  if (isLoading)
+    return (
+      <div className="text-center">
+        <div className="md:hidden">
+          <SkeletonCard />
+        </div>
+        <div className="md:pl-77 flex items-center min-h-screen justify-center">
+          <Spinner />
+        </div>
+      </div>
+    );
+  if (isError) return <div className="md:pl-77 flex items-center justify-center min-h-screen">
+    <Error handleRefetchCount={handleRefetchCount}/>
+  </div>;
 
   const router = useRouter();
   const req = data?.request;
@@ -35,8 +49,16 @@ export default function RequestDetails() {
   // Build timeline events based on status
   const timelineEvents = [
     { label: "Submitted", value: req?.createdAt, show: true },
-    { label: "Approved", value: req?.approvedAt, show: ["APPROVED", "IN_PROGRESS", "COLLECTED"].includes(status) },
-    { label: "Collected", value: req?.collectedAt, show: status === "COLLECTED" },
+    {
+      label: "Approved",
+      value: req?.approvedAt,
+      show: ["APPROVED", "IN_PROGRESS", "COLLECTED"].includes(status),
+    },
+    {
+      label: "Collected",
+      value: req?.collectedAt,
+      show: status === "COLLECTED",
+    },
     { label: "Rejected", value: req?.rejectedAt, show: status === "REJECTED" },
   ].filter((e) => e.show);
 
@@ -57,7 +79,10 @@ export default function RequestDetails() {
                 name={"Full name"}
                 value={`${req?.user?.firstName ? `${req.user.lastName}, ${req.user.firstName}` : "Name not set"}`}
               />
-              <LabelValue name={"Contact number"} value={req?.user?.phoneNumber} />
+              <LabelValue
+                name={"Contact number"}
+                value={req?.user?.phoneNumber}
+              />
               <LabelValue name={"Sitio"} value={req?.user?.sitio?.name} />
             </Card>
 
@@ -83,14 +108,27 @@ export default function RequestDetails() {
                 </h3>
                 <div className="w-full flex flex-col gap-2">
                   <div className="grid grid-cols-3 gap-2 w-full">
-                    <p className="text-xs text-gray-400 font-medium uppercase">Material</p>
-                    <p className="text-xs text-gray-400 font-medium uppercase">Weight</p>
-                    <p className="text-xs text-gray-400 font-medium uppercase">Unit</p>
+                    <p className="text-xs text-gray-400 font-medium uppercase">
+                      Material
+                    </p>
+                    <p className="text-xs text-gray-400 font-medium uppercase">
+                      Weight
+                    </p>
+                    <p className="text-xs text-gray-400 font-medium uppercase">
+                      Unit
+                    </p>
                   </div>
                   {req?.collectionItems.map((item, index) => (
-                    <div className="grid grid-cols-3 gap-2 w-full pt-2 border-t border-gray-100" key={index}>
-                      <p className="text-sm text-gray-700">{item.materialType}</p>
-                      <p className="text-sm text-gray-700">{item.actualWeight}</p>
+                    <div
+                      className="grid grid-cols-3 gap-2 w-full pt-2 border-t border-gray-100"
+                      key={index}
+                    >
+                      <p className="text-sm text-gray-700">
+                        {item.materialType}
+                      </p>
+                      <p className="text-sm text-gray-700">
+                        {item.actualWeight}
+                      </p>
                       <p className="text-sm text-gray-700">{item.weightUnit}</p>
                     </div>
                   ))}
@@ -127,14 +165,20 @@ export default function RequestDetails() {
             </h3>
             <div className="flex flex-col w-full">
               {timelineEvents.map((event, i) => (
-                <div key={event.label} className={`flex flex-row gap-3 ${i < timelineEvents.length - 1 ? "pb-4" : ""}`}>
+                <div
+                  key={event.label}
+                  className={`flex flex-row gap-3 ${i < timelineEvents.length - 1 ? "pb-4" : ""}`}
+                >
                   <div className="flex flex-col items-center">
                     <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />
                     {i < timelineEvents.length - 1 && (
                       <div className="w-px flex-1 bg-gray-200 mt-1" />
                     )}
                   </div>
-                  <LabelValue name={event.label} value={formatDate(event.value)} />
+                  <LabelValue
+                    name={event.label}
+                    value={formatDate(event.value)}
+                  />
                 </div>
               ))}
             </div>
