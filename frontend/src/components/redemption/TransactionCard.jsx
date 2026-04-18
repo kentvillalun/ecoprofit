@@ -14,7 +14,7 @@ export const TransactionCard = ({
 }) => {
   return (
     <>
-      {isLoading && <SkeletonCard rowsCount={3}/>}
+      {isLoading && <SkeletonCard rowsCount={3} />}
 
       {isError && (
         <div className="md:hidden">
@@ -36,17 +36,28 @@ export const TransactionCard = ({
       ) : (
         data?.transactions?.map((d) => (
           <Card
-            className="flex flex-col md:hidden items-start gap-3"
+            className={`flex flex-col md:hidden items-start gap-3 ${d?.programMaterial?.program?.isActive ? "" : "opacity-60"}`}
             key={d?.id}
           >
             <div className="flex flex-row justify-between w-full">
               <div className="flex flex-col">
                 <h3 className="font-semibold">{d?.beneficiaryName}</h3>
-                <p className="text-sm text-gray-500">
-                  {d?.programMaterial?.program?.name}
-                </p>
+                <div className="flex flex-row gap-1 items-center">
+                  <p className="text-sm text-gray-500">
+                    {d?.programMaterial?.program?.name}
+                  </p>
+                  <span
+                    className={`text-xs font-medium px-3 py-1 rounded-full ${d?.programMaterial?.program?.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                  >
+                    {d?.programMaterial?.program?.isActive
+                      ? "Active"
+                      : "Inactive"}
+                  </span>
+                </div>
                 <p className="text-sm text-gray-400">By: {d?.collectorName}</p>
-                <p className="text-sm text-gray-400 capitalize">{(d?.educationalLevel).toLowerCase()} level</p>
+                <p className="text-sm text-gray-400 capitalize">
+                  {(d?.educationalLevel).toLowerCase()} level
+                </p>
               </div>
               <div className="flex flex-col items-end gap-2">
                 <MaterialPill

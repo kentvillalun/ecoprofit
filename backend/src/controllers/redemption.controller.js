@@ -62,7 +62,11 @@ const getProgram = async (req, res) => {
             include: {
                 redemptionTransaction: {
                   include: {
-                    programMaterial: true
+                    programMaterial: {
+                      include: {
+                        program: true
+                      }
+                    }
                   }
                 }
             }
@@ -86,8 +90,9 @@ const getProgram = async (req, res) => {
 const updateProgram = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, allotedBudget, description, maxPoints, isActive } =
+    const { name, allotedBudget, description, maxPoints, isActive, materials } =
       req.body ?? {};
+      console.log("materials received:", materials)
 
     const data = {}
     if (name !== undefined) data.name = name
@@ -96,10 +101,26 @@ const updateProgram = async (req, res) => {
     if (maxPoints !== undefined) data.maxPoints = maxPoints
     if (isActive !== undefined) data.isActive = isActive
 
-    const success = await prisma.program.update({
+    await prisma.program.update({
       where: { id },
       data
     });
+
+    if (materials) {
+      await Promise.all(
+        Object.entries(materials).map(([materialType, pointValue]) => 
+          prisma.programMaterial.upsert({
+            where: { programId_materialType: {
+              programId: id, materialType
+            }},
+            update: {
+              pointValue: parseFloat(pointValue)
+            },
+            create: { programId: id, materialType, pointValue: parseFloat(pointValue) }
+          })
+        )
+      )
+    }
 
     return res.status(200).json({ message: "Update successful"})
   } catch (error) {

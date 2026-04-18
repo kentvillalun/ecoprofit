@@ -13,15 +13,24 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
-export const TransactionTable = ({ data, isLoading, isError, handleRefetchCount }) => {
+export const TransactionTable = ({
+  data,
+  isLoading,
+  isError,
+  handleRefetchCount,
+}) => {
   const tableConfig = [
     {
       header: "Beneficiary",
       render: (data) => (
         <div className="flex flex-col items-start justify-center">
           <p className="text-md font-semibold">{data.beneficiaryName}</p>
-          <p className="capitalize">
-            {data.educationalLevel} · Collected by: {data.collectorName}{" "}
+          <p className="capitalize text-gray-400">
+            {" "}
+            {data.educationalLevel.toLowerCase()} level
+          </p>
+          <p className="capitalize text-gray-400 text-sm">
+            Collected by: {data.collectorName}{" "}
           </p>
         </div>
       ),
@@ -29,7 +38,14 @@ export const TransactionTable = ({ data, isLoading, isError, handleRefetchCount 
     {
       header: "Program",
       render: (data) => (
-        <div className="font-semibold">{data?.programMaterial?.program?.name}</div>
+        <div className="font-semibold">
+          {data?.programMaterial?.program?.name}{" "}
+          <span
+            className={`text-xs font-medium px-3 py-1 rounded-full ${data?.programMaterial?.program?.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+          >
+            {data?.programMaterial?.program?.isActive ? "Active" : "Inactive"}
+          </span>
+        </div>
       ),
     },
     {
@@ -84,14 +100,17 @@ export const TransactionTable = ({ data, isLoading, isError, handleRefetchCount 
           {isError && (
             <tr className="max-w-md">
               <td className="text-center" colSpan={6}>
-                <Error handleRefetchCount={handleRefetchCount}/>
+                <Error handleRefetchCount={handleRefetchCount} />
               </td>
             </tr>
           )}
           {data?.length === 0 ? (
             <tr className="max-w-md">
               <td className="text-center" colSpan={6}>
-                <Empty text={"No transaction yet"} subtext={"There are no redemption transaction yet"}/>
+                <Empty
+                  text={"No transaction yet"}
+                  subtext={"There are no redemption transaction yet"}
+                />
               </td>
             </tr>
           ) : (

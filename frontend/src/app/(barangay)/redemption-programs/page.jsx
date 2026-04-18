@@ -96,8 +96,8 @@ export default function RedemptionProgramPage() {
               >
                 <div className="flex flex-row items-center justify-between w-full">
                   <h4 className="text-base font-semibold">{p.name}</h4>
-                  <span className="text-xs font-medium bg-green-100 text-green-700 px-3 py-1 rounded-full">
-                    Active
+                  <span className={`text-xs font-medium px-3 py-1 rounded-full ${p.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                    {p.isActive ? "Active" : "Inactive"}
                   </span>
                 </div>
                 <div className="flex flex-row gap-6">

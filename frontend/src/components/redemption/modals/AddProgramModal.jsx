@@ -7,14 +7,17 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "@/hooks/useMutation";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 const schema = yup.object().shape({
   name: yup.string().required("Program name is required"),
   allotedBudget: yup
-    .number("Please input a number only").nullable()
+    .number("Please input a number only")
+    .nullable()
     .required("Budget is required"),
   maxPoints: yup
-    .number("Please input a number only").nullable()
+    .number("Please input a number only")
+    .nullable()
     .required("Maximum points is required"),
   materials: yup
     .object()
@@ -26,16 +29,20 @@ const schema = yup.object().shape({
           (v) => v !== "" && v !== null && v !== undefined,
         ),
     ),
-    description: yup.string().required("Decription is required")
+  description: yup.string().required("Decription is required"),
 });
 
 export const AddProgramModal = ({
   isProgramModalOpen,
   setIsProgramModalOpen,
-  setRefetchCount
+  setRefetchCount,
+  program,
+  id,
 }) => {
   const { makeRequest, isLoading, data, error, isError } = useMutation();
-  const url = "/api/redemption/programs";
+  const url = program
+    ? `/api/redemption/programs/${id}`
+    : "/api/redemption/programs";
 
   const {
     register,
@@ -45,11 +52,11 @@ export const AddProgramModal = ({
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      name: "",
-      allotedBudget: null,
-      maxPoints: null,
-      materials: "",
-      description: "",
+      name: program?.name ?? "",
+      allotedBudget: program?.allotedBudget ?? null,
+      maxPoints: program?.maxPoints ?? null,
+      materials: {} ?? "",
+      description: program?.description ?? "",
     },
   });
 
@@ -58,40 +65,75 @@ export const AddProgramModal = ({
       .filter((f) => {
         return f[1] !== "";
       })
-      .map(([key, value]) => ({ materialType: key, pointValue: parseFloat(value) }));
+      .map(([key, value]) => ({
+        materialType: key,
+        pointValue: parseFloat(value),
+      }));
 
-    toast.loading("Creating program");
+    const materials = program
+      ? Object.fromEntries(
+          Object.entries(formData.materials).filter(
+            ([_, v]) => v !== "" && v !== null,
+          ),
+        )
+      : null;
+
+    toast.loading(program ? "Updating program" : "Creating program");
     const success = await makeRequest({
       url,
+      method: program ? "PATCH" : "POST",
       body: {
         name: formData.name,
         allotedBudget: formData.allotedBudget,
         maxPoints: formData.maxPoints,
-        programMaterial,
-        description: formData.description
+        description: formData.description,
+        ...(program ? { materials } : { programMaterial }),
       },
     });
 
     if (success) {
       toast.dismiss();
-      toast.success("Program created");
+      toast.success(program ? "Program updated" : "Program created");
       setIsProgramModalOpen(false);
-      setRefetchCount((prev) => prev + 1)
-      reset()
+      setRefetchCount((prev) => prev + 1);
+      reset();
     } else {
       toast.dismiss();
-      toast.error("Creating program failed");
+      toast.error(
+        program ? "Updating program failed" : "Creating program failed",
+      );
     }
   };
+
+  useEffect(() => {
+    if (program) {
+      reset({
+        name: program.name,
+        description: program.description,
+        allotedBudget: program.allotedBudget,
+        maxPoints: program.maxPoints,
+        materials: Object.fromEntries(
+          program.programMaterial.map((m) => [
+            m.materialType,
+            parseFloat(m.pointValue),
+          ]),
+        ),
+      });
+    }
+  }, [program]);
 
   return (
     <Modal
       isOpen={isProgramModalOpen}
       onClose={() => setIsProgramModalOpen(false)}
       icon={<GiftIcon className="w-6 stroke-black" />}
-      title={"Create Program"}
-      subtitle={"Please input basic details about the program"}
-      confirmLabel={"Create Program"}
+      title={program ? "Edit Program" : "Create Program"}
+      subtitle={
+        program
+          ? "Update program details and material point values"
+          : "Please input basic details about the program"
+      }
+      confirmLabel={program ? "Edit Program" : "Create Program"}
       confirmClassName={
         "bg-[#74C857] hover:bg-primary transition-all duration-200 ease-in-out"
       }
@@ -105,7 +147,6 @@ export const AddProgramModal = ({
             className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
             placeholder="Input the program name here"
             {...register("name")}
-            // onChange={(event) => setRejectionReason(event.target.value)}
           />
           {errors.name && (
             <p className="text-[14px] text-red-500 text-start">
@@ -114,9 +155,10 @@ export const AddProgramModal = ({
           )}
         </div>
 
-
         <div className="flex flex-col gap-1">
-          <label className="text-gray-700 font-medium">Program description</label>
+          <label className="text-gray-700 font-medium">
+            Program description
+          </label>
           <textarea
             type="text"
             className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
@@ -133,15 +175,12 @@ export const AddProgramModal = ({
 
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-1 ">
-            <label className="text-gray-700 font-medium">
-              Allotted budget
-            </label>
+            <label className="text-gray-700 font-medium">Allotted budget</label>
             <input
               type="number"
               className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
               placeholder="Input budget here"
               {...register("allotedBudget")}
-              //   onChange={(event) => setRejectionReason(event.target.value)}
             />
             {errors.allotedBudget && (
               <p className="text-[14px] text-red-500 text-start">
@@ -156,8 +195,6 @@ export const AddProgramModal = ({
               className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
               placeholder="Input max points here"
               {...register("maxPoints")}
-
-              //   onChange={(event) => setRejectionReason(event.target.value)}
             />
             {errors.maxPoints && (
               <p className="text-[14px] text-red-500 text-start">
@@ -170,7 +207,7 @@ export const AddProgramModal = ({
         <div className="flex flex-col gap-1">
           <label className="text-gray-700 font-medium">Material Section</label>
 
-          <div className="flex flex-col gap-3 items-start">
+          <div className="grid grid-cols-2 gap-3 items-start">
             <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors flex flex-row gap-2 w-full">
               <label className="pr-6 text-gray-400" htmlFor="plastics">
                 Plastics
@@ -180,7 +217,7 @@ export const AddProgramModal = ({
                 min={0}
                 className="w-full outline-none"
                 id="plastics"
-                placeholder="Input point value"
+                placeholder="e.g. 2"
                 {...register("materials.PLASTICS")}
               />
             </div>
@@ -194,7 +231,7 @@ export const AddProgramModal = ({
                 min={0}
                 className="w-full outline-none"
                 id="metals"
-                placeholder="Input point value"
+                placeholder="e.g. 2"
                 {...register("materials.METALS")}
               />
             </div>
@@ -208,7 +245,7 @@ export const AddProgramModal = ({
                 min={0}
                 className="w-full outline-none"
                 id="bottles"
-                placeholder="Input point value"
+                placeholder="e.g. 2"
                 {...register("materials.BOTTLES")}
               />
             </div>
@@ -222,21 +259,67 @@ export const AddProgramModal = ({
                 className="w-full outline-none"
                 id="papers"
                 min={0}
-                placeholder="Input point value"
+                placeholder="e.g. 2"
                 {...register("materials.PAPERS")}
               />
             </div>
-            {errors.materials && (
-              <p className="text-[14px] text-red-500 text-start">
-                {errors.materials?.message}
-              </p>
-            )}
-            <p className="text-gray-700 text-sm">
-              <span className="font-medium">Note: </span>Please leave the field
-              blank if you don't want to assign any points to the material
-            </p>
           </div>
+          {errors.materials && (
+            <p className="text-[14px] text-red-500 text-start">
+              {errors.materials?.message}
+            </p>
+          )}
+          <p className="text-gray-700 text-sm">
+            <span className="font-medium">Note: </span>
+            {program
+              ? "Leave a material blank to keep its current point value, or enter a new value to update it"
+              : "Please leave the field blank if you don't want to assign any points to the material"}
+          </p>
         </div>
+
+        {program && (
+          <div className="w-full flex flex-col gap-2">
+            <button
+              className={`py-2.5 rounded-lg text-white mt-5 w-full hover:cursor-pointer transition-all duration-200 ease-in-out ${program?.isActive ? "bg-red-400 hover:bg-red-500" : "bg-[#74C857] hover:bg-primary"}`}
+              type="button"
+              onClick={async () => {
+                toast.loading(program?.isActive ? "Deactivating program" : "Reactivating program");
+
+                const success = await makeRequest({
+                  url,
+                  method: "PATCH",
+                  body: {
+                    isActive: program?.isActive ? false : true
+                  },
+                });
+
+                if (success) {
+                  toast.dismiss();
+                  toast.success(program?.isActive ? "Program deactivated" : "Program reactivated");
+                  setIsProgramModalOpen(false);
+                  setRefetchCount((prev) => prev + 1);
+                  reset();
+                } else {
+                  toast.dismiss();
+                  toast.error(program?.isActive ? "Deactivation failed" : "Reactivation failed");
+                }
+              }}
+            >
+              {program?.isActive ? "Deactivate Program" : "Reactivate Program"}
+            </button>
+            {program?.isActive ? (
+
+              <p className="text-gray-700 text-sm">
+              <span className="font-medium">Caution: </span>This action will
+              deactivate the program. Existing transactions will not be affected
+            </p>
+            ) : (
+              <p className="text-gray-700 text-sm">
+              <span className="font-medium">Note: </span>Reactivating this program will allow new transactions to be recorded under it
+            </p>
+            )}
+          </div>
+        )}
       </div>
     </Modal>
   );

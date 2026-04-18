@@ -23,6 +23,9 @@ import { Spinner } from "@/components/ui/Spinner";
 import { Error } from "@/components/ui/Error";
 import { Empty } from "@/components/ui/Empty";
 import { TransactionCard } from "@/components/redemption/TransactionCard";
+import { createPortal } from "react-dom";
+import { RecordTransactionModal } from "@/components/redemption/modals/RecordTransactionModal";
+import { AddProgramModal } from "@/components/redemption/modals/AddProgramModal";
 
 const TABLE_COLUMNS = [
   {
@@ -31,7 +34,10 @@ const TABLE_COLUMNS = [
       <div className="flex flex-col items-start">
         <p className="font-semibold">{t.beneficiaryName}</p>
         <p className="text-gray-500 capitalize">
-          {t.educationalLevel.toLowerCase()} · By: {t.collectorName}
+          {t.educationalLevel.toLowerCase()} level
+        </p>
+        <p className="text-gray-500 capitalize">
+          Collected By: {t.collectorName}
         </p>
       </div>
     ),
@@ -63,6 +69,8 @@ const TABLE_COLUMNS = [
 ];
 
 export default function ProgramDetails() {
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [refetchCount, setRefetchCount] = useState(0);
   const { id } = useParams();
   const url = `/api/redemption/programs/${id}`;
@@ -73,17 +81,6 @@ export default function ProgramDetails() {
     ?.map((m) => m.redemptionTransaction)
     .flat();
 
-  if (isLoading)
-    return (
-      <div className="text-center">
-        <div className="md:hidden">
-          <SkeletonCard />
-        </div>
-        <div className="md:pl-77 flex items-center min-h-screen justify-center">
-          <Spinner />
-        </div>
-      </div>
-    );
   if (isError)
     return (
       <div className="md:pl-77 flex items-center justify-center min-h-screen">
@@ -95,11 +92,38 @@ export default function ProgramDetails() {
     <Page gradient={true}>
       <BarangayTopBar title={"Program Details"} />
       <PageContent className="md:pl-77 md:p-6 md:gap-7">
+        {isTransactionModalOpen &&
+          createPortal(
+            <RecordTransactionModal
+              isTransactionModalOpen={isTransactionModalOpen}
+              setIsTransactionModalOpen={setIsTransactionModalOpen}
+              setTransactionRefetchCount={setRefetchCount}
+              preselectedProgram={data?.program}
+            />,
+            document.body,
+          )}
+
+        {isEditModalOpen &&
+          createPortal(
+            <AddProgramModal
+              isProgramModalOpen={isEditModalOpen}
+              setIsProgramModalOpen={setIsEditModalOpen}
+              setRefetchCount={setRefetchCount}
+              program={data?.program}
+              id={id}
+            />,
+            document.body,
+          )}
+
         <DetailHeader
           title={"Program Details"}
           subtitle={"Review the full details of this redemption program"}
-          badgeLabel={"Active"}
-          badgeColor={"bg-green-100 text-green-700"}
+          badgeLabel={data?.program?.isActive ? "Active" : "Inactive"}
+          badgeColor={
+            data?.program?.isActive
+              ? "bg-green-100 text-green-700"
+              : "bg-red-100 text-red-700"
+          }
           icon={<DocumentIcon className="w-6 stroke-black" />}
         />
 
@@ -109,61 +133,76 @@ export default function ProgramDetails() {
           subtitle={"Review program details and material points"}
           buttonLabel={"Edit Program"}
           buttonIcon={<PencilSquareIcon className="w-5 hidden md:flex" />}
+          onAction={() => setIsEditModalOpen(true)}
         />
+
         <div className="grid grid-cols-1 gap-3">
           {/* Section 1 — Program Information */}
-          <Card className="flex flex-col items-start gap-3">
-            <h3 className="font-semibold text-sm text-gray-600 border-b border-gray-100 pb-2 w-full">
-              Program Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-              <LabelValue name="Program Name" value={data?.program.name} />
-              <LabelValue
-                name="Status"
-                value={data?.program?.isActive ? "Active" : "Inactive"}
-              />
-              <LabelValue
-                name="Allotted Budget"
-                value={`₱ ${data?.program?.allotedBudget.toLocaleString()}`}
-              />
-              <LabelValue
-                name="Max Points"
-                value={`${data?.program?.maxPoints.toLocaleString()} pts`}
-              />
+          {isLoading ? (
+            <div className="text-center">
+              <div className="md:hidden">
+                <SkeletonCard rowsCount={4} />
+              </div>
+              <div className="md:flex items-center justify-center hidden">
+                <Spinner />
+              </div>
             </div>
-            <LabelValue
-              name="Description"
-              value={
-                data?.program?.description === null
-                  ? "There is no description available"
-                  : data?.program?.description
-              }
-              className="w-full"
-            />
-          </Card>
-
-          {/* Section 2 — Material Points */}
-          <Card className="flex flex-col items-start gap-3">
-            <h3 className="font-semibold text-sm text-gray-600 border-b border-gray-100 pb-2 w-full">
-              Material Points
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-1 w-full">
-              {data?.program?.programMaterial.map((m, i) => (
-                <div
-                  key={m.id}
-                  className="flex flex-row items-center justify-between py-2.5 border-b border-gray-50 last:border-0 md:odd:border-r md:odd:pr-4 md:even:pl-4"
-                >
-                  <MaterialPill type={m.materialType} />
-                  <div className="flex flex-col items-end">
-                    <p className="text-sm font-semibold text-gray-700">
-                      {m.pointValue} pts
-                    </p>
-                    <p className="text-xs text-gray-400">per unit</p>
-                  </div>
+          ) : (
+            <>
+              <Card className="flex flex-col items-start gap-3">
+                <h3 className="font-semibold text-sm text-gray-600 border-b border-gray-100 pb-2 w-full">
+                  Program Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                  <LabelValue name="Program Name" value={data?.program.name} />
+                  <LabelValue
+                    name="Status"
+                    value={data?.program?.isActive ? "Active" : "Inactive"}
+                  />
+                  <LabelValue
+                    name="Allotted Budget"
+                    value={`₱ ${data?.program?.allotedBudget.toLocaleString()}`}
+                  />
+                  <LabelValue
+                    name="Max Points"
+                    value={`${data?.program?.maxPoints.toLocaleString()} pts`}
+                  />
                 </div>
-              ))}
-            </div>
-          </Card>
+                <LabelValue
+                  name="Description"
+                  value={
+                    data?.program?.description === null
+                      ? "There is no description available"
+                      : data?.program?.description
+                  }
+                  className="w-full"
+                />
+              </Card>
+
+              {/* Section 2 — Material Points */}
+              <Card className="flex flex-col items-start gap-3">
+                <h3 className="font-semibold text-sm text-gray-600 border-b border-gray-100 pb-2 w-full">
+                  Material Points
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-1 w-full">
+                  {data?.program?.programMaterial.map((m, i) => (
+                    <div
+                      key={m.id}
+                      className="flex flex-row items-center justify-between py-2.5 border-b border-gray-50 last:border-0 md:odd:border-r md:odd:pr-4 md:even:pl-4"
+                    >
+                      <MaterialPill type={m.materialType} />
+                      <div className="flex flex-col items-end">
+                        <p className="text-sm font-semibold text-gray-700">
+                          {m.pointValue} pts
+                        </p>
+                        <p className="text-xs text-gray-400">per unit</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </>
+          )}
 
           {/* Section 3 — Transaction History */}
           <section className="flex flex-col gap-3">
@@ -172,7 +211,8 @@ export default function ProgramDetails() {
               subtitle={"Redemption transactions under this program"}
               icon={<Bars3BottomLeftIcon className="w-6 stroke-black" />}
               buttonLabel={"Record Transaction"}
-              onAction={() => {}}
+              onAction={() => setIsTransactionModalOpen(true)}
+              buttonClassName={data?.program?.isActive ? "flex!" : "hidden!"}
             />
 
             {/* Desktop: table */}
@@ -236,7 +276,11 @@ export default function ProgramDetails() {
               </table>
             </Card>
 
-            <TransactionCard data={transactions}/>
+            {isLoading ? (
+              <SkeletonCard rowsCount={2} />
+            ) : (
+              <TransactionCard data={{ transactions }} />
+            )}
           </section>
         </div>
       </PageContent>

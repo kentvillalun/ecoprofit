@@ -51,9 +51,10 @@ export const RequestCard = ({
                 />
               )}
               <Card
-                className={`flex flex-col items-start gap-3 transition-all ${
+                className={`flex flex-col items-start gap-3 transition-all hover:cursor-pointer hover:-translate-y-0.5 duration-200 ease-in-out ${
                   isSelected ? "bg-[#F0FAF0] ring-2 ring-[#74C857]" : ""
                 }`}
+                handleClick={() => router.push(`/collection-requests/${d.id}`)}
               >
                 {/* Top row */}
                 <div className="flex flex-row justify-between w-full">
@@ -80,12 +81,7 @@ export const RequestCard = ({
                 {/* Footer row */}
                 <div className="flex flex-row items-center justify-between w-full pt-2 border-t border-gray-100">
                   <p className="text-xs text-gray-400">{formatDate(d.createdAt)}</p>
-                  <button
-                    className="text-xs font-semibold text-[#74C857] hover:underline"
-                    onClick={() => router.push(`/collection-requests/${d.id}`)}
-                  >
-                    View Details
-                  </button>
+                  
                 </div>
               </Card>
             </label>

@@ -8,7 +8,8 @@ export const SectionHeader = ({
   subtitle,
   buttonLabel,
   onAction,
-  buttonIcon = <PlusIcon className="w-5 hidden md:flex" />
+  buttonIcon = <PlusIcon className="w-5 hidden md:flex" />,
+  buttonClassName
 }) => {
   return (
     <header className="">
@@ -25,7 +26,7 @@ export const SectionHeader = ({
           </div>
         </div>
         <button
-          className="bg-[#74C857] text-white px-3.5 rounded-lg py-2.5 flex flex-row items-center gap-2 justify-center hover:cursor-pointer hover:bg-primary transition-all duration-200 ease-in-out min-w-35 md:min-w-45 text-nowrap"
+          className={`bg-[#74C857] text-white px-3.5 rounded-lg py-2.5 flex flex-row items-center gap-2 justify-center hover:cursor-pointer hover:bg-primary transition-all duration-200 ease-in-out min-w-35 md:min-w-45 text-nowrap ${buttonClassName}`}
           onClick={onAction}
         >
           {buttonIcon}

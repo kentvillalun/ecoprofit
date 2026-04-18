@@ -98,8 +98,13 @@
       - `RecordTransactionModal` — dependent dropdowns (program → filtered materials); fields: program, material, beneficiary name, collector name, quantity, educational level; wired to `POST /redemption/transactions`; success triggers transaction list refetch
       - `redemption-programs/page.jsx` — mock data replaced with `useFetch`; separate `refetchCount` states for programs and transactions; "Record Transaction" button passes fetched programs into modal
       - `TransactionTable` and `TransactionCard` — now receive live data with loading/error states
-- [ ] `/redemption-programs/[id]` detail page (program detail with material breakdown and transaction history)
-- [x] Collection requests 500 error — investigation pending
+- [x] `/redemption-programs/[id]` detail page — fully wired to backend; shows program info, materials breakdown (point values per material), and transaction history (flattened from nested `programMaterial.redemptionTransaction`); `getProgram` controller `include` updated so `redemptionTransaction` also includes `programMaterial { include: { program: true } }`
+- [x] `Program` model — `description String?` and `isActive Boolean @default(true)` fields added; migration applied
+- [x] `updateProgram` controller — partial update pattern with upsert for `ProgramMaterial` point values; `PATCH /redemption/programs/:id`
+- [x] `AddProgramModal` extended for edit — pre-fills form via `reset()` in `useEffect` when `program` prop present; sends `POST` for create, `PATCH` for edit; upsert for material point values
+- [x] Deactivate/Reactivate toggle in Edit modal — sends `{ isActive: !program.isActive }`; button label and color flip based on current state; caution/reactivation message shown below button
+- [x] Inactive program UX — program cards dimmed with `opacity-50`; "Record Transaction" button hidden when program is inactive; inactive programs filtered from transaction modal dropdown
+- [x] `RecordTransactionModal` `preselectedProgram` prop — skips program dropdown, shows locked input with program name; `useEffect` + `setValue` sets `programId` automatically
 - [ ] Manual Collection Intake module (Sunday EcoAid manual entry with resident search)
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
@@ -117,10 +122,11 @@ cross-role token acceptance.
 
 The full pickup request lifecycle is end-to-end on the barangay side (list, approve,
 decline, schedule, collect, detail page with ASSORTED breakdown). The Redemption
-Management module is now fully wired end-to-end — programs and transactions are fetched
-from real API data, `AddProgramModal` and `RecordTransactionModal` submit to the backend
-via `useMutation`. Next focus: `/redemption-programs/[id]` detail page, investigating
-collection requests 500 error, and Manual Collection Intake module.
+Management module is fully wired end-to-end — programs and transactions are fetched from
+real API data, `AddProgramModal` handles both create and edit (with deactivate/reactivate
+toggle), `RecordTransactionModal` supports a `preselectedProgram` prop, and the
+`/redemption-programs/[id]` detail page is fully built. Next focus: PWA manifest for
+mobile installability, then resident-side real API integration and dashboard data.
 
 ## Key Decisions Made
 - httpOnly cookies over localStorage → XSS protection
@@ -140,7 +146,7 @@ collection requests 500 error, and Manual Collection Intake module.
 ## Key Files
 - backend/src/controllers/auth.controller.js
 - backend/src/controllers/pickup-request.controller.js — pickup request creation
-- backend/src/controllers/redemption.controller.js — createProgram, getPrograms, getProgram, createTransaction, getTransactions
+- backend/src/controllers/redemption.controller.js — createProgram, updateProgram (partial update + upsert for ProgramMaterial), getPrograms, getProgram, createTransaction, getTransactions
 - backend/src/middlewares/authMiddleware.js — authenticateResident, authenticateBarangay, requireRoles
 - backend/src/routes/auth.route.js
 - backend/src/routes/pickup-request.route.js — POST /pickup-requests; GET/PATCH/GET-by-id collection-requests routes; COLLECTED transition creates CollectionItem records
@@ -163,8 +169,9 @@ collection requests 500 error, and Manual Collection Intake module.
 - frontend/src/components/ui/Spinner.jsx — inline loading spinner
 - frontend/src/components/ui/Error.jsx — error state with handleRefetchCount callback
 - frontend/src/components/ui/Empty.jsx — empty state with title and subtext
-- frontend/src/components/redemption/modals/AddProgramModal.jsx — create program form wired to backend
-- frontend/src/components/redemption/modals/RecordTransactionModal.jsx — record transaction form with dependent selects, wired to backend
+- frontend/src/components/redemption/modals/AddProgramModal.jsx — handles create and edit; pre-fills via reset(); deactivate/reactivate toggle
+- frontend/src/components/redemption/modals/RecordTransactionModal.jsx — dependent selects, preselectedProgram prop, inactive programs filtered
+- frontend/src/app/(barangay)/redemption-programs/[id]/page.jsx — program detail with materials breakdown and transaction history
 - frontend/src/app/(barangay)/collection-requests/page.jsx — tabbed collection requests management UI
 - frontend/src/app/(barangay)/collection-requests/[id]/page.jsx — full request detail page with timeline and action cards
 - frontend/src/lib/formatDate.js — ISO date → readable locale string
@@ -181,7 +188,6 @@ collection requests 500 error, and Manual Collection Intake module.
 - POST /pickup-requests response has a typo: "submittion" → "submission"
 - `InProgressActions` ASSORTED modal: minimum 2 rows enforced (removeRow disabled when `items.length === 2`) but rows start empty — no validation before submit (empty materialType/weight are silently sent to backend)
 - Collection requests page returning 500 error — root cause not yet investigated
-- `/redemption-programs/[id]` detail page not yet built
 
 ## Mentor Instructions
 Act as a senior dev mentor — guide me, don't just give me answers.
