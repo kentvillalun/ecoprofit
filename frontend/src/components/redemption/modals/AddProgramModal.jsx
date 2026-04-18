@@ -11,10 +11,10 @@ import { toast } from "sonner";
 const schema = yup.object().shape({
   name: yup.string().required("Program name is required"),
   allotedBudget: yup
-    .number("Please input a number only")
+    .number("Please input a number only").nullable()
     .required("Budget is required"),
   maxPoints: yup
-    .number("Please input a number only")
+    .number("Please input a number only").nullable()
     .required("Maximum points is required"),
   materials: yup
     .object()
@@ -26,6 +26,7 @@ const schema = yup.object().shape({
           (v) => v !== "" && v !== null && v !== undefined,
         ),
     ),
+    description: yup.string().required("Decription is required")
 });
 
 export const AddProgramModal = ({
@@ -48,6 +49,7 @@ export const AddProgramModal = ({
       allotedBudget: null,
       maxPoints: null,
       materials: "",
+      description: "",
     },
   });
 
@@ -66,6 +68,7 @@ export const AddProgramModal = ({
         allotedBudget: formData.allotedBudget,
         maxPoints: formData.maxPoints,
         programMaterial,
+        description: formData.description
       },
     });
 
@@ -107,6 +110,23 @@ export const AddProgramModal = ({
           {errors.name && (
             <p className="text-[14px] text-red-500 text-start">
               {errors.name?.message}
+            </p>
+          )}
+        </div>
+
+
+        <div className="flex flex-col gap-1">
+          <label className="text-gray-700 font-medium">Program description</label>
+          <textarea
+            type="text"
+            className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
+            placeholder="Input a short description about the program"
+            {...register("description")}
+            rows={4}
+          ></textarea>
+          {errors.description && (
+            <p className="text-[14px] text-red-500 text-start">
+              {errors.description?.message}
             </p>
           )}
         </div>
@@ -207,7 +227,7 @@ export const AddProgramModal = ({
               />
             </div>
             {errors.materials && (
-              <p className="text-[14px] text-red-500 text-center md:text-start">
+              <p className="text-[14px] text-red-500 text-start">
                 {errors.materials?.message}
               </p>
             )}

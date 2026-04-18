@@ -181,6 +181,8 @@ model Program {
   name String
   allotedBudget Float
   maxPoints Float
+  description String?
+  isActive Boolean @default(true)
   createdAt DateTime @default(now()) 
   
   programMaterial ProgramMaterial[]

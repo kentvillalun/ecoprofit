@@ -46,6 +46,7 @@ export const TransactionCard = ({
                   {d?.programMaterial?.program?.name}
                 </p>
                 <p className="text-sm text-gray-400">By: {d?.collectorName}</p>
+                <p className="text-sm text-gray-400 capitalize">{(d?.educationalLevel).toLowerCase()} level</p>
               </div>
               <div className="flex flex-col items-end gap-2">
                 <MaterialPill

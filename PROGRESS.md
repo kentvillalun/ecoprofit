@@ -99,7 +99,7 @@
       - `redemption-programs/page.jsx` — mock data replaced with `useFetch`; separate `refetchCount` states for programs and transactions; "Record Transaction" button passes fetched programs into modal
       - `TransactionTable` and `TransactionCard` — now receive live data with loading/error states
 - [ ] `/redemption-programs/[id]` detail page (program detail with material breakdown and transaction history)
-- [ ] Collection requests 500 error — investigation pending
+- [x] Collection requests 500 error — investigation pending
 - [ ] Manual Collection Intake module (Sunday EcoAid manual entry with resident search)
 - [ ] Collection schedule module
 - [ ] Dashboard with real data

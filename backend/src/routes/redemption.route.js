@@ -1,5 +1,5 @@
 import express from 'express'
-import { createProgram, createTransaction, getProgram, getPrograms, getTransactions } from '../controllers/redemption.controller.js';
+import { createProgram, createTransaction, getProgram, getPrograms, getTransactions, updateProgram } from '../controllers/redemption.controller.js';
 import { authenticateBarangay, requireRoles } from '../middlewares/authMiddleware.js';
 
 const router = express.Router()
@@ -9,5 +9,6 @@ router.get("/programs", authenticateBarangay, requireRoles(["CAPTAIN", "SECRETAR
 router.get("/programs/:id", authenticateBarangay, requireRoles(["CAPTAIN", "SECRETARY", "SK"]), getProgram)
 router.post("/transactions", authenticateBarangay, requireRoles(["CAPTAIN", "SECRETARY", "SK"]), createTransaction)
 router.get("/transactions", authenticateBarangay, requireRoles(["CAPTAIN", "SECRETARY", "SK"]), getTransactions)
+router.patch("/programs/:id", authenticateBarangay, requireRoles(["CAPTAIN", "SECRETARY", "SK"]), updateProgram)
 
 export default router;

@@ -13,7 +13,7 @@ export const Error = ({handleRefetchCount}) => {
           <p className="text-sm text-[#6B7280]">
             Please try again
           </p>
-          <button className="rounded-lg bg-primary px-12 py-2 text-white transition-opacity hover:opacity-90 mt-4" onClick={() => handleRefetchCount()}>Reload</button>
+          <button className="rounded-lg bg-[#74C857] hover:bg-primary px-12 py-2 text-white transition-all mt-4" onClick={() => handleRefetchCount()}>Reload</button>
         </div>
     )
 }
