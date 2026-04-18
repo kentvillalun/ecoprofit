@@ -1,6 +1,6 @@
 "use client";
 
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import {
   PhoneIcon,
   LockClosedIcon,
@@ -20,7 +20,7 @@ import { Page } from "@/components/layout/Page";
 import { API_BASE_URL } from "@/lib/config";
 
 // Defined outside the component so it never gets recreated on re-render
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -330,7 +330,7 @@ export default function SignupPage() {
 
         <form className="mx-1 mt-2 bg-white p-8 rounded-t-[20px] flex flex-col gap-4 max-w-full" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-8">
-            <h3 className={`font-semibold text-[20px] ${poppins.className}`}>
+            <h3 className={`font-semibold text-[20px] ${inter.className}`}>
               Sign Up
             </h3>
 

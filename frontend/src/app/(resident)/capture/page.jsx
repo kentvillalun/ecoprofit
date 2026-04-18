@@ -1,10 +1,5 @@
 "use client";
 
-// Flow
-// User captures photo → preview shown
-// User clicks "Next" → upload to Cloudinary → form fields appear
-// User fills fields → clicks "Submit Request" → send to backend with Cloudinary URL
-
 import { ResidentHeader } from "@/components/navigation/ResidentHeader";
 import { CameraIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef, useState } from "react";

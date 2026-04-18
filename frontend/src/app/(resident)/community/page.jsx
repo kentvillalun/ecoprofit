@@ -1,11 +1,11 @@
 import { ResidentHeader } from "@/components/navigation/ResidentHeader";
 import { PageContent } from "@/components/layout/PageContent";
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import Image from "next/image";
 import { Page } from "@/components/layout/Page";
 import { Card } from "@/components/ui/Card";
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });

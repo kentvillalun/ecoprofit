@@ -1,7 +1,6 @@
 "use client";
 
-import { Poppins } from "next/font/google";
-import Link from "next/link";
+import { Inter } from "next/font/google";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -10,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/lib/config";
 import { BARANGAY_ROLES } from "@/lib/roles";
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -73,7 +72,7 @@ export default function BarangayLoginPage() {
   };
   return (
     <main
-      className={`min-h-svh flex justify-center bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${poppins.className} `}
+      className={`min-h-svh flex justify-center bg-linear-to-b from-[#FFFFFF] from-24% to-[#89D957] ${inter.className} `}
     >
       <div className="grid md:justify-center md:items-center">
         <div className="grid">

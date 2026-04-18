@@ -1,11 +1,11 @@
 "use client";
 
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { useContext } from "react";
 import { DrawerContext } from "@/app/(barangay)/layout.jsx";
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -17,7 +17,7 @@ export const BarangayTopBar = ({ title }) => {
   return (
     <>
       <header
-        className={`flex flex-row items-center justify-between min-w-full max-h-24 bg-[#74C857] fixed top-0 py-6 px-8 ${poppins.className} shadow-lg text-white md:hidden z-40`}
+        className={`flex flex-row items-center justify-between min-w-full max-h-24 bg-[#74C857] fixed top-0 py-6 px-8 ${inter.className} shadow-lg text-white md:hidden z-40`}
       >
         <Bars3Icon
           className="w-6 h-6 hover:cursor-pointer"

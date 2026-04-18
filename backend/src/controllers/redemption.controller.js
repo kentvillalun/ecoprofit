@@ -60,7 +60,11 @@ const getProgram = async (req, res) => {
       include: {
         programMaterial: {
             include: {
-                redemptionTransaction: true
+                redemptionTransaction: {
+                  include: {
+                    programMaterial: true
+                  }
+                }
             }
         }
       },

@@ -1,6 +1,6 @@
 "use client";
 
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import Image from "next/image";
 import { BellIcon } from "@heroicons/react/24/outline";
 import { CameraIcon } from "@heroicons/react/24/solid";
@@ -9,7 +9,7 @@ import { PageContent } from "@/components/layout/PageContent.jsx";
 import { Page } from "@/components/layout/Page.jsx";
 import { Card } from "@/components/ui/Card";
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });

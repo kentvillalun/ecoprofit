@@ -1,4 +1,4 @@
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import {
   HomeIcon,
   MapPinIcon,
@@ -16,7 +16,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -31,7 +31,7 @@ export const ResidentBottomNav = () => {
 
   return (
     <section
-      className={`min-h-18.75 bottom-0 bg-white min-w-screen pb-2.25 flex flex-row items-center justify-center px-3 z-1000 fixed ${poppins.className}`}
+      className={`min-h-18.75 bottom-0 bg-white min-w-screen pb-2.25 flex flex-row items-center justify-center px-3 z-1000 fixed ${inter.className}`}
     >
       <div className="grid grid-cols-3 gap-1 text-[#9DB2CE]">
         <div className="grid grid-cols-2 gap-3">

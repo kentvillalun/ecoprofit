@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -25,7 +25,7 @@ export default function OnboardingPage() {
 
   return (
     <main
-      className={`min-h-svh overflow-x-hidden flex items-center justify-center bg-linear-to-b from-[#FFFFFF]  from-24% to-[#89D957] ${poppins.className}`}
+      className={`min-h-svh overflow-x-hidden flex items-center justify-center bg-linear-to-b from-[#FFFFFF]  from-24% to-[#89D957] ${inter.className}`}
     >
       {step === 1 && (
         <>

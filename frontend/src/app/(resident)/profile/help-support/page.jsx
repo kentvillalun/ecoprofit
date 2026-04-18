@@ -90,18 +90,6 @@ export default function HelpAndSupportPage() {
                 );
               })}
 
-              {/* {faqs.map((faq) => (
-                    <Card className="rounded-md! flex-col gap-5" key={faq.key}>
-                        <div className="flex flex-row min-w-full items-center justify-between gap-5">
-                            <p className="">{faq.question}</p>
-                            <div className="">
-                              
-                                <ChevronDownIcon className="h-6 w-6 stroke-[#74C857]"/>
-                            </div>
-                        </div>
-                        <p className="italic font-light p-2 ">{faq.answer}</p>
-                    </Card>
-                ))} */}
             </div>
           </div>
         </div>

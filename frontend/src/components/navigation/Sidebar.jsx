@@ -17,12 +17,12 @@ import {
 import { useContext, useState } from "react";
 import { DrawerContext } from "@/app/(barangay)/layout.jsx";
 import Link from "next/link";
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import { API_BASE_URL } from "@/lib/config";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -116,7 +116,7 @@ export const Sidebar = () => {
 
   return (
     <aside
-      className={`w-72 h-svh flex flex-col justify-between bg-[#74C857] fixed top-0 text-white left-0 z-50 md:shadow-xl ${poppins.className} overflow-y-auto sidebar`}
+      className={`w-72 h-svh flex flex-col justify-between bg-[#74C857] fixed top-0 text-white left-0 z-50 md:shadow-xl ${inter.className} overflow-y-auto sidebar`}
     >
       <div className="p-4 flex flex-col gap-4 lg:gap-9">
         <div className="flex flex-row justify-between items-center">

@@ -1,6 +1,6 @@
 "use client";
 
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Page } from "@/components/layout/Page";
@@ -11,7 +11,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { API_BASE_URL } from "@/lib/config";
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -98,7 +98,7 @@ export default function ResetPasswordPage() {
   return (
     <Page gradient={true}>
       <div
-        className={`w-full max-w-md min-h-svh flex flex-col justify-between px-1 ${poppins.className}`}
+        className={`w-full max-w-md min-h-svh flex flex-col justify-between px-1 ${inter.className}`}
       >
         <div className=""></div>
         <div className=""></div>

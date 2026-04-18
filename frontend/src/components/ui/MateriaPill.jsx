@@ -1,6 +1,6 @@
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -28,7 +28,7 @@ export const MaterialPill = ({ type, points }) => {
 
   return (
     <div
-      className={`py-1 px-4 text-xs rounded-3xl font-medium w-30 text-center ${poppins.className} ${
+      className={`py-1 px-4 text-xs rounded-3xl font-medium w-30 text-center ${inter.className} ${
         styles[type] || "bg-gray-200 text-gray-700"
       }`}
     >

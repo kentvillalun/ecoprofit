@@ -17,8 +17,8 @@ import { useFetch } from "@/hooks/useFetch";
 import { MaterialPill } from "@/components/ui/MateriaPill";
 import { RecordTransactionModal } from "@/components/redemption/modals/RecordTransactionModal";
 import { Error } from "@/components/ui/Error";
-import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { Spinner } from "@/components/ui/Spinner";
+import { useRouter } from "next/navigation";
 
 export default function RedemptionProgramPage() {
   const [isProgramModalOpen, setIsProgramModalOpen] = useState(false);
@@ -27,6 +27,7 @@ export default function RedemptionProgramPage() {
   const [refetchCount, setRefetchCount] = useState(0);
   const [transactionRefetchCount, setTransactionRefetchCount] = useState(0);
   const { data, isError, isLoading } = useFetch({ url, refetchCount });
+  const router = useRouter();
 
   const transactionUrl = "/api/redemption/transactions";
   const {
@@ -85,12 +86,13 @@ export default function RedemptionProgramPage() {
           <div
             className={`grid gap-3 ${data?.programs.length === 1 && "grid-cols-1"} ${data?.programs.length === 2 && "md:grid-cols-2"} ${data?.programs.length >= 3 && "md:grid-cols-3"}`}
           >
-            {isLoading && <Spinner className="p-7!"/>}
+            {isLoading && <Spinner className="p-7!" />}
             {isError && <Error handleRefetchCount={handleProgramRefetch} />}
             {data?.programs.map((p) => (
               <Card
                 className="flex flex-col items-start gap-2 p-5! hover:-translate-y-0.5 transition-all duration-200 ease-in-out hover:cursor-pointer"
                 key={p.id}
+                handleClick={() => router.push(`/redemption-programs/${p.id}`)}
               >
                 <div className="flex flex-row items-center justify-between w-full">
                   <h4 className="text-base font-semibold">{p.name}</h4>
@@ -105,15 +107,17 @@ export default function RedemptionProgramPage() {
                   />
                   <LabelValue name="Max Points" value={`${p.maxPoints} pts`} />
                 </div>
-                <div className="flex flex-row flex-wrap gap-2 pt-3 border-t border-gray-100 w-full">
-                  {p.programMaterial.map((m) => (
-                    <MaterialPill
-                      type={m.materialType}
-                      points={m.pointValue}
-                      key={m.id}
-                    />
-                  ))}
-                </div>
+           
+                  <div className="flex flex-row flex-wrap gap-2 pt-3 border-t border-gray-100 w-full">
+                    {p.programMaterial.map((m) => (
+                      <MaterialPill
+                        type={m.materialType}
+                        points={m.pointValue}
+                        key={m.id}
+                      />
+                    ))}
+                  </div>
+               
               </Card>
             ))}
           </div>

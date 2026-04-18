@@ -1,14 +1,245 @@
-"use client"
+"use client";
 
+import { Page } from "@/components/layout/Page";
+import { PageContent } from "@/components/layout/PageContent";
+import { BarangayTopBar } from "@/components/navigation/BarangayTopBar";
+import { Card } from "@/components/ui/Card";
+import { LabelValue } from "@/components/ui/LabelValue";
+import { MaterialPill } from "@/components/ui/MateriaPill";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import {
+  GiftIcon,
+  Bars3BottomLeftIcon,
+  DocumentIcon,
+} from "@heroicons/react/24/outline";
+import { PencilSquareIcon } from "@heroicons/react/24/solid";
+import { formatDate } from "@/lib/formatDate";
+import { useState } from "react";
+import { DetailHeader } from "@/components/ui/DetailHeader";
+import { useParams } from "next/navigation";
+import { useFetch } from "@/hooks/useFetch";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
+import { Spinner } from "@/components/ui/Spinner";
+import { Error } from "@/components/ui/Error";
+import { Empty } from "@/components/ui/Empty";
+import { TransactionCard } from "@/components/redemption/TransactionCard";
 
-import { Page } from "@/components/layout/Page"
+const TABLE_COLUMNS = [
+  {
+    header: "Beneficiary",
+    render: (t) => (
+      <div className="flex flex-col items-start">
+        <p className="font-semibold">{t.beneficiaryName}</p>
+        <p className="text-gray-500 capitalize">
+          {t.educationalLevel.toLowerCase()} · By: {t.collectorName}
+        </p>
+      </div>
+    ),
+  },
+  {
+    header: "Material",
+    render: (t) => (
+      <div className="flex justify-center">
+        <MaterialPill type={t.programMaterial?.materialType} />
+      </div>
+    ),
+  },
+  {
+    header: "Qty",
+    render: (t) => <span className="font-semibold">{t.quantity}</span>,
+  },
+  {
+    header: "Points",
+    render: (t) => (
+      <span className="text-green-600 font-bold">
+        {t.quantity * t.currentPointValue} pts
+      </span>
+    ),
+  },
+  {
+    header: "Date",
+    render: (t) => formatDate(t.createdAt),
+  },
+];
 
 export default function ProgramDetails() {
+  const [refetchCount, setRefetchCount] = useState(0);
+  const { id } = useParams();
+  const url = `/api/redemption/programs/${id}`;
+  const { isLoading, isError, data } = useFetch({ url, refetchCount });
 
+  const handleRefetchCount = () => setRefetchCount((prev) => prev + 1);
+  const transactions = data?.program?.programMaterial
+    ?.map((m) => m.redemptionTransaction)
+    .flat();
 
+  if (isLoading)
     return (
-        <Page gradient={true}>
+      <div className="text-center">
+        <div className="md:hidden">
+          <SkeletonCard />
+        </div>
+        <div className="md:pl-77 flex items-center min-h-screen justify-center">
+          <Spinner />
+        </div>
+      </div>
+    );
+  if (isError)
+    return (
+      <div className="md:pl-77 flex items-center justify-center min-h-screen">
+        <Error handleRefetchCount={handleRefetchCount} />
+      </div>
+    );
 
-        </Page>
-    )
+  return (
+    <Page gradient={true}>
+      <BarangayTopBar title={"Program Details"} />
+      <PageContent className="md:pl-77 md:p-6 md:gap-7">
+        <DetailHeader
+          title={"Program Details"}
+          subtitle={"Review the full details of this redemption program"}
+          badgeLabel={"Active"}
+          badgeColor={"bg-green-100 text-green-700"}
+          icon={<DocumentIcon className="w-6 stroke-black" />}
+        />
+
+        <SectionHeader
+          icon={<GiftIcon className="w-6 stroke-black" />}
+          title={"Program Details"}
+          subtitle={"Review program details and material points"}
+          buttonLabel={"Edit Program"}
+          buttonIcon={<PencilSquareIcon className="w-5 hidden md:flex" />}
+        />
+        <div className="grid grid-cols-1 gap-3">
+          {/* Section 1 — Program Information */}
+          <Card className="flex flex-col items-start gap-3">
+            <h3 className="font-semibold text-sm text-gray-600 border-b border-gray-100 pb-2 w-full">
+              Program Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+              <LabelValue name="Program Name" value={data?.program.name} />
+              <LabelValue
+                name="Status"
+                value={data?.program?.isActive ? "Active" : "Inactive"}
+              />
+              <LabelValue
+                name="Allotted Budget"
+                value={`₱ ${data?.program?.allotedBudget.toLocaleString()}`}
+              />
+              <LabelValue
+                name="Max Points"
+                value={`${data?.program?.maxPoints.toLocaleString()} pts`}
+              />
+            </div>
+            <LabelValue
+              name="Description"
+              value={
+                data?.program?.description === null
+                  ? "There is no description available"
+                  : data?.program?.description
+              }
+              className="w-full"
+            />
+          </Card>
+
+          {/* Section 2 — Material Points */}
+          <Card className="flex flex-col items-start gap-3">
+            <h3 className="font-semibold text-sm text-gray-600 border-b border-gray-100 pb-2 w-full">
+              Material Points
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-1 w-full">
+              {data?.program?.programMaterial.map((m, i) => (
+                <div
+                  key={m.id}
+                  className="flex flex-row items-center justify-between py-2.5 border-b border-gray-50 last:border-0 md:odd:border-r md:odd:pr-4 md:even:pl-4"
+                >
+                  <MaterialPill type={m.materialType} />
+                  <div className="flex flex-col items-end">
+                    <p className="text-sm font-semibold text-gray-700">
+                      {m.pointValue} pts
+                    </p>
+                    <p className="text-xs text-gray-400">per unit</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* Section 3 — Transaction History */}
+          <section className="flex flex-col gap-3">
+            <SectionHeader
+              title={"Transaction History"}
+              subtitle={"Redemption transactions under this program"}
+              icon={<Bars3BottomLeftIcon className="w-6 stroke-black" />}
+              buttonLabel={"Record Transaction"}
+              onAction={() => {}}
+            />
+
+            {/* Desktop: table */}
+            <Card
+              className={` hidden md:flex md:flex-col px-8 overflow-x-auto md:gap-3 md:items-start`}
+            >
+              <table className="w-full text-sm border-collapse text-nowrap">
+                <thead className="border-b border-[#E6EFF5]">
+                  <tr>
+                    {TABLE_COLUMNS.map((col) => (
+                      <th
+                        className="font-medium text-base p-4"
+                        key={col.header}
+                      >
+                        {col.header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {isLoading && (
+                    <tr className="max-w-md">
+                      <td className="text-center" colSpan={9}>
+                        <Spinner />
+                      </td>
+                    </tr>
+                  )}
+                  {isError && (
+                    <tr className="max-w-md">
+                      <td className="text-center" colSpan={9}>
+                        <Error handleRefetchCount={handleRefetchCount} />
+                      </td>
+                    </tr>
+                  )}
+                  {transactions?.length === 0 ? (
+                    <tr className="max-w-md">
+                      <td className="text-center" colSpan={9}>
+                        <Empty
+                          text={"No transaction yet"}
+                          subtext={
+                            "There are no transactions under this program yet"
+                          }
+                        />
+                      </td>
+                    </tr>
+                  ) : (
+                    transactions?.map((t) => (
+                      <tr
+                        key={t.id}
+                        className="text-center hover:bg-[#f8f8f8] transition-all"
+                      >
+                        {TABLE_COLUMNS.map((col) => (
+                          <td key={col.header} className="p-3">
+                            {col.render(t)}
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </Card>
+
+            <TransactionCard data={transactions}/>
+          </section>
+        </div>
+      </PageContent>
+    </Page>
+  );
 }

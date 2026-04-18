@@ -1,7 +1,7 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -10,7 +10,7 @@ export const TermsModal = ({ setIsTermsOpen }) => {
   return (
     <>
       <section
-        className={`fixed flex flex-col justify-center items-center z-100 bg-white  rounded-2xl m-4 min-w-[90%] md:min-w-[50%] ${poppins.className} max-h-[90%]`}
+        className={`fixed flex flex-col justify-center items-center z-100 bg-white  rounded-2xl m-4 min-w-[90%] md:min-w-[50%] ${inter.className} max-h-[90%]`}
       >
         <div className="p-6 border-b border-gray-200 w-full">
           <div className="sticky flex flex-row items-start justify-between ">

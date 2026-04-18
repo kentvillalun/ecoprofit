@@ -1,9 +1,9 @@
 import { ResidentHeader } from "@/components/navigation/ResidentHeader";
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import { BellSlashIcon } from "@heroicons/react/24/outline"
 import { Page } from "@/components/layout/Page";
 
-const poppins = Poppins({
+const inter = Inter({
     subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 })

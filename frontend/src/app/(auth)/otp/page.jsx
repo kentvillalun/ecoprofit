@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Page } from "@/components/layout/Page";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/lib/config";
 
 // Outside component — only created once, never recreated on rerender
-const poppins = Poppins({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -280,7 +280,7 @@ export default function OtpPage() {
   return (
     <Page gradient={true} className="from-10%!">
       <div
-        className={`w-full max-w-md min-h-svh flex flex-col justify-between px-1 ${poppins.className}`}
+        className={`w-full max-w-md min-h-svh flex flex-col justify-between px-1 ${inter.className}`}
       >
         <div className=""></div>
         <div className=""></div>
