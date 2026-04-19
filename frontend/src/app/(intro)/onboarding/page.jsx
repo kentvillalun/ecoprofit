@@ -101,12 +101,10 @@ export default function OnboardingPage() {
             <Image src={"/onboarding/step2.svg"} alt="Step 2" fill priority />
           </div>
           <h3 className="font-medium text-[22px] max-w-86 text-center mb-6.25">
-            EcoProfit Turns Your Recyclables into Real Rewards
+            Your recyclables have value. Benefit from them
           </h3>
           <p className="text-[14px] text-center">
-            Contribute your recyclables to your barangay and earn rewards in
-            return — like goods, medicine, or services — all recorded and
-            managed transparently.
+           Every recyclable counts. Turn yours into value and earn rewards, recognition, or incentives along the way, all recorded and tracked transparently.
           </p>
         </div>
         <div className="">
