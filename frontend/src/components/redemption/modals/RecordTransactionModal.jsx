@@ -99,13 +99,13 @@ export const RecordTransactionModal = ({
           <label className="text-gray-700 font-medium">Program</label>
           {preselectedProgram ? (
             <input
-              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
+              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11"
               value={preselectedProgram.name}
               disabled
               {...register("programId")}
             />
           ) : (
-            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors">
+            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11">
               <select
                 className="w-full outline-none"
                 defaultValue=""
@@ -132,7 +132,7 @@ export const RecordTransactionModal = ({
 
         <div className="flex flex-col gap-1">
           <label className="text-gray-700 font-medium">Material</label>
-          <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors">
+          <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11">
             <select
               className="w-full outline-none"
               defaultValue=""
@@ -162,7 +162,7 @@ export const RecordTransactionModal = ({
           <label className="text-gray-700 font-medium">Beneficiary name</label>
           <input
             type="text"
-            className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
+            className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11"
             placeholder="Input name here"
             {...register("beneficiaryName")}
           />
@@ -177,7 +177,7 @@ export const RecordTransactionModal = ({
           <label className="text-gray-700 font-medium">Collector</label>
           <input
             type="text"
-            className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
+            className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11"
             placeholder="Input collectors' name here"
             {...register("collectorName")}
           />
@@ -193,7 +193,7 @@ export const RecordTransactionModal = ({
             <label className="text-gray-700 font-medium">Quantity</label>
             <input
               type="number"
-              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors"
+              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11"
               min={0}
               placeholder="Input quantity here"
               {...register("quantity")}
@@ -208,7 +208,7 @@ export const RecordTransactionModal = ({
             <label className="text-gray-700 font-medium">
               Educational level
             </label>
-            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors">
+            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11">
               <select
                 className="w-full outline-none"
                 defaultValue=""
