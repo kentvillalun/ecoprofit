@@ -112,6 +112,9 @@ export default function ForgotPasswordPage() {
             <Link
               className="text-[14px] text-center text-[#4C5F66]"
               href="/login"
+              onClick={() => {
+                sessionStorage.setItem("skipSplash", "true");
+              }}
             >
               Back to <span className="font-medium text-black">Log In</span>
             </Link>

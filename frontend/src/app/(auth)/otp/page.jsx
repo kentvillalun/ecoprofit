@@ -212,6 +212,7 @@ export default function OtpPage() {
 
     // Registration complete — go to login
     sessionStorage.setItem("authSuccessMessage", "Account created! You can now log in.");
+    sessionStorage.setItem("skipSplash", "true")
     router.push("/login");
   };
 

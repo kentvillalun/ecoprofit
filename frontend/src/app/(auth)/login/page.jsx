@@ -91,6 +91,11 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
+    if (sessionStorage.getItem("skipSplash")) {
+      sessionStorage.removeItem("skipSplash");
+      setIsChecking(false);
+      return;
+    }
     setTimeout(() => {
       setIsFading(true);
 
@@ -133,9 +138,6 @@ export default function LoginPage() {
             />
           </div>
           <div className=""></div>
-       
-          
-          
         </div>
       </main>
     );

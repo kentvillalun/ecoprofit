@@ -91,7 +91,11 @@ export default function ResetPasswordPage() {
     sessionStorage.removeItem("pendingPhone");
 
     // Show a success message on the login page
-    sessionStorage.setItem("authSuccessMessage", "Password reset! You can now log in.");
+    sessionStorage.setItem(
+      "authSuccessMessage",
+      "Password reset! You can now log in.",
+    );
+    sessionStorage.setItem("skipSplash", "true")
     router.push("/login");
   };
 
@@ -183,6 +187,9 @@ export default function ResetPasswordPage() {
             <Link
               className="text-[14px] text-center text-[#4C5F66]"
               href="/login"
+              onClick={() => {
+                sessionStorage.setItem("skipSplash", "true");
+              }}
             >
               Back to <span className="font-medium text-black">Log In</span>
             </Link>

@@ -582,6 +582,9 @@ export default function SignupPage() {
             <Link
               className="text-[14px] text-center text-[#4C5F66]"
               href="/login"
+              onClick={() => {
+                sessionStorage.setItem("skipSplash", "true")
+              }}
             >
               Already have an account?{" "}
               <span className="font-medium text-black">Log In</span>

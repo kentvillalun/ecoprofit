@@ -71,6 +71,7 @@ export default function OnboardingPage() {
               href="/login"
               onClick={() => {
                 localStorage.setItem("hasSeenOnboarding", "true");
+                sessionStorage.setItem("skipSplash", "true")
                 document.cookie = "hasSeenOnboarding=true; path=/";
               }}
             >
@@ -114,6 +115,7 @@ export default function OnboardingPage() {
               href="/login"
               onClick={() => {
                 localStorage.setItem("hasSeenOnboarding", "true");
+                sessionStorage.setItem("skipSplash", "true")
                 document.cookie = "hasSeenOnboarding=true; path=/";
               }}
             >
@@ -159,6 +161,7 @@ export default function OnboardingPage() {
               href="/login"
               onClick={() => {
                 localStorage.setItem("hasSeenOnboarding", "true");
+                sessionStorage.setItem("skipSplash", "true")
                 document.cookie = "hasSeenOnboarding=true; path=/";
               }}
             >
@@ -170,6 +173,7 @@ export default function OnboardingPage() {
               href="/login"
               onClick={() => {
                 localStorage.setItem("hasSeenOnboarding", "true");
+                sessionStorage.setItem("skipSplash", "true")
                 document.cookie = "hasSeenOnboarding=true; path=/";
               }}
             >
