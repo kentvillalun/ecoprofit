@@ -100,13 +100,13 @@ export const RecordTransactionModal = ({
           <label className="text-gray-700 font-medium">Program</label>
           {preselectedProgram ? (
             <input
-              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11"
+              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11 max-h-11"
               value={preselectedProgram.name}
               disabled
               {...register("programId")}
             />
           ) : (
-            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11">
+            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11 max-h-11 flex items-center">
               <select
                 className="w-full outline-none"
                 defaultValue=""
@@ -134,7 +134,7 @@ export const RecordTransactionModal = ({
         <div className="grid grid-cols-2 gap-2">
           <div className="flex flex-col gap-1">
             <label className="text-gray-700 font-medium">Material</label>
-            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11">
+            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11 flex items-center">
               <select
                 className="w-full outline-none"
                 defaultValue=""
@@ -193,7 +193,7 @@ export const RecordTransactionModal = ({
 
         <div className="flex flex-col gap-1 col-span-2">
           <label className="text-gray-700 font-medium">Educational level</label>
-          <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11">
+          <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11 flex items-center">
             <select
               className="w-full outline-none"
               defaultValue=""
