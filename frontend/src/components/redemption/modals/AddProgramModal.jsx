@@ -144,7 +144,7 @@ export const AddProgramModal = ({
           <label className="text-gray-700 font-medium">Program name</label>
           <input
             type="text"
-            className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11"
+            className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11"
             placeholder="Input the program name here"
             {...register("name")}
           />
@@ -178,7 +178,7 @@ export const AddProgramModal = ({
             <label className="text-gray-700 font-medium">Allotted budget</label>
             <input
               type="number"
-              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11"
+              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11"
               placeholder="Input budget here"
               {...register("allotedBudget")}
             />
@@ -192,7 +192,7 @@ export const AddProgramModal = ({
             <label className="text-gray-700 font-medium">Maximum points</label>
             <input
               type="number"
-              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11"
+              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11"
               placeholder="Input max points here"
               {...register("maxPoints")}
             />
@@ -208,7 +208,7 @@ export const AddProgramModal = ({
           <label className="text-gray-700 font-medium">Material Section</label>
 
           <div className="grid grid-cols-2 gap-3 items-start">
-            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors flex flex-row gap-2 w-full min-h-11">
+            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors flex flex-row gap-2 w-full min-h-11  max-h-11">
               <label className="pr-6 text-gray-400" htmlFor="plastics">
                 Plastics
               </label>
@@ -222,7 +222,7 @@ export const AddProgramModal = ({
               />
             </div>
 
-            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors flex flex-row gap-3 w-full min-h-11">
+            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors flex flex-row gap-3 w-full min-h-11  max-h-11">
               <label className="pr-6 text-gray-400" htmlFor="metals">
                 Metals
               </label>
@@ -236,7 +236,7 @@ export const AddProgramModal = ({
               />
             </div>
 
-            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors flex flex-row gap-3 w-full min-h-11">
+            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors flex flex-row gap-3 w-full min-h-11  max-h-11">
               <label className="pr-6 text-gray-400" htmlFor="bottles">
                 Bottles
               </label>
@@ -250,7 +250,7 @@ export const AddProgramModal = ({
               />
             </div>
 
-            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors flex flex-row gap-3 w-full min-h-11">
+            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors flex flex-row gap-3 w-full min-h-11  max-h-11">
               <label className="pr-6 text-gray-400" htmlFor="papers">
                 Papers
               </label>

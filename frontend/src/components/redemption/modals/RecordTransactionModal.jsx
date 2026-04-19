@@ -33,7 +33,7 @@ export const RecordTransactionModal = ({
   const { makeRequest, isLoading, error, isError } = useMutation();
   const url = "/api/redemption/transactions";
 
-  const filteredData = data?.filter((d) => d.isActive === true)
+  const filteredData = data?.filter((d) => d.isActive === true);
 
   const {
     register,
@@ -60,7 +60,8 @@ export const RecordTransactionModal = ({
   }, [preselectedProgram]);
 
   const selectedProgramId = watch("programId");
-  const selectedProgram = preselectedProgram ?? filteredData?.find((p) => p.id === selectedProgramId);
+  const selectedProgram =
+    preselectedProgram ?? filteredData?.find((p) => p.id === selectedProgramId);
 
   const onSubmit = async (formData) => {
     toast.loading("Creating transaction");
@@ -99,13 +100,13 @@ export const RecordTransactionModal = ({
           <label className="text-gray-700 font-medium">Program</label>
           {preselectedProgram ? (
             <input
-              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11"
+              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11"
               value={preselectedProgram.name}
               disabled
               {...register("programId")}
             />
           ) : (
-            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11">
+            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11">
               <select
                 className="w-full outline-none"
                 defaultValue=""
@@ -130,70 +131,39 @@ export const RecordTransactionModal = ({
           )}
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label className="text-gray-700 font-medium">Material</label>
-          <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11">
-            <select
-              className="w-full outline-none"
-              defaultValue=""
-              {...register("programMaterialId")}
-              disabled={selectedProgramId === ""}
-            >
-              <option value="" disabled hidden>
-                {selectedProgramId === ""
-                  ? "Select program first"
-                  : "Select material"}
-              </option>
-              {selectedProgram?.programMaterial.map((m) => (
-                <option value={m.id} key={m.id}>
-                  {m.materialType}
+        <div className="grid grid-cols-2 gap-2">
+          <div className="flex flex-col gap-1">
+            <label className="text-gray-700 font-medium">Material</label>
+            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11">
+              <select
+                className="w-full outline-none"
+                defaultValue=""
+                {...register("programMaterialId")}
+                disabled={selectedProgramId === ""}
+              >
+                <option value="" disabled hidden>
+                  {selectedProgramId === ""
+                    ? "Select program first"
+                    : "Select material"}
                 </option>
-              ))}
-            </select>
+                {selectedProgram?.programMaterial.map((m) => (
+                  <option value={m.id} key={m.id}>
+                    {m.materialType}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {errors.programMaterialId && (
+              <p className="text-[14px] text-red-500 text-start">
+                {errors.programMaterialId?.message}
+              </p>
+            )}
           </div>
-          {errors.programMaterialId && (
-            <p className="text-[14px] text-red-500 text-start">
-              {errors.programMaterialId?.message}
-            </p>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-gray-700 font-medium">Beneficiary name</label>
-          <input
-            type="text"
-            className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11"
-            placeholder="Input name here"
-            {...register("beneficiaryName")}
-          />
-          {errors.beneficiaryName && (
-            <p className="text-[14px] text-red-500 text-start">
-              {errors.beneficiaryName?.message}
-            </p>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-gray-700 font-medium">Collector</label>
-          <input
-            type="text"
-            className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11"
-            placeholder="Input collectors' name here"
-            {...register("collectorName")}
-          />
-          {errors.collectorName && (
-            <p className="text-[14px] text-red-500 text-start">
-              {errors.collectorName?.message}
-            </p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-3 gap-2">
           <div className="flex flex-col gap-1">
             <label className="text-gray-700 font-medium">Quantity</label>
             <input
               type="number"
-              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11"
+              className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11"
               min={0}
               placeholder="Input quantity here"
               {...register("quantity")}
@@ -204,33 +174,64 @@ export const RecordTransactionModal = ({
               </p>
             )}
           </div>
-          <div className="flex flex-col gap-1 col-span-2">
-            <label className="text-gray-700 font-medium">
-              Educational level
-            </label>
-            <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11">
-              <select
-                className="w-full outline-none"
-                defaultValue=""
-                {...register("educationalLevel")}
-              >
-                <option value="" disabled hidden>
-                  Select educational level
-                </option>
-                <option value="PRIMARY" className="">
-                  Primary
-                </option>
-                <option value="SECONDARY">Secondary</option>
-                <option value="TERTIARY">Tertiary</option>
-              </select>
-            </div>
-            {errors.educationalLevel && (
-              <p className="text-[14px] text-red-500 text-start">
-                {errors.educationalLevel?.message}
-              </p>
-            )}
-          </div>
         </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-gray-700 font-medium">Beneficiary name</label>
+          <input
+            type="text"
+            className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11"
+            placeholder="Input name here"
+            {...register("beneficiaryName")}
+          />
+          {errors.beneficiaryName && (
+            <p className="text-[14px] text-red-500 text-start">
+              {errors.beneficiaryName?.message}
+            </p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1 col-span-2">
+          <label className="text-gray-700 font-medium">Educational level</label>
+          <div className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11  max-h-11">
+            <select
+              className="w-full outline-none"
+              defaultValue=""
+              {...register("educationalLevel")}
+            >
+              <option value="" disabled hidden>
+                Select educational level
+              </option>
+              <option value="PRIMARY" className="">
+                Primary
+              </option>
+              <option value="SECONDARY">Secondary</option>
+              <option value="TERTIARY">Tertiary</option>
+            </select>
+          </div>
+          {errors.educationalLevel && (
+            <p className="text-[14px] text-red-500 text-start">
+              {errors.educationalLevel?.message}
+            </p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-gray-700 font-medium">Collector</label>
+          <input
+            type="text"
+            className="outline-1 py-2.5 px-3.5 text-[#717680] outline-gray-300 rounded-lg focus-within:outline-[#74C857] transition-colors min-h-11 max-h-11"
+            placeholder="Input collectors' name here"
+            {...register("collectorName")}
+          />
+          {errors.collectorName && (
+            <p className="text-[14px] text-red-500 text-start">
+              {errors.collectorName?.message}
+            </p>
+          )}
+        </div>
+
+      
       </div>
     </Modal>
   );
