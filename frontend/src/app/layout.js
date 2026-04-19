@@ -13,7 +13,10 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "EcoProfit",
-  description: "EcoProfit is a recycling platform where you can earn by selling your recyclable materials to your local barangay.",
+  description: "EcoProfit is a barangay waste management system that allows residents to contribute recyclable materials and enables the barangay to manage collections, track inventory, run redemption programs, and monitor finances.",
+  appleWebApp: {
+    title: "EcoProfit"
+  }
 };
 
 export default function RootLayout({ children }) {
