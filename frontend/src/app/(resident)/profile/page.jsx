@@ -39,6 +39,7 @@ export default function ProfilePage() {
       }
 
       sessionStorage.setItem("skipSplash", "true")
+      localStorage.removeItem("ecoprofitResidentSession")
       router.push("/login")
 
     } catch (error) {
