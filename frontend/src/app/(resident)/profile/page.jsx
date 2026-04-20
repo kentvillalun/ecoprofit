@@ -38,6 +38,7 @@ export default function ProfilePage() {
         return;
       }
 
+      sessionStorage.setItem("skipSplash", "true")
       router.push("/login")
 
     } catch (error) {

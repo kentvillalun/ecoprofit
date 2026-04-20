@@ -85,6 +85,10 @@
 
 - **RequestCard redesigned** — layout now mirrors `TransactionCard`: top row (name, sitio, estimated weight on left; status pill + material pill on right) + footer row (date on left, "View Details" on right) separated by a `border-t`; selected state uses `ring-2 ring-[#74C857] bg-[#F0FAF0]` instead of the old `!important` override
 
+- **Splash screen on login page** — login page shows an animated splash screen on first visit; fades out then redirects based on session state (already logged in → `/home`, hasn't seen onboarding → `/onboarding`, otherwise shows login form); `sessionStorage.getItem("skipSplash")` skips the splash on return navigations (e.g. back from OTP) to prevent re-triggering
+- **Web app manifest (PWA)** — `manifest.json` added at `frontend/src/app/`; enables add-to-home-screen on mobile; `display: standalone`, `theme_color: #a8e063`, 192×192 and 512×512 maskable icons, `start_url: /`; barangay login page has its own `manifest.json` as well
+- **UI polish** — fixed cut logo icon on Android devices; fixed slow loading issue on onboarding screens; logo position adjusted; input fields given minimum and maximum height values; select input container aligned with `items-center`
+
 ---
 
 ## In Progress
@@ -96,12 +100,11 @@
 ## Next Steps (priority order)
 
 1. Build Manual Collection Intake module (Sunday EcoAid manual entry flow with resident search)
-2. Build Manual Collection Intake module (Sunday EcoAid manual entry flow with resident search)
-3. Build Leaderboard (resident ranking by total contribution)
-4. Build Reward Inventory module
-5. Build Program Funds module (expenses, junkshop income, profits)
-6. Build Material Stock read-only view
-7. Reports module
+2. Build Leaderboard (resident ranking by total contribution)
+3. Build Reward Inventory module
+4. Build Program Funds module (expenses, junkshop income, profits)
+5. Build Material Stock read-only view
+6. Reports module
 
 ---
 

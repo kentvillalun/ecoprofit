@@ -105,6 +105,10 @@
 - [x] Deactivate/Reactivate toggle in Edit modal — sends `{ isActive: !program.isActive }`; button label and color flip based on current state; caution/reactivation message shown below button
 - [x] Inactive program UX — program cards dimmed with `opacity-50`; "Record Transaction" button hidden when program is inactive; inactive programs filtered from transaction modal dropdown
 - [x] `RecordTransactionModal` `preselectedProgram` prop — skips program dropdown, shows locked input with program name; `useEffect` + `setValue` sets `programId` automatically
+- [x] Splash screen on login page — animated splash shown on first visit; fades out then checks localStorage session (already logged in → `/home`, no onboarding → `/onboarding`, else show form); `sessionStorage.getItem("skipSplash")` bypasses splash on return navigations (e.g. back from OTP or reset password)
+- [x] Web app manifest — `manifest.json` added at `frontend/src/app/`; enables add-to-home-screen on mobile; `display: standalone`, `theme_color: #a8e063`, 192×192 and 512×512 maskable icons, `start_url: /`
+- [x] Barangay login manifest — separate `manifest.json` added for the barangay login page
+- [x] UI polish — fixed cut logo icon on Android devices; fixed slow loading on onboarding screens; input fields given explicit min/max heights; select input container aligned with `items-center`; logo position adjusted
 - [ ] Manual Collection Intake module (Sunday EcoAid manual entry with resident search)
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
@@ -125,8 +129,9 @@ decline, schedule, collect, detail page with ASSORTED breakdown). The Redemption
 Management module is fully wired end-to-end — programs and transactions are fetched from
 real API data, `AddProgramModal` handles both create and edit (with deactivate/reactivate
 toggle), `RecordTransactionModal` supports a `preselectedProgram` prop, and the
-`/redemption-programs/[id]` detail page is fully built. Next focus: PWA manifest for
-mobile installability, then resident-side real API integration and dashboard data.
+`/redemption-programs/[id]` detail page is fully built. The app now ships a PWA-ready
+web manifest and the login page has a splash screen with session-aware redirect logic.
+Next focus: Manual Collection Intake module (Sunday EcoAid manual entry with resident search).
 
 ## Key Decisions Made
 - httpOnly cookies over localStorage → XSS protection

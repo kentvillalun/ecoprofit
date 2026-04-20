@@ -22,11 +22,11 @@ The system supports:
 
 ## Current Development Status
 
-Full resident authentication flow is complete and stable. Barangay authentication is complete and stable. The full collection request lifecycle is wired end-to-end: REQUESTED → APPROVED → IN_PROGRESS → COLLECTED (or REJECTED), including batch collection, decline modal with rejection reason, and actual weight input at collection.
+Full resident authentication flow is complete and stable. Barangay authentication is complete and stable. The full collection request lifecycle is wired end-to-end: REQUESTED → APPROVED → IN_PROGRESS → COLLECTED (or REJECTED), including batch collection, decline modal with rejection reason, and actual weight input at collection. The Redemption Management module is complete end-to-end (programs, transactions, frontend and backend). The login page has a splash screen with session-aware redirect logic. The app ships a PWA-ready web manifest for mobile installation.
 
 The system is deployed. Backend runs on Railway. Frontend proxies via next.config.mjs rewrites.
 
-Active development focus: barangay-side collection request management and the upcoming Manual Collection Intake module.
+Active development focus: Manual Collection Intake module (Sunday EcoAid manual entry flow with resident search).
 
 ---
 
