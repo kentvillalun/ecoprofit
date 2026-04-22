@@ -20,12 +20,12 @@ import { useState } from "react";
 import { Error } from "@/components/ui/Error";
 
 export default function RequestDetails() {
-  const [refetchCount, setRefetchCount] = useState(0)
+  const [refetchCount, setRefetchCount] = useState(0);
   const { id } = useParams();
   const url = `/api/pickup-requests/collection-requests/${id}`;
   const { isLoading, isError, data } = useFetch({ url, refetchCount });
-  
-  const handleRefetchCount = () => setRefetchCount((prev) =>  prev + 1)
+
+  const handleRefetchCount = () => setRefetchCount((prev) => prev + 1);
 
   if (isLoading)
     return (
@@ -38,9 +38,12 @@ export default function RequestDetails() {
         </div>
       </div>
     );
-  if (isError) return <div className="md:pl-77 flex items-center justify-center min-h-screen">
-    <Error handleRefetchCount={handleRefetchCount}/>
-  </div>;
+  if (isError)
+    return (
+      <div className="md:pl-77 flex items-center justify-center min-h-screen">
+        <Error handleRefetchCount={handleRefetchCount} />
+      </div>
+    );
 
   const router = useRouter();
   const req = data?.request;
@@ -70,7 +73,9 @@ export default function RequestDetails() {
 
         <div className="grid grid-cols-1 gap-3">
           {/* Info cards row */}
-          <div className={`grid grid-cols-1 md:grid-cols-2 gap-3 ${status !== "COLLECTED" ? "lg:grid-cols-2" : "lg:grid-cols-3"}`}>
+          <div
+            className={`grid grid-cols-1 md:grid-cols-2 gap-3 ${status !== "COLLECTED" ? "lg:grid-cols-2" : "lg:grid-cols-3"}`}
+          >
             <Card className="flex flex-col items-start gap-3">
               <h3 className="font-semibold text-sm text-gray-600 border-b border-gray-100 pb-2 w-full">
                 Resident Information
@@ -99,6 +104,12 @@ export default function RequestDetails() {
                 name={"Notes"}
                 value={req?.notes || "No notes available"}
               />
+              {status === "REJECTED" && (
+                <LabelValue
+                  name={"Rejection reason"}
+                  value={req?.rejectionReason}
+                />
+              )}
             </Card>
 
             {status === "COLLECTED" && (

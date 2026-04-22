@@ -166,6 +166,7 @@ const getRequest = async (req, res) => {
         rejectedAt: true,
         collectedAt: true,
         status: true,
+        rejectionReason: true,
         collectionItems: {
           select: {
             materialType: true,
