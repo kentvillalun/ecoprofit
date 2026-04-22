@@ -10,6 +10,7 @@ import authRoute from "./routes/auth.route.js"
 import dashboardRoute from "./routes/dashboard.route.js"
 import pickupRequestRoute from "./routes/pickup-request.route.js"
 import redemptionRoute from "./routes/redemption.route.js"
+import residentRoute from "./routes/resident.route.js"
 
 config();
 connectDB();
@@ -36,6 +37,7 @@ app.use("/auth", authRoute)
 app.use("/dashboard", dashboardRoute)
 app.use("/pickup-requests", pickupRequestRoute)
 app.use("/redemption", redemptionRoute)
+app.use("/resident", residentRoute)
 
 
 

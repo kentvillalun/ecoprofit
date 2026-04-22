@@ -8,6 +8,12 @@ import Link from "next/link";
 import { PageContent } from "@/components/layout/PageContent.jsx";
 import { Page } from "@/components/layout/Page.jsx";
 import { Card } from "@/components/ui/Card";
+import { useFetch } from "@/hooks/useFetch";
+import { useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { CalendarDaysIcon,ArrowPathIcon } from "@heroicons/react/24/outline";
+import { MaterialPill } from "@/components/ui/MateriaPill";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -15,6 +21,10 @@ const inter = Inter({
 });
 
 export default function HomePage() {
+  const [refetchCount, setRefetchCount] = useState(0);
+  const url = `/api/resident/me`;
+  const { isLoading, data, isError } = useFetch({ url, refetchCount });
+
   return (
     <Page gradient={true}>
       <header className="flex flex-row items-start justify-between min-w-full max-h-18.75 bg-white fixed top-0 p-5 shadow-lg ">
@@ -28,10 +38,21 @@ export default function HomePage() {
 
       <PageContent>
         <div className="flex flex-col items-start">
-          <p className="font-medium text-sm">Hi, Jaymar</p>
-          <p className="text-sm">
-            Sell your recyclables to Barangay Beddend Laud
-          </p>
+          {isLoading ? (
+            <Skeleton width={50} />
+          ) : (
+            <p className="font-medium text-sm">
+              {" "}
+              Hi, {data?.user?.firstName} 👋
+            </p>
+          )}
+          {isLoading ? (
+            <Skeleton width={150} />
+          ) : (
+            <p className="text-sm">
+              Sell your recyclables to {data?.user?.barangay}
+            </p>
+          )}
         </div>
 
         <div className="flex items-center justify-center">
@@ -44,16 +65,31 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <Card className="flex-col items-start">
-            <p className="font-medium text-xs">Barangay Schedule Today:</p>
-            <p className="text-xs text-[#727272]">
-              Tue & Thu — 9:00 AM to 4:00 PM
-            </p>
+          <Card className="flex-col items-start gap-2">
+            <div className="border p-3 border-none rounded-lg items-center bg-[#89d95720]">
+              <CalendarDaysIcon className="w-6 stroke-[#89d957]" />
+            </div>
+            <div className="text-xs flex flex-col gap-2">
+              <p className="uppercase  text-gray-400">ECOAID SCHEDULE</p>
+              <div className="">
+                <p className="">Every Sunday</p>
+                <p className=" text-gray-600">8:00 AM - 12:00 PM</p>
+              </div>
+            </div>
           </Card>
-          <Card className="flex-col items-start">
-            <p className="font-medium text-xs">Current Buying Prices:</p>
-            <p className="text-xs text-[#727272]">PET: ₱8/kg</p>
-            <p className="text-xs text-[#727272]">Cardboard: ₱5/kg</p>
+          <Card className="flex-col items-start gap-2">
+            <div className="border p-3 border-none rounded-lg items-center bg-[#89d95720]">
+              <ArrowPathIcon className="w-6 stroke-[#89d957]" />
+            </div>
+            <div className="text-xs flex flex-col gap-2">
+              <p className="uppercase  text-gray-400">accepted materials</p>
+              <div className="grid grid-cols-2 gap-1 md:grid-cols-3">
+                <MaterialPill type={"PLASTICS"} className="px-1! w-15!"/>
+                <MaterialPill type={"PAPERS"} className="px-1! w-15!"/>
+                <MaterialPill type={"BOTTLES"} className="px-1! w-15!"/>
+                <MaterialPill type={"METALS"} className="px-1! w-15!"/>
+              </div>
+            </div>
           </Card>
         </div>
 
