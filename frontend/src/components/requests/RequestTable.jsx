@@ -261,7 +261,7 @@ export const RequestTable = ({
           ) : (
             filteredRequest?.map((req) => (
               <tr
-                className="text-center hover:bg-[#f8f8f8] transition-all transform"
+                className={`text-center hover:bg-[#f8f8f8] transition-all transform ${isLoading && "hidden"}`}
                 key={req.id}
               >
                 {columns?.map((col) => (
