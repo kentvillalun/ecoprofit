@@ -50,7 +50,43 @@ export const RequestCard = ({
                   className="sr-only"
                 />
               )}
-              <Card
+              {d.status === "APPROVED" ? (
+                <Card
+                className={`flex flex-col items-start gap-3 transition-all hover:cursor-pointer hover:-translate-y-0.5 duration-200 ease-in-out ${
+                  isSelected ? "bg-[#F0FAF0] ring-2 ring-[#74C857]" : ""
+                }`}
+                
+              >
+                {/* Top row */}
+                <div className="flex flex-row justify-between w-full">
+                  <div className="flex flex-col gap-0.5">
+                    <h3 className="font-semibold text-[#1F2937]">
+                      {d.user.firstName
+                        ? `${d.user.firstName} ${d.user.lastName}`
+                        : d?.user.phoneNumber}
+                    </h3>
+                    <p className="text-sm text-gray-500">{d.user.sitio.name}</p>
+                    <p className="text-sm text-gray-400">
+                      Estimated weight:{" "}
+                      <span className="font-medium text-gray-600">
+                        {d.estimatedWeight} {d.weightUnit}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <Pill type={d.status} />
+                    <MaterialPill type={d.materialType} />
+                  </div>
+                </div>
+
+                {/* Footer row */}
+                <div className="flex flex-row items-center justify-between w-full pt-2 border-t border-gray-100">
+                  <p className="text-xs text-gray-400">{formatDate(d.createdAt)}</p>
+                  
+                </div>
+              </Card>
+              ) : (
+                <Card
                 className={`flex flex-col items-start gap-3 transition-all hover:cursor-pointer hover:-translate-y-0.5 duration-200 ease-in-out ${
                   isSelected ? "bg-[#F0FAF0] ring-2 ring-[#74C857]" : ""
                 }`}
@@ -84,6 +120,8 @@ export const RequestCard = ({
                   
                 </div>
               </Card>
+              )}
+              
             </label>
           );
         })
