@@ -13,6 +13,7 @@ import {
   GiftIcon as RedemptionProgramIcon,
   ClipboardDocumentCheckIcon as RewardsIcon,
   WalletIcon as ProgramFundsIcon,
+  TrophyIcon as LeaderboardIcon
 } from "@heroicons/react/24/solid";
 import { useContext, useState } from "react";
 import { DrawerContext } from "@/app/(barangay)/layout.jsx";
@@ -37,11 +38,6 @@ export const Sidebar = () => {
       href: "/dashboard",
     },
     {
-      icon: ResidentsIcon,
-      label: "Residents",
-      href: "",
-    },
-    {
       icon: RequestIcon,
       label: "Collection Requests",
       href: "/collection-requests",
@@ -49,6 +45,11 @@ export const Sidebar = () => {
     {
       icon: CollectionSortingIcon,
       label: "Manual Collection Intake",
+      href: "",
+    },
+    {
+      icon: ResidentsIcon,
+      label: "Residents",
       href: "",
     },
     {
@@ -79,6 +80,11 @@ export const Sidebar = () => {
     {
       icon: AnnoucementsIcon,
       label: "Announcements",
+      href: "",
+    },
+    {
+      icon: LeaderboardIcon,
+      label: "Leaderboard",
       href: "",
     },
     {
@@ -116,7 +122,7 @@ export const Sidebar = () => {
 
   return (
     <aside
-      className={`w-72 h-svh flex flex-col justify-between bg-[#74C857] fixed top-0 text-white left-0 z-50 md:shadow-xl ${inter.className} overflow-y-auto sidebar`}
+      className={`w-75 h-svh flex flex-col justify-between bg-[#74C857] fixed top-0 text-white left-0 z-50 md:shadow-xl ${inter.className} overflow-y-auto sidebar`}
     >
       <div className="p-4 flex flex-col gap-4 lg:gap-9">
         <div className="flex flex-row justify-between items-center">

@@ -90,7 +90,7 @@ export default function CollectionRequests() {
   return (
     <Page>
       <BarangayTopBar title="Collection Requests" />
-      <PageContent className="bg-[#F3F3FF]! md:pl-77 md:p-6 md:gap-7">
+      <PageContent className="bg-[#F3F3FF]! md:pl-80 md:p-6 md:gap-7">
         <BarangayHeaderCard
           title={"Collection Requests"}
           subtitle={

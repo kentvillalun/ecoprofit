@@ -94,3 +94,9 @@ The barangay sells recyclables to junkshops. Receipts from these sales are recor
 ## 15. Leaderboard
 
 The leaderboard ranks residents by total contribution (kg or points) to provide recognition and motivation for active participants.
+
+---
+
+## 16. Junkshop Price Comparison
+
+The Junkshop Sales module tracks price offers per material type from multiple junkshops. This allows the barangay to compare buyers and sell to whoever offers the highest price.

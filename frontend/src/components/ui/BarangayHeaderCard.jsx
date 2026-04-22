@@ -14,7 +14,7 @@ export const BarangayHeaderCard = ({ title, subtitle }) => {
         <h1 className="font-semibold text-2xl md:text-3xl">{title}</h1>
         <p className="">{subtitle}</p>
       </div>
-      <div className="">
+      <div className=""> 
         <SearchInput className="hidden md:flex!" />
       </div>
     </Card>

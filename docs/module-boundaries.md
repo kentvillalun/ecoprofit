@@ -32,3 +32,13 @@ Tracks all financial records: expenses, junkshop sale proceeds, profits, and fun
 
 ## Leaderboard
 Ranks residents by total recyclable contribution. Includes both app-based and manual entries. Serves as recognition for the barangay and motivation for residents.
+
+---
+
+## Junkshop Sales
+Tracks price offers per material type from multiple junkshops. The barangay uses this module to compare buyers and identify who offers the highest price per material, enabling smarter selling decisions to maximize profit. Receipts from completed sales are recorded as income in Program Funds.
+
+--- 
+
+## Program Funds
+Tracks all financial records for the barangay's recycling program. This includes income from junkshop sales, expenses from redemption programs and plant distribution, and overall profit summaries. Serves as the central financial overview module.

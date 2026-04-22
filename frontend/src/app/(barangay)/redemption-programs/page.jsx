@@ -46,7 +46,7 @@ export default function RedemptionProgramPage() {
   return (
     <Page>
       <BarangayTopBar title={"Redemption Management"} />
-      <PageContent className="bg-[#F3F3FF]! md:pl-77 md:p-6 md:gap-7">
+      <PageContent className="bg-[#F3F3FF]! md:pl-80 md:p-6 md:gap-7">
         <BarangayHeaderCard
           title={"Redemption Management"}
           subtitle={"Create and manage redemption programs and transactions"}

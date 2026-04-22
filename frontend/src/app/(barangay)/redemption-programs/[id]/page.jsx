@@ -91,7 +91,7 @@ export default function ProgramDetails() {
   return (
     <Page gradient={true}>
       <BarangayTopBar title={"Program Details"} />
-      <PageContent className="md:pl-77 md:p-6 md:gap-7">
+      <PageContent className="md:pl-80 md:p-6 md:gap-7">
         {isTransactionModalOpen &&
           createPortal(
             <RecordTransactionModal

@@ -65,7 +65,7 @@ export default function RequestDetails() {
   return (
     <Page gradient={true}>
       <BarangayTopBar title={"Collection Request"} />
-      <PageContent className="md:pl-77 md:p-6 md:gap-7">
+      <PageContent className="md:pl-80 md:p-6 md:gap-7">
         <RequestDetailHeader type={status} />
 
         <div className="grid grid-cols-1 gap-3">
