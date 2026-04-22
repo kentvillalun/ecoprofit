@@ -82,7 +82,7 @@ export const RequestCard = ({
                 {/* Footer row */}
                 <div className="flex flex-row items-center justify-between w-full pt-2 border-t border-gray-100">
                   <p className="text-xs text-gray-400">{formatDate(d.createdAt)}</p>
-                  
+                  <button className="text-xs text-[#74C857]" onClick={() => router.push(`/collection-requests/${d.id}`)}>View details</button>
                 </div>
               </Card>
               ) : (
