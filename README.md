@@ -102,50 +102,89 @@ Both must be running for the app to work. The frontend calls the backend over HT
 | GET    | `/auth/barangays?search=`           | Search registered barangays (max 10)             |
 | GET    | `/auth/barangays/:id/sitios`        | List sitios for a barangay                       |
 | POST   | `/auth/register`                    | Register resident + send OTP                     |
-| POST   | `/auth/login`                       | Resident login by phone + password               |
+| POST   | `/auth/login`                       | Resident login by username + password            |
 | POST   | `/auth/verify-otp`                  | Verify OTP + activate account                    |
 | POST   | `/auth/resend-otp`                  | Resend OTP (signup or forgot-password flow)      |
 | POST   | `/auth/forgot-password`             | Send password reset OTP                          |
 | POST   | `/auth/verify-forgot-password-otp`  | Verify password reset OTP                        |
 | POST   | `/auth/reset-password`              | Set new password after OTP verified              |
 | POST   | `/auth/barangay/login`              | Barangay staff login — sets `barangay_token` httpOnly cookie |
-| POST   | `/auth/logout`                      | Barangay staff logout — clears cookie, blacklists token      |
+| POST   | `/auth/logout`                      | Logout — clears cookie, blacklists token         |
+| GET    | `/auth/me`                          | Resident: returns id, role, barangay from JWT    |
+| GET    | `/auth/barangay/me`                 | Barangay staff: returns id, role from JWT        |
+
+### Resident (`/resident`)
+
+Protected by `authenticateResident` middleware.
+
+| Method | Path                     | Description                                              |
+|--------|--------------------------|----------------------------------------------------------|
+| GET    | `/resident/me`           | Returns resident profile (name, sitio, barangay, phone)  |
+| GET    | `/resident/barangay-info`| Returns resident's barangay info (name, city, contact, registration status) |
+
+### Pickup Requests (`/pickup-requests`)
+
+| Method | Path                                    | Required role                       | Description                           |
+|--------|-----------------------------------------|-------------------------------------|---------------------------------------|
+| POST   | `/pickup-requests/`                     | RESIDENT                            | Submit new pickup request             |
+| GET    | `/pickup-requests/my-requests`          | RESIDENT                            | List authenticated resident's requests |
+| GET    | `/pickup-requests/collection-requests`  | CAPTAIN, SECRETARY, COLLECTOR       | List all pickup requests              |
+| GET    | `/pickup-requests/collection-requests/:id` | CAPTAIN, SECRETARY, COLLECTOR    | Get single request detail             |
+| PATCH  | `/pickup-requests/collection-requests/:id` | CAPTAIN, SECRETARY, COLLECTOR    | Update request status                 |
+
+### Redemption (`/redemption`)
+
+Protected by `authenticateBarangay + requireRoles(["CAPTAIN","SECRETARY","SK"])`.
+
+| Method | Path                          | Description                                       |
+|--------|-------------------------------|---------------------------------------------------|
+| POST   | `/redemption/programs`        | Create redemption program                         |
+| GET    | `/redemption/programs`        | List all programs                                 |
+| GET    | `/redemption/programs/:id`    | Get program detail with materials and transactions |
+| PATCH  | `/redemption/programs/:id`    | Update program and upsert material point values   |
+| POST   | `/redemption/transactions`    | Record a redemption transaction                   |
+| GET    | `/redemption/transactions`    | List all redemption transactions                  |
 
 ### Dashboard (`/dashboard`)
 
-Protected routes — authenticated via `barangay_token` httpOnly cookie (set by `/auth/barangay/login`) or `Authorization: Bearer <token>` header. The token is checked against the blacklist on every request.
-
 | Method | Path           | Required role | Description           |
 |--------|----------------|---------------|-----------------------|
-| GET    | `/dashboard`   | CAPTAIN       | Barangay dashboard    |
+| GET    | `/dashboard`   | CAPTAIN       | Barangay dashboard (placeholder) |
 
 ---
 
 ## Database Models
 
-- `Barangay` — Registered barangay organizations
+- `Barangay` — Registered barangay organizations; fields include `name`, `city`, `code`, `isRegistered`, `contactNumber`
 - `Sitio` — Sub-divisions within a barangay (unique per barangay)
-- `User` — Residents and barangay staff; roles: `RESIDENT`, `CAPTAIN`, `SECRETARY`, `TREASURER`, `SK`, `COLLECTOR`, `SUPER_ADMIN`
+- `User` — Residents and barangay staff; roles: `RESIDENT`, `CAPTAIN`, `SECRETARY`, `TREASURER`, `SK`, `COLLECTOR`, `SUPER_ADMIN`; `username` field for login
 - `OtpVerification` — SMS OTP codes with expiration
 - `PasswordResetToken` — Tokens for forgot-password flow
 - `BlackListedToken` — Revoked JWTs; checked on every authenticated request
+- `PickupRequests` — Resident pickup requests with `MaterialType`, `WeightUnit`, `Status` enums
+- `CollectionItem` — Per-material breakdown recorded at collection time (child of `PickupRequests`)
+- `Program` — Redemption program with allotted budget, max points, description, and active flag
+- `ProgramMaterial` — Per-material point value scoped to a program (junction table)
+- `RedemptionTransaction` — Records each redemption event with a frozen `currentPointValue` snapshot
 
 ---
 
 ## Frontend Pages
 
-| Route group      | Pages                                                        |
-|------------------|--------------------------------------------------------------|
-| `(intro)`        | Onboarding flow                                              |
-| `(auth)`         | Login, signup, OTP verification, forgot password, reset password, barangay login |
-| `(resident)`     | Dashboard, profile, capture, requests                        |
-| `(barangay)`     | Collection requests management                               |
+| Route group      | Pages                                                                                       |
+|------------------|---------------------------------------------------------------------------------------------|
+| `(intro)`        | Onboarding flow                                                                             |
+| `(auth)`         | Login (with splash screen), signup, OTP verification, forgot password, reset password, barangay login |
+| `(resident)`     | Home (live data: profile + recent requests), community (live barangay info), capture, requests, profile, announcements |
+| `(barangay)`     | Dashboard, collection requests (list + detail), redemption programs (list + detail)         |
 
 ---
 
 ## Current Status
 
-Resident authentication is fully working end-to-end (login, signup, OTP, forgot password, reset password). Barangay staff authentication backend is complete: login issues a `barangay_token` httpOnly cookie, logout clears the cookie and blacklists the JWT via the `BlackListedToken` table. The `authenticate` middleware accepts both the cookie and a `Bearer` token, checking the blacklist on every request. Frontend connection for barangay login is in progress.
+Both resident and barangay auth flows are complete and stable (username-based login, OTP, forgot password, split middleware). The full pickup request lifecycle is wired end-to-end on the barangay side (REQUESTED → APPROVED → IN_PROGRESS → COLLECTED or REJECTED, including batch collection and ASSORTED material breakdown). The Redemption Management module is fully wired end-to-end (programs with create/edit/deactivate, transactions, program detail page). The resident home page and community page fetch live data from the backend (profile, recent requests, barangay contact info). The app ships as a PWA with web manifests and a splash screen on login.
+
+Next focus: Manual Collection Intake module (Sunday EcoAid manual entry with resident search).
 
 See `docs/current-progress.md` for a detailed breakdown of what is done and what is next.
 

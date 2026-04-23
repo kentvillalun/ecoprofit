@@ -89,6 +89,18 @@
 - **Web app manifest (PWA)** — `manifest.json` added at `frontend/src/app/`; enables add-to-home-screen on mobile; `display: standalone`, `theme_color: #a8e063`, 192×192 and 512×512 maskable icons, `start_url: /`; barangay login page has its own `manifest.json` as well
 - **UI polish** — fixed cut logo icon on Android devices; fixed slow loading issue on onboarding screens; logo position adjusted; input fields given minimum and maximum height values; select input container aligned with `items-center`
 
+- **`contactNumber` field on `Barangay` model** — `contactNumber VARCHAR(20)` added via migration `20260423175548_add_barangay_contact`; seed updated so dev barangay is seeded with `contactNumber: "09177744669"`
+- **Resident profile endpoint** — `GET /resident/me` returns `firstName`, `lastName`, `sitio`, `phoneNumber`, `barangay`, `address`; protected by `authenticateResident`
+- **Barangay info endpoint** — `GET /resident/barangay-info` returns `name`, `isRegistered`, `contactNumber`, `city` for the authenticated resident's barangay; protected by `authenticateResident`
+- **My requests endpoint** — `GET /pickup-requests/my-requests` (`getMyRequest` controller) returns the authenticated resident's own pickup requests; protected by `authenticateResident`
+- **Resident home page wired to real data** — fetches resident name and barangay name from `GET /resident/me`; fetches recent requests from `GET /pickup-requests/my-requests`; skeleton loading states, `Error` and `Empty` components used for all states; request cards show material type, notes, date, estimated weight, and status pill
+- **Community page fully built** — `/community` page fetches from `GET /resident/barangay-info`; displays EcoAid collection schedule card, accepted materials card, how-it-works steps card, and barangay contact info card (name, registration badge, city, contact number); skeleton loading on all data-driven fields
+- **`Badge` component** — standalone reusable pill component at `components/ui/Badge.jsx`; accepts `label`, `color`, and `className` props
+- **`SitioPill` component** — new reusable sitio pill at `components/ui/SitioPill.jsx`; maps sitio keys to display labels and color styles
+- **`Error` component updated** — now accepts optional `text`, `subtext`, `buttonLabel`, and `buttonClassName` props for flexible reuse across pages
+- **Sidebar leaderboard link added** — barangay sidebar now includes a Leaderboard navigation entry
+- **Bug fixes** — skeleton alignment fixed; collection request module minor bugs resolved; rejection reason now shown on the request detail page; table items hidden while loading; column layout fixed on the pickup details page; card bug under approved tab resolved; "View Details" text button added for approved items on mobile
+
 ---
 
 ## In Progress

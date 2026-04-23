@@ -109,6 +109,17 @@
 - [x] Web app manifest — `manifest.json` added at `frontend/src/app/`; enables add-to-home-screen on mobile; `display: standalone`, `theme_color: #a8e063`, 192×192 and 512×512 maskable icons, `start_url: /`
 - [x] Barangay login manifest — separate `manifest.json` added for the barangay login page
 - [x] UI polish — fixed cut logo icon on Android devices; fixed slow loading on onboarding screens; input fields given explicit min/max heights; select input container aligned with `items-center`; logo position adjusted
+- [x] `contactNumber` field on `Barangay` model — `contactNumber VARCHAR(20)` added via migration `20260423175548_add_barangay_contact`; seed updated with `contactNumber: "09177744669"` for dev barangay
+- [x] Resident profile endpoint — `GET /resident/me` returns `firstName`, `lastName`, `sitio`, `phoneNumber`, `barangay`, `address`; protected by `authenticateResident`
+- [x] Barangay info endpoint — `GET /resident/barangay-info` returns `name`, `isRegistered`, `contactNumber`, `city` for the authenticated resident's barangay; protected by `authenticateResident`
+- [x] My requests endpoint — `GET /pickup-requests/my-requests` (`getMyRequest` controller) returns the authenticated resident's own pickup requests; protected by `authenticateResident`
+- [x] Resident home page wired to real data — fetches resident name/barangay from `GET /resident/me`; fetches recent requests from `GET /pickup-requests/my-requests`; skeleton loading, `Error` and `Empty` states; request cards show material, notes, date, estimated weight, status pill
+- [x] Community page fully built — `/community` fetches from `GET /resident/barangay-info`; displays EcoAid schedule, accepted materials, how-it-works steps, and barangay contact info card (name, registration badge, city, contact number); skeleton loading on all data-driven fields
+- [x] `Badge` component — standalone reusable pill at `components/ui/Badge.jsx`; accepts `label`, `color`, `className` props
+- [x] `SitioPill` component — new reusable sitio pill at `components/ui/SitioPill.jsx`; maps sitio keys to display labels and styles
+- [x] `Error` component updated — now accepts optional `text`, `subtext`, `buttonLabel`, `buttonClassName` props for flexible reuse
+- [x] Sidebar leaderboard link — barangay sidebar now includes a Leaderboard navigation entry
+- [x] Bug fixes (recent) — skeleton alignment; collection request module minor bugs; rejection reason shown on detail page; table items hidden while loading; column layout on pickup details page; card bug under approved tab; "View Details" text button for approved items on mobile
 - [ ] Manual Collection Intake module (Sunday EcoAid manual entry with resident search)
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
@@ -129,8 +140,13 @@ decline, schedule, collect, detail page with ASSORTED breakdown). The Redemption
 Management module is fully wired end-to-end — programs and transactions are fetched from
 real API data, `AddProgramModal` handles both create and edit (with deactivate/reactivate
 toggle), `RecordTransactionModal` supports a `preselectedProgram` prop, and the
-`/redemption-programs/[id]` detail page is fully built. The app now ships a PWA-ready
+`/redemption-programs/[id]` detail page is fully built. The app ships a PWA-ready
 web manifest and the login page has a splash screen with session-aware redirect logic.
+
+The resident side now has working data-driven pages: the home page shows the resident's
+name, barangay, and recent pickup requests from real API calls; the community page shows
+EcoAid schedule, accepted materials, and live barangay contact info (name, registration
+status, city, contact number). The `Barangay` model gained a `contactNumber` field.
 Next focus: Manual Collection Intake module (Sunday EcoAid manual entry with resident search).
 
 ## Key Decisions Made
@@ -184,7 +200,13 @@ Next focus: Manual Collection Intake module (Sunday EcoAid manual entry with res
 - frontend/src/components/ui/LabelValue.jsx — label/value pair display component
 - frontend/src/app/(resident)/capture/page.jsx — Cloudinary upload + pickup request submission
 - frontend/src/app/(resident)/profile/page.jsx — resident logout
-- frontend/src/components/navigation/Sidebar.jsx — sidebar with logout handler
+- frontend/src/app/(resident)/home/page.jsx — resident home; fetches profile + recent requests from real API
+- frontend/src/app/(resident)/community/page.jsx — community page; fetches and displays live barangay info
+- frontend/src/components/navigation/Sidebar.jsx — sidebar with logout handler and leaderboard link
+- frontend/src/components/ui/Badge.jsx — reusable pill badge (label, color, className)
+- frontend/src/components/ui/SitioPill.jsx — sitio display pill component
+- backend/src/controllers/resident.controller.js — getResidentProfile, getBarangayInfo
+- backend/src/routes/resident.route.js — GET /resident/me, GET /resident/barangay-info
 
 ## Known Issues / TODO
 - BlacklistedToken cleanup job needed (periodic deletion of expired tokens using the expiresAt field)

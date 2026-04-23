@@ -22,7 +22,8 @@ const DEV_BARANGAY = {
   adminFirstName: "Beddeng",
   adminLastName: "Laud Admin",
   sitios: ["Sitio 1", "Sitio 2", "Sitio 3"],
-  adminUsername: "barangayadmin"
+  adminUsername: "barangayadmin",
+  contactNumber: "09177744669"
 };
 
 async function main() {
@@ -36,12 +37,14 @@ async function main() {
       name: DEV_BARANGAY.name,
       city: DEV_BARANGAY.city,
       isRegistered: true,
+      contactNumber: DEV_BARANGAY.contactNumber
     },
     create: {
       name: DEV_BARANGAY.name,
       city: DEV_BARANGAY.city,
       code: DEV_BARANGAY.code,
       isRegistered: true,
+      contactNumber: DEV_BARANGAY.contactNumber
     },
   });
 

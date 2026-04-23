@@ -22,7 +22,9 @@ The system supports:
 
 ## Current Development Status
 
-Full resident authentication flow is complete and stable. Barangay authentication is complete and stable. The full collection request lifecycle is wired end-to-end: REQUESTED → APPROVED → IN_PROGRESS → COLLECTED (or REJECTED), including batch collection, decline modal with rejection reason, and actual weight input at collection. The Redemption Management module is complete end-to-end (programs, transactions, frontend and backend). The login page has a splash screen with session-aware redirect logic. The app ships a PWA-ready web manifest for mobile installation.
+Full resident and barangay authentication flows are complete and stable (username-based login, OTP, forgot password, split `authenticateResident`/`authenticateBarangay` middleware). The full collection request lifecycle is wired end-to-end: REQUESTED → APPROVED → IN_PROGRESS → COLLECTED (or REJECTED), including batch collection, decline modal with rejection reason, and ASSORTED material breakdown at collection. The Redemption Management module is complete end-to-end (programs with create/edit/deactivate/reactivate, transactions, program detail page). The login page has a splash screen with session-aware redirect logic. The app ships a PWA-ready web manifest for mobile installation.
+
+The resident home page now fetches live data (profile, barangay name, recent pickup requests). The community page shows live barangay contact info, EcoAid schedule, and accepted materials. The `Barangay` model has a `contactNumber` field and supporting backend endpoints (`GET /resident/me`, `GET /resident/barangay-info`, `GET /pickup-requests/my-requests`).
 
 The system is deployed. Backend runs on Railway. Frontend proxies via next.config.mjs rewrites.
 

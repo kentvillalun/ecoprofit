@@ -1,29 +1,36 @@
+"use client";
+
 import { ResidentHeader } from "@/components/navigation/ResidentHeader";
 import { PageContent } from "@/components/layout/PageContent";
 import { Inter } from "next/font/google";
 import Image from "next/image";
 import { Page } from "@/components/layout/Page";
 import { Card } from "@/components/ui/Card";
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
+import { useFetch } from "@/hooks/useFetch";
+import { MaterialPill } from "@/components/ui/MateriaPill";
+import { useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import { Badge } from "@/components/ui/Badge";
+import { SitioPill } from "@/components/ui/SitioPill";
 
 export default function CommunityPage() {
+  const [refetchCount, setRefetchCount] = useState(0);
+  const url = `/api/resident/barangay-info`;
+  const { data, isLoading, isError } = useFetch({ url, refetchCount });
+
   return (
     <Page gradient={true}>
       <ResidentHeader
-        title={"Barangay Beddeng Laud"}
+        title={isLoading ? <Skeleton width={200} /> : data?.barangay?.name}
         subtitle={"EcoAid Program"}
-        action={'notification'}
+        action={"notification"}
       />
 
       <PageContent>
         <div className="mt-4 flex flex-col gap-4">
           {/* Collection Schedule */}
-          <Card className="gap-6 flex-row">
-            <div className="">
+          <Card className="flex gap-6 flex-row">
+            <div className="w-auto">
               <Image
                 src={"/calendar.svg"}
                 width={52}
@@ -32,71 +39,61 @@ export default function CommunityPage() {
               />
             </div>
             <div className="flex flex-col gap-1 text-sm">
-              <p className="font-medium">Collection Schedule</p>
+              <p className="font-medium">EcoAid Collection Schedule</p>
               <div className="">
-                <div className="">
-                  Collection Days:{" "}
-                  <span className="text-[#727272]">Every Sunday</span>
-                </div>
-                <div className="">
-                  Time:{" "}
-                  <span className="text-[#727272]">9:00 AM - 4:30 PM</span>
-                </div>
+                <div className="text-[#727272]">Every Sunday</div>
+                <div className="text-gray-400">9:00 AM - 12:00 PM</div>
               </div>
             </div>
           </Card>
 
           {/* Accepted Materials */}
-          <Card className="gap-6 flex-row">
-            <div className="">
-              <Image
-                src={"/leaves.svg"}
-                width={52}
-                height={52}
-                alt="Calendar"
-              />
-            </div>
-            <div className="flex flex-col gap-1 text-sm">
+          <Card className="flex gap-6 flex-row">
+            <div className="flex flex-col gap-3 text-sm">
               <p className="font-medium">Accepted Materials</p>
-              <ul className="text-[#727272] list-disc list-inside">
-                <li>
-                  <span className="">Plastic Bottles</span>
-                </li>
-                <li>
-                  <span className="">Cardboard/ Cartons</span>
-                </li>
-                <li>
-                  <span className="">Cans</span>
-                </li>
-                <li>
-                  <span className="">Metals</span>
-                </li>
-              </ul>
+              <div className="flex flex-col gap-2">
+                <div className="grid gap-1 grid-cols-4">
+                  <MaterialPill type={"PLASTICS"} className="px-1! w-auto!" />
+                  <MaterialPill type={"PAPERS"} className="px-1! w-auto!" />
+                  <MaterialPill type={"BOTTLES"} className="px-1! w-auto!" />
+                  <MaterialPill type={"METALS"} className="px-1! w-auto!" />
+                </div>
+                <p className="text-xs text-gray-400 italic">
+                  These are general material categories. Feel free to include
+                  anything you think can be recycled.
+                </p>
+              </div>
             </div>
           </Card>
 
           {/* How It Works */}
-          <Card className="flex-col items-start gap-1">
-            <p className="font-medium">How It Works</p>
-            <div className="flex flex-row gap-4 items-center ">
-              <div className="flex flex-row gap-2 ">
-                <div className="text-primary border-2 rounded-full h-8 w-8 text-center text-lg font-medium">
+          <Card className="flex-col items-start gap-1 text-sm!">
+            <p className="font-medium">How it Works</p>
+            <div className="flex flex-col gap-2 items-center ">
+              <div className="flex flex-row items-center gap-4">
+                <div className="text-primary border-2 rounded-full min-h-8 min-w-8 text-center text-lg align font-medium">
                   1
                 </div>
-                <div className="text-primary border-2 rounded-full h-8 w-8 text-center text-lg font-medium">
+                <p className="text-gray-400 text-sm">
+                  Post your recyclables using the camera button.
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-4">
+                <div className="text-primary border-2 rounded-full min-h-8 min-w-8 text-center text-lg align font-medium">
                   2
                 </div>
-                <div className="text-primary border-2 rounded-full h-8 w-8 text-center text-lg font-medium">
+                <p className="text-gray-400 text-sm">
+                  Barangay reviews, approves, and picks up your materials.
+                </p>
+              </div>
+              <div className="flex flex-row items-center gap-4">
+                <div className="text-primary border-2 rounded-full min-h-8 min-w-8 text-center text-lg align font-medium">
                   3
                 </div>
+                <p className="text-gray-400 text-sm">
+                  Earn rewards through your barangay's redemption program.
+                </p>
               </div>
-              <ul className="flex flex-col text-[#727272] text-sm list-decimal list-inside">
-                <li className="">Post your recyclables.</li>
-                <li className="">Barangay approves & picks up.</li>
-                <li className="">
-                  Wait for the barangay to verify your reward.
-                </li>
-              </ul>
             </div>
           </Card>
 
@@ -110,13 +107,44 @@ export default function CommunityPage() {
                 alt="Calendar"
               />
             </div>
-            <div className="flex flex-col gap-1 text-sm">
+            <div className="flex flex-col gap-2 text-sm">
               <p className="font-medium">Barangay Information</p>
-              <div className="">
-                <div className="">
-                  Barangay Office:{" "}
-                  <span className="text-[#727272]">09XX-XXX-XXXX</span>
+              <div className="flex flex-col">
+                <div className="flex flex-row gap-2 items-center justify-between w-full">
+                  <p className="">
+                    {isLoading ? (
+                      <Skeleton width={150} />
+                    ) : (
+                      data?.barangay?.name
+                    )}
+                  </p>
+                  {isLoading ? (
+                    <Skeleton width={50} />
+                  ) : (
+                    <Badge
+                      label={
+                        data?.barangay?.isRegistered
+                          ? "Registered"
+                          : "Unregistered"
+                      }
+                      color={
+                        data?.barangay?.isRegistered
+                          ? "bg-[#dcfce7] text-[#15803d]"
+                          : "bg-[#fee2e2] text-[#b91c1c]"
+                      }
+                      className="px-2!"
+                    />
+                  )}
                 </div>
+                {isLoading ? <Skeleton width={130}/> : (
+
+                  <p className="text-gray-400 text-sm">
+                  {data?.barangay?.city}, Ilocos Sur
+                </p>
+                )}
+                <p className="text-gray-400 text-sm pb-2">
+                  {isLoading ? <Skeleton width={80}/> : data?.barangay?.contactNumber}
+                </p>
               </div>
             </div>
           </Card>

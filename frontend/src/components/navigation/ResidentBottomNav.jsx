@@ -40,24 +40,32 @@ export const ResidentBottomNav = () => {
             href="/home"
           >
             {isHome ? (
-              <HomeIconSolid className="h-6.25 w-6.25" />
+              <>
+                <HomeIconSolid className="h-6.25 w-6.25 fill-[#89d957]" />
+                <p className="text-[12px] text-[#89d957]">Home</p>
+              </>
             ) : (
-              <HomeIcon className="h-6.25 w-6.25" />
+              <>
+                <HomeIcon className="h-6.25 w-6.25" />
+                <p className="text-[12px]">Home</p>
+              </>
             )}
-
-            <p className="text-[12px]">Home</p>
           </Link>
           <Link
             className="flex flex-col items-center justify-center"
             href="/community"
           >
             {isCommunity ? (
-              <MapPinIconSolid className="h-6.25 w-6.25" />
+              <>
+                <MapPinIconSolid className="h-6.25 w-6.25 fill-[#89d957]" />
+                <p className="text-[12px] text-[#89d957]">Barangay</p>
+              </>
             ) : (
-              <MapPinIcon className="h-6.25 w-6.25" />
+              <>
+                <MapPinIcon className="h-6.25 w-6.25" />
+                <p className="text-[12px]">Barangay</p>
+              </>
             )}
-
-            <p className="text-[12px]">Barangay</p>
           </Link>
         </div>
 
@@ -66,7 +74,7 @@ export const ResidentBottomNav = () => {
             className="min-w-16 min-h-16 bg-[#89D957] flex items-center justify-center rounded-full border-2 border-white shadow-gray-400 shadow-lg trasform -translate-y-10"
             href="/capture"
           >
-            <CameraIcon className="fill-white h-7.75  w-7.75" />
+            <CameraIcon className="fill-white h-7.75  w-7.75 " />
           </Link>
         </div>
 
@@ -76,24 +84,32 @@ export const ResidentBottomNav = () => {
             href="/requests"
           >
             {isRequests ? (
-              <ClipboardIconSolid className="h-6.25 w-6.25" />
+              <>
+                <ClipboardIconSolid className="h-6.25 w-6.25 fill-[#89d957]" />
+                <p className="text-[12px] text-[#89d957]">Requests</p>
+              </>
             ) : (
-              <ClipboardIcon className="h-6.25 w-6.25" />
+              <>
+                <ClipboardIcon className="h-6.25 w-6.25" />
+                <p className="text-[12px]">Requests</p>
+              </>
             )}
-            
-            <p className="text-[12px]">Requests</p>
           </Link>
           <Link
             className="flex flex-col items-center justify-center"
             href="/profile"
           >
             {isProfile ? (
-              <UserIconSolid className="h-6.25 w-6.25" />
+              <>
+                <UserIconSolid className="h-6.25 w-6.25 fill-[#89d957]" />
+                <p className="text-[12px] text-[#89d957]">Profile</p>
+              </>
             ) : (
-              <UserIcon className="h-6.25 w-6.25" />
+              <>
+                <UserIcon className="h-6.25 w-6.25" />
+                <p className="text-[12px]">Profile</p>
+              </>
             )}
-            
-            <p className="text-[12px]">Profile</p>
           </Link>
         </div>
       </div>
