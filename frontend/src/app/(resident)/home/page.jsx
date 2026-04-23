@@ -119,10 +119,10 @@ export default function HomePage() {
           <div className="flex flex-col gap-3">
             {requestLoading
               ? Array.from({ length: 3 }).map((_, index) => (
-                  <Card key={index} className="flex flex-col">
+                  <Card key={index} className="flex flex-col items-start">
                     <div className="flex flex-row justify-between w-full">
                       <Skeleton width={80} />
-                      <Skeleton width={100} />
+                      <Skeleton width={120} />
                     </div>
                     <Skeleton width={150} />
                     <Skeleton width={150} />
