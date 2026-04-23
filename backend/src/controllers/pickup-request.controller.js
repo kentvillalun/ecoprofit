@@ -96,10 +96,10 @@ const updateStatus = async (req, res) => {
           requestId: id,
           materialType: item.materialType,
           actualWeight: item.actualWeight,
-          weightUnit: item.weightUnit
+          weightUnit: item.weightUnit,
         })),
-        skipDuplicates: true
-      })
+        skipDuplicates: true,
+      });
 
       await prisma.pickupRequests.update({
         where: { id },
@@ -172,8 +172,8 @@ const getRequest = async (req, res) => {
             materialType: true,
             actualWeight: true,
             weightUnit: true,
-          }
-        }
+          },
+        },
       },
     });
 
@@ -190,4 +190,34 @@ const getRequest = async (req, res) => {
   }
 };
 
-export { pickupRequest, listRequests, updateStatus, getRequest };
+const getMyRequest = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const requests = await prisma.pickupRequests.findMany({
+      where: { userId },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        materialType: true,
+        status: true,
+        createdAt: true,
+        notes: true,
+        estimatedWeight: true,
+        weightUnit: true,
+      },
+      take: 3,
+    });
+
+    return res.status(200).json({
+      message: "Fetch requests successful",
+      requests,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+export { pickupRequest, listRequests, updateStatus, getRequest, getMyRequest };
