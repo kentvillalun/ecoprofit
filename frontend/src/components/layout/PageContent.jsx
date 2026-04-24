@@ -6,7 +6,7 @@ export const PageContent = ({ children, className = "" }) => {
         h-[calc(100dvh-72px)] md:h-screen
         overflow-y-auto
         p-3 flex flex-col gap-6
-        pb-[calc(7rem+env(safe-area-inset-bottom))]
+        pb-[calc(12rem+env(safe-area-inset-bottom))]
         ${className}
       `}
     >

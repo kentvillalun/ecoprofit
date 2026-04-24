@@ -193,6 +193,9 @@ const getRequest = async (req, res) => {
 const getMyRequest = async (req, res) => {
   try {
     const userId = req.user.id;
+    const limit = req.query.limit;
+
+    const take = limit ? parseInt(limit) : undefined;
 
     const requests = await prisma.pickupRequests.findMany({
       where: { userId },
@@ -207,8 +210,9 @@ const getMyRequest = async (req, res) => {
         notes: true,
         estimatedWeight: true,
         weightUnit: true,
+        photoUrl: true,
       },
-      take: 3,
+      ...(take && { take })
     });
 
     return res.status(200).json({

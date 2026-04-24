@@ -1,9 +1,9 @@
 "use client"
 
-export const Error = ({handleRefetchCount, text, subtext, buttonLabel, buttonClassName = ""}) => {
+export const Error = ({handleRefetchCount, text, subtext, buttonLabel, buttonClassName = "", className = ""}) => {
 
     return (
-        <div className="flex flex-col items-center justify-center p-10 text-center">
+        <div className={`flex flex-col items-center justify-center p-10 text-center ${className}`}>
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-[#74C857]">
             EcoProfit
           </p>

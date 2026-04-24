@@ -35,7 +35,7 @@ export default function HomePage() {
   const { isLoading, data, isError } = useFetch({ url, refetchCount });
 
   const [requestsRefetchCount, setRequestsRefetchCount] = useState(0);
-  const requestsUrl = `/api/pickup-requests/my-requests`;
+  const requestsUrl = `/api/pickup-requests/my-requests?limit=3`;
   const {
     isLoading: requestLoading,
     isError: requestError,

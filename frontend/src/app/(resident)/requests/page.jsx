@@ -6,35 +6,30 @@ import { ResidentHeader } from "@/components/navigation/ResidentHeader";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
 import { useState } from "react";
+import { useFetch } from "@/hooks/useFetch";
+import { Error } from "@/components/ui/Error";
+import { formatDate } from "@/lib/formatDate";
+import Image from "next/image";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { Empty } from "@/components/ui/Empty";
 
 export default function RequestsPage() {
   const [currentTab, setCurrectTab] = useState("ongoing"); // 'ongoing' || 'completed'
-
-  const requests = [
-    {
-      id: 1,
-      title: "Plastic Bottles Collection",
-      status: "approved",
-      isCompleted: false,
-    },
-    {
-      id: 2,
-      title: "Cardboard Pickup",
-      status: "in_progress",
-      isCompleted: false,
-    },
-    {
-      id: 3,
-      title: "Metal Scraps",
-      status: "collected",
-      isCompleted: true,
-    },
-  ];
+  const [refetchCount, setRefetchCount] = useState(0);
+  const url = `/api/pickup-requests/my-requests`;
+  const { isLoading, isError, data } = useFetch({ url, refetchCount });
 
   const filteredRequests =
     currentTab === "ongoing"
-      ? requests.filter((r) => !r.isCompleted)
-      : requests.filter((r) => r.isCompleted);
+      ? data?.requests?.filter((r) =>
+          ["REQUESTED", "APPROVED", "IN_PROGRESS"].includes(r.status),
+        )
+      : data?.requests?.filter((r) =>
+          ["COLLECTED", "REJECTED"].includes(r.status),
+        );
+
+  const handleRefetchCount = () => setRefetchCount((prev) => prev + 1);
 
   return (
     <Page gradient={true}>
@@ -51,27 +46,101 @@ export default function RequestsPage() {
               Ongoing
             </button>
             <button
-              className={`rounded-2xl shadow-lg py-3 font-medium text-[#727272] ${currentTab === "completed" ? "text-white bg-[#89D957]" : "bg-white"} `}
-              onClick={() => setCurrectTab("completed")}
+              className={`rounded-2xl shadow-lg py-3 font-medium text-[#727272] ${currentTab === "history" ? "text-white bg-[#89D957]" : "bg-white"} `}
+              onClick={() => setCurrectTab("history")}
             >
-              Collected
+              History
             </button>
           </div>
 
           <PageContent>
             <div className="flex flex-col gap-2">
-                {filteredRequests.map(r => (
-                    <Card className="flex flex-row items-start justify-between" key={r.id}>
-                        <div className="flex flex-col gap-3">
-                            <p className="font-medium text-md">{r.title}</p>
-                            <p className="text-sm text-[#727272]">Cancel Requests</p>
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                  <Card
+                    className={`flex flex-row items-start gap-3`}
+                    key={index}
+                  >
+                    {/* Top row */}
+                    <div className="flex flex-col items-start h-16 w-16 rounded-md overflow-hidden shrink-0">
+                      <Skeleton width={64} height={64} />
+                    </div>
+
+                    <div className="flex flex-col w-full gap-3">
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex flex-row min-w-full items-center justify-between">
+                          <Skeleton width={55} />
+                          <Skeleton width={100} />
                         </div>
-                        <div className="flex flex-col justify-between items-center min-h-full">
-                            <Pill type={r.status}/>
-                            <p className=" text-sm text-[#727272]">View Details</p>
+                        <Skeleton width={100} />
+                        <Skeleton width={150} />
+                      </div>
+
+                      {/* Footer row */}
+                      <div className="flex flex-row items-end justify-end w-full pt-2 border-t border-gray-100">
+                        <Skeleton width={100} />
+                      </div>
+                    </div>
+                  </Card>
+                ))
+              ) : isError ? (
+                <Error
+                  buttonLabel={"Try again"}
+                  buttonClassName="py-2! px-6! text-sm!"
+                  subtext={"We coudn't load your requests"}
+                  handleRefetchCount={handleRefetchCount}
+                  className="pt-30!"
+                />
+              ) : filteredRequests?.length === 0 ? (
+                <Empty
+                  text={"No request yet"}
+                  subtext={"Tap the camera button to submit your first request"}
+                />
+              ) : (
+                filteredRequests?.map((r) => (
+                  <Card
+                    className={`flex flex-row items-start gap-3 transition-all hover:cursor-pointer hover:-translate-y-0.5 duration-200 ease-in-out`}
+                    key={r.id}
+                  >
+                    {/* Top row */}
+                    <div className="flex flex-col items-start h-16 w-16 rounded-md overflow-hidden shrink-0">
+                      <Image
+                        src={r?.photoUrl}
+                        width={64}
+                        height={64}
+                        alt="Recyclables"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    <div className="flex flex-col w-full gap-3">
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex flex-row min-w-full items-center justify-between">
+                          <h3 className="font-semibold text-[#1F2937] capitalize">
+                            {r.materialType.toLowerCase()}
+                          </h3>
+
+                          <Pill type={r.status} />
                         </div>
-                    </Card>
-                ))}
+                        <p className="text-sm text-gray-500">
+                          {r.notes ? r.notes : "No notes available"}
+                        </p>
+                        <p className="text-sm text-gray-400">
+                          {formatDate(r.createdAt)}
+                        </p>
+                      </div>
+
+                      {/* Footer row */}
+                      <div className="flex flex-row items-end justify-end w-full pt-2 border-t border-gray-100">
+                        <p className="text-xs text-gray-400">
+                          Est. {r.estimatedWeight}{" "}
+                          <span className="lowercase">{r.weightUnit}</span>
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                ))
+              )}
             </div>
           </PageContent>
         </div>
