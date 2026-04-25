@@ -37,7 +37,7 @@ export default function RequestsPage() {
     <Page gradient={true}>
       <ResidentHeader title={"Requests & History"} notification={true} />
 
-      <PageContent className="overflow-hidden!">
+      <PageContent className="overflow-hidden!" padding="py-4 px-3">
         {/* Tab section */}
         <div className="flex flex-col gap-6">
           <div className="grid grid-cols-2 gap-2 ">

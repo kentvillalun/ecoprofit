@@ -1,9 +1,11 @@
 "use client"
 
+import { twMerge } from "tailwind-merge"
+
 export const Error = ({handleRefetchCount, text, subtext, buttonLabel, buttonClassName = "", className = ""}) => {
 
     return (
-        <div className={`flex flex-col items-center justify-center p-10 text-center ${className}`}>
+        <div className={`flex flex-col items-center justify-center text-center ${twMerge("p-10", className)}`}>
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-[#74C857]">
             EcoProfit
           </p>

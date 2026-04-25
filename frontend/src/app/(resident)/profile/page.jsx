@@ -51,7 +51,7 @@ export default function ProfilePage() {
   return (
     <Page gradient={true}>
       <Toaster position="top-center"/>
-      <ResidentHeader title={"Profile"} />
+      <ResidentHeader title={"Profile"} className="py-6"/>
 
       <PageContent>
         <section className="flex flex-col gap-5">

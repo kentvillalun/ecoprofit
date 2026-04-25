@@ -6,7 +6,14 @@ import { ResidentHeader } from "@/components/navigation/ResidentHeader";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useFetch } from "@/hooks/useFetch";
-import { Card } from "@/components/ui/Card";
+import { Banner } from "@/components/ui/Banner";
+import Image from "next/image";
+import { MaterialPill } from "@/components/ui/MateriaPill";
+import { formatDate } from "@/lib/formatDate";
+import { statusStyles } from "@/lib/statusStyles";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { Error } from "@/components/ui/Error";
 
 export default function RequestDetailPage() {
   const [refetchCount, setRefetchCount] = useState(0);
@@ -14,13 +21,265 @@ export default function RequestDetailPage() {
   const url = `/api/pickup-requests/my-requests/${id}`;
   const { isLoading, isError, data } = useFetch({ url, refetchCount });
 
+  const timelineEvents = [
+    { label: "Submitted", value: data?.request?.createdAt, show: true },
+    {
+      label: "Approved",
+      value: data?.request?.approvedAt,
+      show: ["APPROVED", "IN_PROGRESS", "COLLECTED"].includes(
+        data?.request?.status,
+      ),
+    },
+    {
+      label: "In Progress",
+      value: data?.request?.approvedAt,
+      show: ["IN_PROGRESS"].includes(data?.request?.status),
+    },
+    {
+      label: "Collected",
+      value: data?.request?.collectedAt,
+      show: data?.request?.status === "COLLECTED",
+    },
+    {
+      label: "Rejected",
+      value: data?.request?.rejectedAt,
+      show: data?.request?.status === "REJECTED",
+    },
+  ].filter((e) => e.show);
+
+  const handleRefetchCount = () => setRefetchCount((prev) => prev + 1)
+
   return (
     <Page gradient={false} className="bg-[#F3F3FF]!">
       <ResidentHeader title={"Request Detail"} />
-      <PageContent className="bg-[#F3F3FF]!" withBottomNav={false} >
-        <Card>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa molestias distinctio eius architecto? Quae, natus hic culpa qui quidem provident omnis aliquam? Beatae exercitationem quidem eligendi corrupti distinctio dolorum libero excepturi voluptate nulla? Quod in ipsum explicabo corrupti facere asperiores autem tenetur quidem laborum, ipsam accusantium repudiandae reprehenderit mollitia, expedita quis quae provident veniam illo dolore placeat aperiam quibusdam! Nostrum error quibusdam cupiditate, laboriosam magnam repellat est ea quaerat corporis quia id et tenetur voluptatum doloribus, esse culpa similique debitis placeat molestias tempore vero nisi eaque! Magnam laudantium quaerat reprehenderit, laboriosam, aspernatur natus asperiores illum nam aliquid, pariatur laborum itaque. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nemo, adipisci! Ullam aspernatur ab magni vero veniam quo exercitationem nisi necessitatibus nulla? Doloribus expedita totam nostrum quia ratione accusamus, repellat debitis vero. Illum eius facere rem excepturi. Voluptatem laudantium quia neque, aut saepe nisi harum modi fugiat temporibus aliquam quos. Enim? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tempore ad dolor sunt pariatur odio impedit, temporibus repellendus excepturi mollitia eveniet laborum non dolore sit soluta maiores, dolores provident! Explicabo, similique modi! Ex maiores quis obcaecati, repellat consectetur dicta esse non, soluta, numquam maxime totam laborum id eius ratione dolorem eligendi. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque possimus molestiae dolor recusandae maiores sequi, assumenda officiis cumque? Magnam, dolor? Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis, alias.
-        </Card>
+      <PageContent withBottomNav={false} padding="px-0 py-0" className="gap-0">
+        <Banner status={data?.request?.status} />
+        {isLoading ? (
+          <>
+            <div className="w-full h-48 overflow-hidden">
+              <Skeleton height={192} width={800} />
+            </div>
+            <div className="p-3 border-b border-gray-300 flex flex-col gap-2">
+              <h3 className="font-semibold text-sm text-gray-600 border-b border-gray-100 w-full uppercase">
+                Request Information
+              </h3>
+              <div className="flex flex-col gap-1">
+                <div className="flex flex-row items-center justify-between">
+                  <p className="text-gray-600 text-sm font-medium">Material</p>
+                  <Skeleton width={100} />
+                </div>
+                <div className="flex flex-row items-center justify-between">
+                  <p className="text-gray-600 text-sm font-medium">
+                    Estimated weight
+                  </p>
+                  <p className={`text-sm text-gray-600 lowercase`}>
+                    <Skeleton width={100} />
+                  </p>
+                </div>
+                <div className="flex flex-col items-start justify-between gap-2 pb-2">
+                  <p className="text-gray-600 text-sm font-medium">Notes</p>
+                  <Skeleton width={800} height={100} />
+                </div>
+                <div className="flex flex-row items-center justify-between">
+                  <p className="text-gray-600 text-sm font-medium">Submitted</p>
+                  <p className={`text-sm text-gray-600`}>
+                    {formatDate(data?.request?.createdAt)}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 border-b border-gray-300 flex flex-col gap-2">
+              <h3 className="font-semibold text-sm text-gray-600 border-b border-gray-100 w-full uppercase">
+                Status Timeline
+              </h3>
+              
+              <div className="flex flex-col w-full">
+                {timelineEvents.map((event, i) => (
+                  <div
+                    key={event.label}
+                    className={`flex flex-row gap-3 ${i < timelineEvents.length - 1 ? "pb-4" : ""}`}
+                  >
+                    <div className="flex flex-col items-center">
+                     <Skeleton width={20} />
+
+                      {i < timelineEvents.length - 1 && (
+                        <div className="w-px flex-1 bg-gray-200 mt-1" />
+                      )}
+                    </div>
+
+                    <div className="flex flex-col items-start justify-between">
+                     <Skeleton width={100} />
+                    <Skeleton width={150} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="p-3 flex flex-col gap-2">
+              <h3 className="font-semibold text-sm text-gray-600 border-b border-gray-100 w-full uppercase">
+                Collection details
+              </h3>
+              {data?.request?.status !== "COLLECTED" ? (
+                <>
+                  <Skeleton width={800} />
+                  <Skeleton width={50} />
+                </>
+              ) : (
+                <div className="w-full flex flex-col gap-2 px-4">
+                  <div className="flex flex-row items-center justify-between gap-2 w-full">
+                    <p className="text-xs text-gray-400 font-medium uppercase">
+                      Material
+                    </p>
+                    <p className="text-xs text-gray-400 font-medium uppercase">
+                      Actual weight
+                    </p>
+                  </div>
+                  {data?.request?.collectionItems.map((item, index) => (
+                    <div
+                      className="flex flex-row items-center justify-between gap-2 w-full border-gray-100"
+                      key={index}
+                    >
+                      <Skeleton width={150}/>
+                      <Skeleton width={40}/>
+                      
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        ) : isError ? (
+         
+          <Error subtext={"We couldn't load this requests"} buttonLabel={"Try again"} handleRefetchCount={handleRefetchCount} className="p-20" />
+        
+        ) : (
+          <>
+            <div className="w-full h-48 overflow-hidden">
+              {data?.request?.photoUrl && (
+                <Image
+                  src={data.request.photoUrl}
+                  alt="recyclables"
+                  width={800}
+                  height={192}
+                  className="object-cover w-full h-full"
+                  style={{ height: "192px" }}
+                  priority
+                />
+              )}
+            </div>
+            <div className="p-3 border-b border-gray-300 flex flex-col gap-2">
+              <h3 className="font-semibold text-sm text-gray-600 border-b border-gray-100 w-full uppercase">
+                Request Information
+              </h3>
+              <div className="flex flex-col gap-1">
+                <div className="flex flex-row items-center justify-between">
+                  <p className="text-gray-600 text-sm font-medium">Material</p>
+                  <MaterialPill
+                    type={data?.request?.materialType}
+                    className="w-auto"
+                  />
+                </div>
+                <div className="flex flex-row items-center justify-between">
+                  <p className="text-gray-600 text-sm font-medium">
+                    Estimated weight
+                  </p>
+                  <p className={`text-sm text-gray-600 lowercase`}>
+                    {data?.request?.estimatedWeight} {data?.request?.weightUnit}
+                  </p>
+                </div>
+                <div className="flex flex-col items-start justify-between gap-2 pb-2">
+                  <p className="text-gray-600 text-sm font-medium">Notes</p>
+                  <textarea
+                    rows={3}
+                    value={data?.request?.notes}
+                    className="text-sm text-gray-600 lowercase w-full p-2 outline-none border rounded-md border-gray-300 "
+                    disabled
+                  ></textarea>
+                </div>
+                <div className="flex flex-row items-center justify-between">
+                  <p className="text-gray-600 text-sm font-medium">Submitted</p>
+                  <p className={`text-sm text-gray-600`}>
+                    {formatDate(data?.request?.createdAt)}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 border-b border-gray-300 flex flex-col gap-2">
+              <h3 className="font-semibold text-sm text-gray-600 border-b border-gray-100 w-full uppercase">
+                Status Timeline
+              </h3>
+              <div className="flex flex-col w-full">
+                {timelineEvents.map((event, i) => (
+                  <div
+                    key={event.label}
+                    className={`flex flex-row gap-3 ${i < timelineEvents.length - 1 ? "pb-4" : ""}`}
+                  >
+                    <div className="flex flex-col items-center">
+                      <div
+                        className={`w-2 h-2 rounded-full mt-1.5 ${
+                          i === timelineEvents.length - 1
+                            ? statusStyles[data?.request?.status]
+                            : "bg-primary"
+                        }`}
+                      />
+
+                      {i < timelineEvents.length - 1 && (
+                        <div className="w-px flex-1 bg-gray-200 mt-1" />
+                      )}
+                    </div>
+
+                    <div className="flex flex-col items-start justify-between">
+                      <p className="text-gray-600 text-sm font-medium">
+                        {event.label}
+                      </p>
+                      <p className={`text-sm text-gray-600`}>
+                        {event.label === "In Progress"
+                          ? "Being collected"
+                          : formatDate(event.value)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="p-3 flex flex-col gap-2">
+              <h3 className="font-semibold text-sm text-gray-600 border-b border-gray-100 w-full uppercase">
+                Collection details
+              </h3>
+              {data?.request?.status !== "COLLECTED" ? (
+                <p className="italic text-sm text-gray-500">
+                  Shown when request is collected. Actual weights and material
+                  breakdown appear here.
+                </p>
+              ) : (
+                <div className="w-full flex flex-col gap-2 px-4">
+                  <div className="flex flex-row items-center justify-between gap-2 w-full">
+                    <p className="text-xs text-gray-400 font-medium uppercase">
+                      Material
+                    </p>
+                    <p className="text-xs text-gray-400 font-medium uppercase">
+                      Actual weight
+                    </p>
+                  </div>
+                  {data?.request?.collectionItems.map((item, index) => (
+                    <div
+                      className="flex flex-row items-center justify-between gap-2 w-full border-gray-100"
+                      key={index}
+                    >
+                      <MaterialPill type={item.materialType} />
+
+                      <p className="text-sm text-gray-700">
+                        {item.actualWeight} {item.weightUnit}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </PageContent>
     </Page>
   );
