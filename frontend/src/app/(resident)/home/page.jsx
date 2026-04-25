@@ -20,9 +20,9 @@ import {
 import { MaterialPill } from "@/components/ui/MateriaPill";
 import { Pill } from "@/components/ui/Pill";
 import { formatDate } from "@/lib/formatDate";
-import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { Error } from "@/components/ui/Error";
 import { Empty } from "@/components/ui/Empty";
+import { useRouter } from "next/navigation";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,6 +33,7 @@ export default function HomePage() {
   const [refetchCount, setRefetchCount] = useState(0);
   const url = `/api/resident/me`;
   const { isLoading, data, isError } = useFetch({ url, refetchCount });
+  const router = useRouter()
 
   const [requestsRefetchCount, setRequestsRefetchCount] = useState(0);
   const requestsUrl = `/api/pickup-requests/my-requests?limit=3`;
@@ -43,6 +44,8 @@ export default function HomePage() {
   } = useFetch({ url: requestsUrl, refetchCount: requestsRefetchCount });
 
   const handleRefetchCount = () => setRequestsRefetchCount((prev) => prev + 1);
+
+
 
   return (
     <Page gradient={true}>
@@ -164,6 +167,7 @@ export default function HomePage() {
                 <Card
                   className={`flex flex-col items-start gap-3 transition-all hover:cursor-pointer hover:-translate-y-0.5 duration-200 ease-in-out`}
                   key={r.id}
+                  handleClick={() => router.push(`/requests/${r.id}`)}
                 >
                   {/* Top row */}
                   <div className="flex flex-row justify-between w-full">
