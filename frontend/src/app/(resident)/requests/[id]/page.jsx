@@ -155,7 +155,7 @@ export default function RequestDetailPage() {
         
         ) : (
           <>
-            <div className="w-full h-48 overflow-hidden">
+            <div className="w-full h-70 ">
               {data?.request?.photoUrl && (
                 <Image
                   src={data.request.photoUrl}
@@ -192,7 +192,7 @@ export default function RequestDetailPage() {
                   <p className="text-gray-600 text-sm font-medium">Notes</p>
                   <textarea
                     rows={3}
-                    value={data?.request?.notes}
+                    value={data?.request?.notes ? data?.request?.notes : "There is no notes available for this request"}
                     className="text-sm text-gray-600 lowercase w-full p-2 outline-none border rounded-md border-gray-300 "
                     disabled
                   ></textarea>
