@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeftIcon, BellIcon, PencilIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, BellIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { Inter } from "next/font/google";
 import { useState } from "react";
 import Link from "next/link";
@@ -15,7 +15,8 @@ export const ResidentHeader = ({
   subtitle,
   action,
   setIsEditing,
-  className = ""
+  className = "",
+  handleClick = () => history.back()
 }) => {
   
   const [actions, setActions] = useState(action);
@@ -31,7 +32,7 @@ export const ResidentHeader = ({
           </Link>
         );
       case 'edit':
-        return <PencilIcon className="w-6 h-6 text-[#727272]" onClick={() => setIsEditing(true)}/>
+        return <PencilSquareIcon className="w-6 h-6 text-[#727272]" onClick={() => setIsEditing((prev) => !prev)}/>
 
       default: 
        return <div className="w-6"></div> 
@@ -45,7 +46,7 @@ export const ResidentHeader = ({
       <div className="flex flex-row items-center justify-between min-w-full">
         <ArrowLeftIcon
           className="h-6 text-[#727272]"
-          onClick={() => history.back()}
+          onClick={handleClick}
         />
         <div className="flex flex-col items-center">
           <p className="font-semibold text-lg text-nowrap">{title}</p>

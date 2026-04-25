@@ -52,7 +52,7 @@ export default function RequestDetailPage() {
   return (
     <Page gradient={false} className="bg-[#F3F3FF]!">
       <ResidentHeader title={"Request Detail"} />
-      <PageContent withBottomNav={false} padding="px-0 py-0" className="gap-0">
+      <PageContent withBottomNav={false} className="gap-0 px-0 py-0">
         <Banner status={data?.request?.status} />
         {isLoading ? (
           <>

@@ -106,6 +106,15 @@
 - **Resident request detail page fully built** — `/requests/[id]` fetches from `GET /pickup-requests/my-requests/:id`; shows photo banner, Request Information section (material pill, estimated weight, notes textarea, submitted date), Status Timeline section (conditional entries per status with connecting line), and Collection Details section (breakdown table of `collectionItems` when `COLLECTED`, placeholder text otherwise); skeleton loading and error states implemented
 - **Home page request cards navigate to detail** — "Recent Requests" cards on `/home` are now tappable and push to `/requests/:id`
 
+- **`PATCH /resident/me` backend endpoint** — `updateResidentProfile` controller; accepts partial updates for `firstName`, `lastName`, `phoneNumber`, `address`; ignores undefined fields; protected by `authenticateResident`
+- **`PATCH /redemption/programs/:id` backend endpoint** — `updateProgram` controller; updates `name`, `allotedBudget`, `description`, `maxPoints`, `isActive`; upserts per-material `pointValue` entries when a `materials` map is included; enables program deactivate/reactivate and in-place editing; protected by `authenticateBarangay` + `requireRoles(["CAPTAIN", "SECRETARY", "SK"])`
+- **Resident profile page wired to live data** — `/profile` fetches from `GET /api/resident/me`; displays live first/last name and barangay name; skeleton loading and inline error state with retry button; logout flow clears cookie and session storage
+- **Personal Information page fully built** — `/profile/personal-information` has an edit mode toggle (`PencilSquareIcon` in header); editable fields for `firstName`, `lastName`, `phoneNumber`, `address`; `sitio` and `barangay` shown as read-only with explanatory note; "Save Changes" button wired to `PATCH /api/resident/me` via `useMutation`; discard-changes confirmation modal (rendered via `createPortal`) when navigating back with unsaved edits; skeleton loading and `Error` states throughout
+- **Profile sub-pages (UI shells)** — Notification Settings (`/profile/notifications`): toggle UI for request-status and barangay-update notifications (local state only, not yet wired to backend); Settings (`/profile/settings`): toggle UI for Language and Dark Mode (local state only, not yet wired); Help & Support (`/profile/help-support`): FAQ accordion with 8 static questions about app usage
+- **`ResidentHeader` enhancements** — added `handleClick` prop (defaults to `history.back()`); `edit` action type renders `PencilSquareIcon` and toggles edit mode via `setIsEditing`; back arrow now fires `handleClick` instead of always calling `history.back()` directly
+- **`Modal` component** — added `cancelLabel` prop for customizable cancel button text (defaults to `"Cancel"`)
+- **Resident layout** — profile sub-pages (`/profile/notifications`, `/profile/settings`, `/profile/help-support`) and `/requests/` paths now correctly hide the bottom navigation bar
+
 ---
 
 ## In Progress

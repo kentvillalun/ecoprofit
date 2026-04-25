@@ -51,23 +51,55 @@ const getBarangayInfo = async (req, res) => {
         isRegistered: true,
         contactNumber: true,
         city: true,
-      }
+      },
     });
 
     if (!barangay) {
-      return res.status(404).json({ error: "Barangay do not exist"})
+      return res.status(404).json({ error: "Barangay do not exist" });
     }
-    
+
     return res.status(200).json({
       message: "Fetch barangay info sucessful",
       barangay,
-    })
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
 
+const updateResidentProfile = async (req, res) => {
+  try {
+    const id = req.user.id;
+    const { firstName, lastName, phoneNumber, address } = req.body ?? {};
 
+    const data = {};
+    if (firstName !== undefined) data.firstName = firstName;
+    if (lastName !== undefined) data.lastName = lastName;
+    if (phoneNumber !== undefined) data.phoneNumber = phoneNumber;
+    if (address !== undefined) data.address = address;
 
+    if (Object.keys(data).length === 0) {
+      return res.status(400).json("Invalid request");
+    }
 
-export { getResidentProfile, getBarangayInfo };
+    const user = await prisma.user.update({
+      where: { id },
+      data,
+      select: {
+        firstName: true, 
+        lastName: true,
+        address: true,
+        phoneNumber: true,
+      }
+    });
+
+    return res.status(200).json({
+      message: "Update Successful",
+      user,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+export { getResidentProfile, getBarangayInfo, updateResidentProfile };

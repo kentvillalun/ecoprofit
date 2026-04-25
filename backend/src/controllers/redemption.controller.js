@@ -92,7 +92,7 @@ const updateProgram = async (req, res) => {
     const { id } = req.params;
     const { name, allotedBudget, description, maxPoints, isActive, materials } =
       req.body ?? {};
-      console.log("materials received:", materials)
+    
 
     const data = {}
     if (name !== undefined) data.name = name

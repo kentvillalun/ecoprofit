@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Page } from "@/components/layout/Page";
 import { PageContent } from "@/components/layout/PageContent";
@@ -16,14 +16,19 @@ import Link from "next/link";
 import { API_BASE_URL } from "@/lib/config";
 import { toast, Toaster } from "sonner";
 import { useRouter } from "next/navigation";
+import { useFetch } from "@/hooks/useFetch";
+import { useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export default function ProfilePage() {
+  const [refetchCount, setRefetchCount] = useState(0);
+  const url = `/api/resident/me`;
+  const { isLoading, isError, data } = useFetch({ url, refetchCount });
 
-  const router = useRouter()
+  const router = useRouter();
 
   const handleLogout = async () => {
-
-
     try {
       const response = await fetch(`${API_BASE_URL}/auth/logout`, {
         method: "POST",
@@ -38,36 +43,49 @@ export default function ProfilePage() {
         return;
       }
 
-      sessionStorage.setItem("skipSplash", "true")
-      localStorage.removeItem("ecoprofitResidentSession")
-      router.push("/login")
-
+      sessionStorage.setItem("skipSplash", "true");
+      localStorage.removeItem("ecoprofitResidentSession");
+      router.push("/login");
     } catch (error) {
-      toast.error("Logout failed")
+      toast.error("Logout failed");
     }
-  }
+  };
 
+  const handleRefetchCount = () => setRefetchCount((prev) => prev + 1)
 
   return (
     <Page gradient={true}>
-      <Toaster position="top-center"/>
-      <ResidentHeader title={"Profile"} className="py-6"/>
+      <Toaster position="top-center" />
+      <ResidentHeader title={"Profile"} className="py-6" />
 
-      <PageContent>
+      <PageContent className="pt-10">
         <section className="flex flex-col gap-5">
           <div className="flex flex-col items-center gap-4">
             <div className="border-5 rounded-full max-h-40 max-w-40 border-[#74C857] shadow-xl overflow-hidden flex items-center justify-center">
               <Image
-                src={"/profile.jpg"}
+                src={"/picture.jpg"}
                 width={143}
                 height={140}
                 alt="Profile picture"
               />
             </div>
-            <div className="text-center ">
-              <p className="font-semibold text-lg">Jaymar Tabangin</p>
-              <p className="text-sm text-[#727272]">Brgy. Beddeng Laud</p>
-            </div>
+            {isLoading ? (
+              <div className="text-center ">
+                <Skeleton width={150}/>
+                <Skeleton width={180}/>
+              </div>
+            ) : isError ? (
+              <div className="text-center ">
+                <div className="text-sm text-[#727272]">Something went wrong. <button className="text-[#74C857] hover:underline" onClick={handleRefetchCount}>Please try again</button></div>
+              </div>
+            ) : (
+              <div className="text-center ">
+                <p className="font-semibold text-lg">
+                  {data?.user?.firstName} {data?.user?.lastName}
+                </p>
+                <p className="text-sm text-[#727272]">{data?.user?.barangay}</p>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-14">

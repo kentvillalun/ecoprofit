@@ -23,6 +23,7 @@ export const Modal = ({
   onConfirm,
   status,
   isPill,
+  cancelLabel = "Cancel"
 }) => {
   return (
     // blur background
@@ -68,7 +69,7 @@ export const Modal = ({
                   onClick={onClose}
                   type="button"
                 >
-                  Cancel
+                  {cancelLabel}
                 </button>
                 <button
                   className={`py-2.5 ${confirmClassName}  text-white rounded-lg hover:cursor-pointer`}

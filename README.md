@@ -120,6 +120,7 @@ Protected by `authenticateResident` middleware.
 | Method | Path                     | Description                                              |
 |--------|--------------------------|----------------------------------------------------------|
 | GET    | `/resident/me`           | Returns resident profile (name, sitio, barangay, phone)  |
+| PATCH  | `/resident/me`           | Updates firstName, lastName, phoneNumber, address        |
 | GET    | `/resident/barangay-info`| Returns resident's barangay info (name, city, contact, registration status) |
 
 ### Pickup Requests (`/pickup-requests`)
@@ -176,14 +177,16 @@ Protected by `authenticateBarangay + requireRoles(["CAPTAIN","SECRETARY","SK"])`
 |------------------|---------------------------------------------------------------------------------------------|
 | `(intro)`        | Onboarding flow                                                                             |
 | `(auth)`         | Login (with splash screen), signup, OTP verification, forgot password, reset password, barangay login |
-| `(resident)`     | Home (live data: profile + recent requests, cards navigate to detail), community (live barangay info), capture, requests list (Ongoing/History tabs, live data), request detail (photo, timeline, collection breakdown), profile, announcements |
+| `(resident)`     | Home (live data: profile + recent requests, cards navigate to detail), community (live barangay info), capture, requests list (Ongoing/History tabs, live data), request detail (photo, timeline, collection breakdown), profile (live name + barangay, logout), personal-information (edit mode, PATCH /resident/me, discard modal), notification settings (UI shell), settings (UI shell), help & support (FAQ accordion), announcements |
 | `(barangay)`     | Dashboard, collection requests (list + detail), redemption programs (list + detail)         |
 
 ---
 
 ## Current Status
 
-Both resident and barangay auth flows are complete and stable (username-based login, OTP, forgot password, split middleware). The full pickup request lifecycle is wired end-to-end on the barangay side (REQUESTED → APPROVED → IN_PROGRESS → COLLECTED or REJECTED, including batch collection and ASSORTED material breakdown). The Redemption Management module is fully wired end-to-end (programs with create/edit/deactivate, transactions, program detail page). The resident home page and community page fetch live data from the backend (profile, recent requests, barangay contact info). The resident requests list and request detail pages are fully wired — a new `GET /pickup-requests/my-requests/:id` endpoint (ownership-scoped) returns full request detail including `collectionItems`; home page request cards navigate directly to the detail page. The app ships as a PWA with web manifests and a splash screen on login.
+Both resident and barangay auth flows are complete and stable (username-based login, OTP, forgot password, split middleware). The full pickup request lifecycle is wired end-to-end on the barangay side (REQUESTED → APPROVED → IN_PROGRESS → COLLECTED or REJECTED, including batch collection and ASSORTED material breakdown). The Redemption Management module is fully wired end-to-end (programs with create/edit/deactivate via `PATCH /redemption/programs/:id`, transactions, program detail page). The resident home page and community page fetch live data from the backend (profile, recent requests, barangay contact info). The resident requests list and request detail pages are fully wired — a new `GET /pickup-requests/my-requests/:id` endpoint (ownership-scoped) returns full request detail including `collectionItems`; home page request cards navigate directly to the detail page. The app ships as a PWA with web manifests and a splash screen on login.
+
+The resident profile section is complete: the `/profile` page shows live name and barangay data; `/profile/personal-information` has a full edit mode wired to `PATCH /resident/me` with a discard-changes confirmation modal; profile sub-pages for notification settings, settings, and help & support exist as UI shells.
 
 Next focus: Manual Collection Intake module (Sunday EcoAid manual entry with resident search).
 
