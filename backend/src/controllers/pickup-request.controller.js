@@ -212,7 +212,7 @@ const getMyRequest = async (req, res) => {
         weightUnit: true,
         photoUrl: true,
       },
-      ...(take && { take })
+      ...(take && { take }),
     });
 
     return res.status(200).json({
@@ -224,4 +224,46 @@ const getMyRequest = async (req, res) => {
   }
 };
 
-export { pickupRequest, listRequests, updateStatus, getRequest, getMyRequest };
+const getMyRequestsById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const request = await prisma.pickupRequests.findUnique({
+      where: { id, userId },
+      select: {
+        photoUrl: true,
+        materialType: true,
+        status: true,
+        notes: true,
+        estimatedWeight: true,
+        weightUnit: true,
+        createdAt: true,
+        approvedAt: true,
+        isScheduled: true,
+        collectedAt: true,
+        rejectedAt: true,
+        collectionItems: {
+          select: {
+            materialType: true,
+            actualWeight: true,
+            weightUnit: true,
+          }
+        }
+      },
+    });
+
+    if (!request) {
+      return res.status(404).json({ error: "Request do not exist" });
+    }
+
+    return res.status(200).json({
+      message: "Fetch request successful",
+      request,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+export { pickupRequest, listRequests, updateStatus, getRequest, getMyRequest, getMyRequestsById };

@@ -67,4 +67,7 @@ const getBarangayInfo = async (req, res) => {
   }
 };
 
+
+
+
 export { getResidentProfile, getBarangayInfo };

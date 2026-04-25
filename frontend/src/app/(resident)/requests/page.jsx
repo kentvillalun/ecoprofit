@@ -13,12 +13,14 @@ import Image from "next/image";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Empty } from "@/components/ui/Empty";
+import { useRouter } from "next/navigation";
 
 export default function RequestsPage() {
   const [currentTab, setCurrectTab] = useState("ongoing"); // 'ongoing' || 'completed'
   const [refetchCount, setRefetchCount] = useState(0);
   const url = `/api/pickup-requests/my-requests`;
   const { isLoading, isError, data } = useFetch({ url, refetchCount });
+  const router = useRouter()
 
   const filteredRequests =
     currentTab === "ongoing"
@@ -38,7 +40,7 @@ export default function RequestsPage() {
       <PageContent className="overflow-hidden!">
         {/* Tab section */}
         <div className="flex flex-col gap-6">
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 ">
             <button
               className={`rounded-2xl shadow-lg py-3 font-medium text-[#727272] ${currentTab === "ongoing" ? "text-white bg-[#89D957]" : "bg-white"} transition-all duration-250 ease-out`}
               onClick={() => setCurrectTab("ongoing")}
@@ -101,6 +103,8 @@ export default function RequestsPage() {
                   <Card
                     className={`flex flex-row items-start gap-3 transition-all hover:cursor-pointer hover:-translate-y-0.5 duration-200 ease-in-out`}
                     key={r.id}
+                    handleClick={() => router.push(`/requests/${r.id}`)}
+                    
                   >
                     {/* Top row */}
                     <div className="flex flex-col items-start h-16 w-16 rounded-md overflow-hidden shrink-0">

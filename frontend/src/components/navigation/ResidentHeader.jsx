@@ -14,7 +14,8 @@ export const ResidentHeader = ({
   title,
   subtitle,
   action,
-  setIsEditing
+  setIsEditing,
+  className = ""
 }) => {
   
   const [actions, setActions] = useState(action);
@@ -39,7 +40,7 @@ export const ResidentHeader = ({
 
   return (
     <header
-      className={`flex flex-row items-start justify-between min-w-full max-h-24 bg-white fixed top-0 py-5 px-8 ${inter.className} shadow-lg z-1000 `}
+      className={`flex flex-row items-start justify-between min-w-full bg-white fixed top-0 py-5 px-8 ${inter.className} shadow-lg z-50 min-h-18`}
     >
       <div className="flex flex-row items-center justify-between min-w-full">
         <ArrowLeftIcon

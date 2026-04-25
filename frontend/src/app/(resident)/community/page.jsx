@@ -67,9 +67,9 @@ export default function CommunityPage() {
           </Card>
 
           {/* How It Works */}
-          <Card className="flex-col items-start gap-1 text-sm!">
+          <Card className="flex flex-col items-start gap-1 text-sm! justify-start w-full">
             <p className="font-medium">How it Works</p>
-            <div className="flex flex-col gap-2 items-center ">
+            <div className="flex flex-col gap-2 items-start">
               <div className="flex flex-row items-center gap-4">
                 <div className="text-primary border-2 rounded-full min-h-8 min-w-8 text-center text-lg align font-medium">
                   1

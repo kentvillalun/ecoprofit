@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Inter } from "next/font/google";
-import { Sidebar } from "../navigation/Sidebar";
+
 
 const inter = Inter({
   subsets: ["latin"],

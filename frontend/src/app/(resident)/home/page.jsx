@@ -46,7 +46,7 @@ export default function HomePage() {
 
   return (
     <Page gradient={true}>
-      <header className="flex flex-row items-start justify-between min-w-full max-h-18.75 bg-white fixed top-0 p-5 shadow-lg ">
+      <header className="flex flex-row items-start justify-between min-w-full max-h-18.75 bg-white fixed top-0 p-5 shadow-lg z-50">
         <div className="flex flex-row justify-between min-w-full ">
           <Image src="/logo-solo.svg" width={32} height={38} alt="Logo" />
           <Link href={"/announcements"}>
