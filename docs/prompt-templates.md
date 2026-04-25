@@ -24,6 +24,7 @@ Constraints:
 
 Please read the following before making any changes:
 - AGENTS.md
+- PROGRESS.md
 - All README files in the project
 - The full git log and recent commits
 - The actual codebase to verify what is implemented

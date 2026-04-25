@@ -101,6 +101,11 @@
 - **Sidebar leaderboard link added** — barangay sidebar now includes a Leaderboard navigation entry
 - **Bug fixes** — skeleton alignment fixed; collection request module minor bugs resolved; rejection reason now shown on the request detail page; table items hidden while loading; column layout fixed on the pickup details page; card bug under approved tab resolved; "View Details" text button added for approved items on mobile
 
+- **`GET /pickup-requests/my-requests/:id` backend endpoint** — `getMyRequestsById` controller; query is scoped to the authenticated resident's own `userId` (ownership check); returns `photoUrl`, `materialType`, `status`, `notes`, estimated weight, timeline fields (`createdAt`, `approvedAt`, `collectedAt`, `rejectedAt`, `isScheduled`), and `collectionItems` relation; mounted at `GET /pickup-requests/my-requests/:id`, protected by `authenticateResident`
+- **Resident requests list page wired end-to-end** — `/requests` fetches from `GET /pickup-requests/my-requests`; Ongoing tab filters `REQUESTED / APPROVED / IN_PROGRESS`; History tab filters `COLLECTED / REJECTED`; skeleton loading, `Error` and `Empty` states; each card shows photo thumbnail, material type, notes, date, estimated weight, and status pill; tapping a card navigates to `/requests/:id`
+- **Resident request detail page fully built** — `/requests/[id]` fetches from `GET /pickup-requests/my-requests/:id`; shows photo banner, Request Information section (material pill, estimated weight, notes textarea, submitted date), Status Timeline section (conditional entries per status with connecting line), and Collection Details section (breakdown table of `collectionItems` when `COLLECTED`, placeholder text otherwise); skeleton loading and error states implemented
+- **Home page request cards navigate to detail** — "Recent Requests" cards on `/home` are now tappable and push to `/requests/:id`
+
 ---
 
 ## In Progress

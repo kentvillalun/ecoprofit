@@ -120,6 +120,10 @@
 - [x] `Error` component updated — now accepts optional `text`, `subtext`, `buttonLabel`, `buttonClassName` props for flexible reuse
 - [x] Sidebar leaderboard link — barangay sidebar now includes a Leaderboard navigation entry
 - [x] Bug fixes (recent) — skeleton alignment; collection request module minor bugs; rejection reason shown on detail page; table items hidden while loading; column layout on pickup details page; card bug under approved tab; "View Details" text button for approved items on mobile
+- [x] `GET /pickup-requests/my-requests/:id` backend endpoint — `getMyRequestsById` controller; query scoped to the authenticated resident's `userId` (ownership check); returns `photoUrl`, `materialType`, `status`, `notes`, estimated weight, timeline fields (`createdAt`, `approvedAt`, `collectedAt`, `rejectedAt`, `isScheduled`), and `collectionItems` relation; mounted at `/pickup-requests/my-requests/:id`, protected by `authenticateResident`
+- [x] Resident requests list page wired to real data — `/requests` fetches from `GET /pickup-requests/my-requests`; Ongoing tab filters `REQUESTED / APPROVED / IN_PROGRESS`; History tab filters `COLLECTED / REJECTED`; skeleton loading, `Error`, `Empty` states; each card shows photo thumbnail, material, notes, date, estimated weight, status pill; tapping a card navigates to `/requests/:id`
+- [x] Resident request detail page fully built — `/requests/[id]` fetches from `GET /pickup-requests/my-requests/:id`; shows photo banner, Request Information (material pill, estimated weight, notes, submitted date), Status Timeline (conditional entries with connecting line), and Collection Details (breakdown table of `collectionItems` when `COLLECTED`, placeholder text otherwise); skeleton loading and error states implemented
+- [x] Home page request cards navigate to detail — "Recent Requests" cards on `/home` now push to `/requests/:id` on tap
 - [ ] Manual Collection Intake module (Sunday EcoAid manual entry with resident search)
 - [ ] Collection schedule module
 - [ ] Dashboard with real data
@@ -147,7 +151,11 @@ The resident side now has working data-driven pages: the home page shows the res
 name, barangay, and recent pickup requests from real API calls; the community page shows
 EcoAid schedule, accepted materials, and live barangay contact info (name, registration
 status, city, contact number). The `Barangay` model gained a `contactNumber` field.
-Next focus: Manual Collection Intake module (Sunday EcoAid manual entry with resident search).
+The resident requests list page (`/requests`) and request detail page (`/requests/[id]`)
+are fully wired end-to-end — a new `GET /pickup-requests/my-requests/:id` endpoint scoped
+to the authenticated resident returns full request detail including `collectionItems`.
+Home page request cards navigate to the detail page. Next focus: Manual Collection Intake
+module (Sunday EcoAid manual entry with resident search).
 
 ## Key Decisions Made
 - httpOnly cookies over localStorage → XSS protection
@@ -207,6 +215,8 @@ Next focus: Manual Collection Intake module (Sunday EcoAid manual entry with res
 - frontend/src/components/ui/SitioPill.jsx — sitio display pill component
 - backend/src/controllers/resident.controller.js — getResidentProfile, getBarangayInfo
 - backend/src/routes/resident.route.js — GET /resident/me, GET /resident/barangay-info
+- frontend/src/app/(resident)/requests/page.jsx — resident requests list with Ongoing/History tabs, live data, error/empty/skeleton states
+- frontend/src/app/(resident)/requests/[id]/page.jsx — resident request detail with photo, timeline, and collection items breakdown
 
 ## Known Issues / TODO
 - BlacklistedToken cleanup job needed (periodic deletion of expired tokens using the expiresAt field)
