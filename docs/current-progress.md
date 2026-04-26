@@ -115,6 +115,13 @@
 - **`Modal` component** — added `cancelLabel` prop for customizable cancel button text (defaults to `"Cancel"`)
 - **Resident layout** — profile sub-pages (`/profile/notifications`, `/profile/settings`, `/profile/help-support`) and `/requests/` paths now correctly hide the bottom navigation bar
 
+- **`isVerified Boolean` field on `User` model** — migration `20260426061732_add_is_verified` adds `isVerified @default(false)` to the `User` table; used by the dashboard unverified-residents stat
+- **Dashboard stats endpoint `GET /dashboard/`** — `getDashboardStats` controller returns `requestedCount` (pickups in REQUESTED status), `totalRecords` (COLLECTED pickups), and `unverified` (unverified RESIDENT users) from real DB queries; protected by `authenticateBarangay + requireRoles(["CAPTAIN"])`
+- **Dashboard recent transactions endpoint `GET /dashboard/recent-transactions`** — `getRecentTransactions` controller returns the last 3 `CollectionItem` records ordered by `request.createdAt desc`, including related user `firstName`/`lastName`; protected by `authenticateBarangay + requireRoles(["CAPTAIN"])`
+- **`RecentTransactionTable` component** — `frontend/src/components/dashboard/RecentTransactionTable.jsx`; desktop table showing date created, household name, material pill, actual weight, source, and a "View Details" link to `/collection-requests/:id`; loading/error/empty states
+- **`RecentTransactionCard` component** — `frontend/src/components/dashboard/RecentTransactionCard.jsx`; mobile card equivalent of `RecentTransactionTable`; tappable, navigates to `/collection-requests/:id`
+- **Dashboard page wired with real data** — `useFetch` drives both stats (`GET /api/dashboard/`) and recent transactions (`GET /api/dashboard/recent-transactions`); skeleton loading and `Error` states on both; "Pending Collection Requests", "Total Intake Transactions", and "Unverified Residents" cards show live DB data; "Total Recyclables Collected", "Total Program Expenses", and "Current Fund Balance" remain hardcoded pending MRF and Program Funds modules
+
 ---
 
 ## In Progress

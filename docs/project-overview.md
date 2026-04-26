@@ -28,6 +28,8 @@ The resident home page fetches live data (profile, barangay name, recent pickup 
 
 The resident profile section is complete: `/profile` shows live name and barangay from the API; `/profile/personal-information` is fully wired with edit mode, `PATCH /resident/me` save, and a discard-changes modal. Profile sub-pages for Notification Settings, Settings, and Help & Support exist as UI shells (not yet wired to backend). The `ResidentHeader` component supports an `edit` action type and a `handleClick` prop used by these pages.
 
+The barangay dashboard is partially wired. `GET /dashboard/` returns real DB counts for pending requests, collected pickups, and unverified residents. `GET /dashboard/recent-transactions` returns the last 3 `CollectionItem` records. Three stat cards (Total Recyclables Collected, Total Program Expenses, Current Fund Balance) remain hardcoded until the MRF and Program Funds modules are built. The `User` model has a new `isVerified` field.
+
 The system is deployed. Backend runs on Railway. Frontend proxies via next.config.mjs rewrites.
 
 Active development focus: Manual Collection Intake module (Sunday EcoAid manual entry flow with resident search).

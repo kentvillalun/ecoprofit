@@ -1,18 +1,17 @@
-"use client";
-
-import { formatDate } from "@/lib/formatDate";
-import { Card } from "../ui/Card";
-import { MaterialPill } from "../ui/MateriaPill";
-import { Error } from "../ui/Error";
 import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import { Card } from "../ui/Card";
+import { Error } from "../ui/Error";
+import { MaterialPill } from "../ui/MateriaPill";
+import { formatDate } from "@/lib/formatDate";
+import { useRouter } from "next/navigation";
 
-export const TransactionCard = ({
+export const RecentTransactionCard = ({
   data,
   isLoading,
   isError,
   handleRefetchCount,
 }) => {
+  const router = useRouter();
   return (
     <>
       {isLoading ? (
@@ -23,21 +22,18 @@ export const TransactionCard = ({
           >
             <div className="flex flex-row justify-between w-full">
               <div className="flex flex-col">
-                <Skeleton width={105} />
+                <Skeleton width={103} />
                 <div className="flex flex-row gap-1 items-center">
-                  <Skeleton width={180} />
-                  <Skeleton width={70} />
+                  <Skeleton width={105} />
                 </div>
-                <Skeleton width={105} />
-                <Skeleton width={100} />
               </div>
               <div className="flex flex-col items-end gap-2">
                 <Skeleton width={120} />
               </div>
             </div>
             <div className="flex flex-row items-center justify-between w-full pt-2 border-t border-gray-100">
-              <Skeleton width={105} />
-              <Skeleton width={30} />
+              <Skeleton width={130} />
+              <Skeleton width={135} />
             </div>
           </Card>
         ))
@@ -58,44 +54,36 @@ export const TransactionCard = ({
           </p>
         </div>
       ) : (
-        data?.transactions?.map((d) => (
+        data?.recentTransactions?.map((d) => (
           <Card
-            className={`flex flex-col md:hidden items-start gap-3 ${d?.programMaterial?.program?.isActive ? "" : "opacity-60"}`}
+            className={`flex flex-col md:hidden items-start gap-3`}
             key={d?.id}
+            handleClick={() =>
+              router.push(`/collection-requests/${d?.requestId}`)
+            }
           >
             <div className="flex flex-row justify-between w-full">
               <div className="flex flex-col">
-                <h3 className="font-semibold">{d?.beneficiaryName}</h3>
+                <h3 className="font-semibold">
+                  {d?.request?.user?.firstName} {d?.request?.user?.lastName}
+                </h3>
                 <div className="flex flex-row gap-1 items-center">
-                  <p className="text-sm text-gray-500">
-                    {d?.programMaterial?.program?.name}
-                  </p>
-                  <span
-                    className={`text-xs font-medium px-3 py-1 rounded-full ${d?.programMaterial?.program?.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
-                  >
-                    {d?.programMaterial?.program?.isActive
-                      ? "Active"
-                      : "Inactive"}
-                  </span>
+                  <p className="text-sm text-gray-500">Pickup Request</p>
                 </div>
-                <p className="text-sm text-gray-400">By: {d?.collectorName}</p>
-                <p className="text-sm text-gray-400 capitalize">
-                  {(d?.educationalLevel).toLowerCase()} level
-                </p>
               </div>
               <div className="flex flex-col items-end gap-2">
-                <MaterialPill
-                  type={`${d?.programMaterial?.materialType}`}
-                  points={`${d?.quantity * d?.currentPointValue}`}
-                />
+                <MaterialPill type={`${d?.materialType}`} />
               </div>
             </div>
             <div className="flex flex-row items-center justify-between w-full pt-2 border-t border-gray-100">
               <p className="text-xs text-gray-400">
-                {formatDate(d?.createdAt)}
+                {formatDate(d?.request?.createdAt)}
               </p>
               <p className="text-xs text-gray-500 font-medium">
-                Qty: {d?.quantity}
+                Actual weight: {d?.actualWeight}{" "}
+                <span className="capitalize">
+                  {(d?.weightUnit).toLowerCase()}
+                </span>
               </p>
             </div>
           </Card>

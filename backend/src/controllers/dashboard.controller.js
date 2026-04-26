@@ -1,4 +1,5 @@
 import { prisma } from "../config/db.js";
+import { pickupRequest } from "./pickup-request.controller.js";
 
 const getDashboardStats = async (req, res) => {
   try {
@@ -14,7 +15,6 @@ const getDashboardStats = async (req, res) => {
       }),
     ]);
 
- 
     return res.status(200).json({
       message: "Fetch success",
       requestedCount,
@@ -25,5 +25,38 @@ const getDashboardStats = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
- 
-export { getDashboardStats, }
+
+const getRecentTransactions = async (req, res) => {
+  try {
+    const recentTransactions = await prisma.collectionItem.findMany({
+      take: 3,
+      include: {
+        request: {
+          select: {
+            createdAt: true,
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+       request: {
+        createdAt: "desc"
+       }
+      },
+    });
+
+    return res.status(200).json({
+      message: "Fetch successful",
+      recentTransactions
+    })
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+export { getDashboardStats, getRecentTransactions };

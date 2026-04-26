@@ -6,7 +6,7 @@ import { PageContent } from "@/components/layout/PageContent";
 import { BarangayHeaderCard } from "@/components/ui/BarangayHeaderCard";
 import { Card } from "@/components/ui/Card";
 import { IconContainer } from "@/components/ui/IconContainer";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, Bars3Icon } from "@heroicons/react/24/outline";
 import {
   InboxStackIcon,
   ClipboardDocumentCheckIcon,
@@ -19,13 +19,29 @@ import { useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Error } from "@/components/ui/Error";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import { useRouter } from "next/navigation";
+import { RecentTransactionTable } from "@/components/dashboard/RecentTransactionTable";
+import { RecentTransactionCard } from "@/components/dashboard/RecentTransactionCard";
 
 export default function BarangayDashboardPage() {
   const [refetchCount, setRefetchCount] = useState(0);
   const url = `/api/dashboard/`;
   const { isLoading, isError, data } = useFetch({ url, refetchCount });
+  const router = useRouter();
 
-  const handleRefetchCount = () => setRefetchCount((prev) => prev + 1)
+  const handleRefetchCount = () => setRefetchCount((prev) => prev + 1);
+
+  const [transactionRefetchCount, setTransactionRefetchCount] = useState(0);
+  const transactionUrl = `/api/dashboard/recent-transactions`;
+  const {
+    isLoading: transactionLoading,
+    isError: transactionError,
+    data: transactionData,
+  } = useFetch({ url: transactionUrl, refetchCount: transactionRefetchCount });
+
+  const handleTransactionRefetchCount = () =>
+    setTransactionRefetchCount((prev) => prev + 1);
 
   return (
     <Page>
@@ -132,7 +148,10 @@ export default function BarangayDashboardPage() {
             </Card>
           </section>
         ) : isError ? (
-          <Error subtext={"We coudn't get your dashboard data"} handleRefetchCount={handleRefetchCount}/>
+          <Error
+            subtext={"We coudn't get your dashboard data"}
+            handleRefetchCount={handleRefetchCount}
+          />
         ) : (
           <section className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <Card className="flex-col items-start gap-3">
@@ -229,6 +248,32 @@ export default function BarangayDashboardPage() {
             </Card>
           </section>
         )}
+        <section className="flex flex-col gap-6">
+          <SectionHeader
+            icon={<Bars3Icon className="w-6" />}
+            title={"Recent Intake Transactions"}
+            subtitle={"Latest recorded material intake entries"}
+            buttonIcon={""}
+            buttonLabel={"View all ->"}
+            onAction={() => router.push("/collection-requests")}
+          />
+
+          <RecentTransactionTable
+            data={transactionData}
+            isError={transactionError}
+            isLoading={transactionLoading}
+            handleRefetchCount={handleTransactionRefetchCount}
+          />
+
+          <div className="md:hidden flex flex-col gap-2">
+            <RecentTransactionCard
+              data={transactionData}
+              isError={transactionError}
+              isLoading={transactionLoading}
+              handleRefetchCount={handleTransactionRefetchCount}
+            />
+          </div>
+        </section>
       </PageContent>
     </Page>
   );

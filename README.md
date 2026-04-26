@@ -149,9 +149,12 @@ Protected by `authenticateBarangay + requireRoles(["CAPTAIN","SECRETARY","SK"])`
 
 ### Dashboard (`/dashboard`)
 
-| Method | Path           | Required role | Description           |
-|--------|----------------|---------------|-----------------------|
-| GET    | `/dashboard`   | CAPTAIN       | Barangay dashboard (placeholder) |
+Protected by `authenticateBarangay + requireRoles(["CAPTAIN"])`.
+
+| Method | Path                               | Required role | Description                                                |
+|--------|------------------------------------|---------------|------------------------------------------------------------|
+| GET    | `/dashboard`                       | CAPTAIN       | Returns `requestedCount`, `totalRecords`, `unverified`     |
+| GET    | `/dashboard/recent-transactions`   | CAPTAIN       | Returns last 3 `CollectionItem` records with user info     |
 
 ---
 
@@ -159,7 +162,7 @@ Protected by `authenticateBarangay + requireRoles(["CAPTAIN","SECRETARY","SK"])`
 
 - `Barangay` — Registered barangay organizations; fields include `name`, `city`, `code`, `isRegistered`, `contactNumber`
 - `Sitio` — Sub-divisions within a barangay (unique per barangay)
-- `User` — Residents and barangay staff; roles: `RESIDENT`, `CAPTAIN`, `SECRETARY`, `TREASURER`, `SK`, `COLLECTOR`, `SUPER_ADMIN`; `username` field for login
+- `User` — Residents and barangay staff; roles: `RESIDENT`, `CAPTAIN`, `SECRETARY`, `TREASURER`, `SK`, `COLLECTOR`, `SUPER_ADMIN`; `username` field for login; `isVerified` flag for resident account verification
 - `OtpVerification` — SMS OTP codes with expiration
 - `PasswordResetToken` — Tokens for forgot-password flow
 - `BlackListedToken` — Revoked JWTs; checked on every authenticated request
@@ -187,6 +190,8 @@ Protected by `authenticateBarangay + requireRoles(["CAPTAIN","SECRETARY","SK"])`
 Both resident and barangay auth flows are complete and stable (username-based login, OTP, forgot password, split middleware). The full pickup request lifecycle is wired end-to-end on the barangay side (REQUESTED → APPROVED → IN_PROGRESS → COLLECTED or REJECTED, including batch collection and ASSORTED material breakdown). The Redemption Management module is fully wired end-to-end (programs with create/edit/deactivate via `PATCH /redemption/programs/:id`, transactions, program detail page). The resident home page and community page fetch live data from the backend (profile, recent requests, barangay contact info). The resident requests list and request detail pages are fully wired — a new `GET /pickup-requests/my-requests/:id` endpoint (ownership-scoped) returns full request detail including `collectionItems`; home page request cards navigate directly to the detail page. The app ships as a PWA with web manifests and a splash screen on login.
 
 The resident profile section is complete: the `/profile` page shows live name and barangay data; `/profile/personal-information` has a full edit mode wired to `PATCH /resident/me` with a discard-changes confirmation modal; profile sub-pages for notification settings, settings, and help & support exist as UI shells.
+
+The barangay dashboard is now partially wired. `GET /dashboard/` returns real DB counts (pending requests, collected pickups, unverified residents). `GET /dashboard/recent-transactions` returns the last 3 `CollectionItem` records. Three stat cards remain hardcoded (Total Recyclables Collected, Total Program Expenses, Current Fund Balance) pending the MRF and Program Funds modules. The `User` model gained an `isVerified` field.
 
 Next focus: Manual Collection Intake module (Sunday EcoAid manual entry with resident search).
 

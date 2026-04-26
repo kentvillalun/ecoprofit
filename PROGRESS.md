@@ -124,9 +124,15 @@
 - [x] Resident requests list page wired to real data — `/requests` fetches from `GET /pickup-requests/my-requests`; Ongoing tab filters `REQUESTED / APPROVED / IN_PROGRESS`; History tab filters `COLLECTED / REJECTED`; skeleton loading, `Error`, `Empty` states; each card shows photo thumbnail, material, notes, date, estimated weight, status pill; tapping a card navigates to `/requests/:id`
 - [x] Resident request detail page fully built — `/requests/[id]` fetches from `GET /pickup-requests/my-requests/:id`; shows photo banner, Request Information (material pill, estimated weight, notes, submitted date), Status Timeline (conditional entries with connecting line), and Collection Details (breakdown table of `collectionItems` when `COLLECTED`, placeholder text otherwise); skeleton loading and error states implemented
 - [x] Home page request cards navigate to detail — "Recent Requests" cards on `/home` now push to `/requests/:id` on tap
+- [x] `isVerified Boolean` field on `User` model — migration `20260426061732_add_is_verified` adds `isVerified @default(false)`; used by dashboard unverified-residents stat
+- [x] Dashboard stats endpoint `GET /dashboard/` — `getDashboardStats` controller returns `requestedCount` (REQUESTED pickups), `totalRecords` (COLLECTED pickups), `unverified` (unverified RESIDENT users) from real DB; protected by `authenticateBarangay + requireRoles(["CAPTAIN"])`
+- [x] Dashboard recent transactions endpoint `GET /dashboard/recent-transactions` — `getRecentTransactions` controller returns last 3 `CollectionItem` records ordered by `request.createdAt desc`, including related user `firstName`/`lastName`; protected by `authenticateBarangay + requireRoles(["CAPTAIN"])`
+- [x] `RecentTransactionTable` component — `frontend/src/components/dashboard/RecentTransactionTable.jsx`; desktop table (date, household name, material pill, actual weight, source, "View Details" link to `/collection-requests/:id`); loading/error/empty states
+- [x] `RecentTransactionCard` component — `frontend/src/components/dashboard/RecentTransactionCard.jsx`; mobile card version of recent transactions; tappable, navigates to `/collection-requests/:id`
+- [x] Dashboard page wired with real data — `useFetch` drives both stats (`GET /api/dashboard/`) and recent transactions (`GET /api/dashboard/recent-transactions`); skeleton loading and `Error` states; "Pending Collection Requests", "Total Intake Transactions", and "Unverified Residents" cards show live DB data; "Total Recyclables Collected", "Total Program Expenses", and "Current Fund Balance" remain hardcoded pending MRF and Program Funds modules
 - [ ] Manual Collection Intake module (Sunday EcoAid manual entry with resident search)
 - [ ] Collection schedule module
-- [ ] Dashboard with real data
+- [ ] Dashboard remaining hardcoded stats (Total Recyclables Collected, Total Program Expenses, Current Fund Balance) — pending MRF and Program Funds modules
 
 ## Current State
 App is deployed. Backend runs on Railway (`ecoprofit-production.up.railway.app`).
@@ -154,8 +160,15 @@ status, city, contact number). The `Barangay` model gained a `contactNumber` fie
 The resident requests list page (`/requests`) and request detail page (`/requests/[id]`)
 are fully wired end-to-end — a new `GET /pickup-requests/my-requests/:id` endpoint scoped
 to the authenticated resident returns full request detail including `collectionItems`.
-Home page request cards navigate to the detail page. Next focus: Manual Collection Intake
-module (Sunday EcoAid manual entry with resident search).
+Home page request cards navigate to the detail page.
+
+The barangay dashboard is now partially wired to real data. `GET /dashboard/` returns
+`requestedCount`, `totalRecords`, and `unverified` counts from the DB. `GET /dashboard/recent-transactions`
+returns the last 3 `CollectionItem` records with household name and material info.
+The `User` model gained an `isVerified` field. Three stat cards ("Total Recyclables
+Collected", "Total Program Expenses", "Current Fund Balance") remain hardcoded pending
+the MRF and Program Funds modules. Next focus: Manual Collection Intake module (Sunday
+EcoAid manual entry with resident search).
 
 ## Key Decisions Made
 - httpOnly cookies over localStorage → XSS protection
@@ -220,7 +233,7 @@ module (Sunday EcoAid manual entry with resident search).
 
 ## Known Issues / TODO
 - BlacklistedToken cleanup job needed (periodic deletion of expired tokens using the expiresAt field)
-- Dashboard returns placeholder response, real data pending
+- Dashboard partially wired — "Pending Collection Requests", "Total Intake Transactions", and "Unverified Residents" cards show real DB data; "Total Recyclables Collected", "Total Program Expenses", and "Current Fund Balance" are still hardcoded (pending MRF and Program Funds modules)
 - Resident Layer 2 auth check (server component calling GET /auth/me) still pending
 - POST /pickup-requests response has a typo: "submittion" → "submission"
 - `InProgressActions` ASSORTED modal: minimum 2 rows enforced (removeRow disabled when `items.length === 2`) but rows start empty — no validation before submit (empty materialType/weight are silently sent to backend)
