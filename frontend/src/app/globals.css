@@ -5,3 +5,7 @@
     
 }
 
+.sidebar {
+    scrollbar-color: rgba(0, 128, 0, 0.337) transparent;
+    scrollbar-width: thin;
+}
