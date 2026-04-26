@@ -99,6 +99,7 @@ model User {
 
   address String?
   purok String?
+  isVerified Boolean? @default(false)
 
   passwordHash String 
 

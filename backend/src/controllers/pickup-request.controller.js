@@ -91,6 +91,20 @@ const updateStatus = async (req, res) => {
     }
 
     if (status === "COLLECTED") {
+      const { userId } = await prisma.pickupRequests.findUnique({
+        where: { id },
+        select: {
+          userId: true,
+        },
+      });
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          isVerified: true,
+        },
+      });
+
       await prisma.collectionItem.createMany({
         data: items.map((item) => ({
           requestId: id,
@@ -248,8 +262,8 @@ const getMyRequestsById = async (req, res) => {
             materialType: true,
             actualWeight: true,
             weightUnit: true,
-          }
-        }
+          },
+        },
       },
     });
 
@@ -266,4 +280,11 @@ const getMyRequestsById = async (req, res) => {
   }
 };
 
-export { pickupRequest, listRequests, updateStatus, getRequest, getMyRequest, getMyRequestsById };
+export {
+  pickupRequest,
+  listRequests,
+  updateStatus,
+  getRequest,
+  getMyRequest,
+  getMyRequestsById,
+};
