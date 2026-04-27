@@ -19,6 +19,7 @@ import { RecordTransactionModal } from "@/components/redemption/modals/RecordTra
 import { Error } from "@/components/ui/Error";
 import { Spinner } from "@/components/ui/Spinner";
 import { useRouter } from "next/navigation";
+import { Empty } from "@/components/ui/Empty";
 
 export default function RedemptionProgramPage() {
   const [isProgramModalOpen, setIsProgramModalOpen] = useState(false);
@@ -88,26 +89,36 @@ export default function RedemptionProgramPage() {
           >
             {isLoading && <Spinner className="p-7!" />}
             {isError && <Error handleRefetchCount={handleProgramRefetch} />}
-            {data?.programs.map((p) => (
-              <Card
-                className="flex flex-col items-start gap-2 p-5! hover:-translate-y-0.5 transition-all duration-200 ease-in-out hover:cursor-pointer"
-                key={p.id}
-                handleClick={() => router.push(`/redemption-programs/${p.id}`)}
-              >
-                <div className="flex flex-row items-center justify-between w-full">
-                  <h4 className="text-base font-semibold">{p.name}</h4>
-                  <span className={`text-xs font-medium px-3 py-1 rounded-full ${p.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                    {p.isActive ? "Active" : "Inactive"}
-                  </span>
-                </div>
-                <div className="flex flex-row gap-6">
-                  <LabelValue
-                    name="Budget"
-                    value={`₱ ${p.allotedBudget.toLocaleString()}`}
-                  />
-                  <LabelValue name="Max Points" value={`${p.maxPoints} pts`} />
-                </div>
-           
+            {data?.programs?.length === 0 ? (
+              <Empty text={"No redemption programs yet"} subtext={"Please register a new redemption program by tapping the Add Program button above."}/>
+            ) : (
+              data?.programs.map((p) => (
+                <Card
+                  className="flex flex-col items-start gap-2 p-5! hover:-translate-y-0.5 transition-all duration-200 ease-in-out hover:cursor-pointer"
+                  key={p.id}
+                  handleClick={() =>
+                    router.push(`/redemption-programs/${p.id}`)
+                  }
+                >
+                  <div className="flex flex-row items-center justify-between w-full">
+                    <h4 className="text-base font-semibold">{p.name}</h4>
+                    <span
+                      className={`text-xs font-medium px-3 py-1 rounded-full ${p.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                    >
+                      {p.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+                  <div className="flex flex-row gap-6">
+                    <LabelValue
+                      name="Budget"
+                      value={`₱ ${p.allotedBudget.toLocaleString()}`}
+                    />
+                    <LabelValue
+                      name="Max Points"
+                      value={`${p.maxPoints} pts`}
+                    />
+                  </div>
+
                   <div className="flex flex-row flex-wrap gap-2 pt-3 border-t border-gray-100 w-full">
                     {p.programMaterial.map((m) => (
                       <MaterialPill
@@ -117,9 +128,9 @@ export default function RedemptionProgramPage() {
                       />
                     ))}
                   </div>
-               
-              </Card>
-            ))}
+                </Card>
+              ))
+            )}
           </div>
         </section>
 

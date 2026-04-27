@@ -104,7 +104,7 @@ export const TransactionTable = ({
               </td>
             </tr>
           )}
-          {data?.length === 0 ? (
+          {data?.transactions?.length === 0 ? (
             <tr className="max-w-md">
               <td className="text-center" colSpan={6}>
                 <Empty
