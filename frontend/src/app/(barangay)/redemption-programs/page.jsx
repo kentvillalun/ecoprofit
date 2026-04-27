@@ -94,13 +94,13 @@ export default function RedemptionProgramPage() {
             ) : (
               data?.programs.map((p) => (
                 <Card
-                  className="flex flex-col items-start gap-2 p-5! hover:-translate-y-0.5 transition-all duration-200 ease-in-out hover:cursor-pointer"
+                  className={`flex flex-col gap-2 p-5! hover:-translate-y-0.5 transition-all duration-200 ease-in-out hover:cursor-pointer ${data?.programs?.length === 1 ? "items-center" : "items-start"}`}
                   key={p.id}
                   handleClick={() =>
                     router.push(`/redemption-programs/${p.id}`)
                   }
                 >
-                  <div className="flex flex-row items-center justify-between w-full">
+                  <div className={`flex flex-row items-center  w-full ${data?.programs?.length === 1 ? "justify-center gap-2" : "justify-between"}`}>
                     <h4 className="text-base font-semibold">{p.name}</h4>
                     <span
                       className={`text-xs font-medium px-3 py-1 rounded-full ${p.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
@@ -119,7 +119,7 @@ export default function RedemptionProgramPage() {
                     />
                   </div>
 
-                  <div className="flex flex-row flex-wrap gap-2 pt-3 border-t border-gray-100 w-full">
+                  <div className={`flex flex-row flex-wrap gap-2 pt-3 border-t border-gray-100 w-full ${data?.programs?.length === 1 ? "items-center justify-center" : ""}`}>
                     {p.programMaterial.map((m) => (
                       <MaterialPill
                         type={m.materialType}
