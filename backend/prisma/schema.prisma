@@ -46,8 +46,17 @@ model OtpVerification {
 model Barangay {
   id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name         String
-  city         String?
-  code         String? @unique
+  municipality String?
+  province String?
+  zipCode        String? @unique
+  logoUrl String?
+  redemptionMode RedemptionMode @default(POINTS)
+
+  hasCollectionRequests Boolean @default(true)
+  hasRedemptionManagement Boolean @default(false)
+  hasRewardInventory Boolean @default(false)
+  hasLeaderboard Boolean @default(false)
+
   isRegistered Boolean @default(true)
   users        User[]
   sitios       Sitio[]
@@ -55,6 +64,15 @@ model Barangay {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  material Material[]
+  program Program[]
+}
+
+enum RedemptionMode {
+  POINTS
+  CASH
+  BOTH
 }
 
 model Sitio {
@@ -121,11 +139,13 @@ model PickupRequests {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   userId String @db.Uuid
-
   user User @relation(fields: [userId], references: [id])
-  materialType MaterialType @default(PLASTICS)
+  
+  materialId String? @db.Uuid
+  material Material? @relation(fields: [materialId], references: [id])
+
   estimatedWeight Float 
-  weightUnit WeightUnit @default(KG)
+  estimatedUnit Unit @default(KG)
   status Status @default(REQUESTED)
   photoUrl String
   isScheduled Boolean @default(false)
@@ -139,22 +159,46 @@ model PickupRequests {
   approvedAt DateTime?
   collectedAt DateTime?
   rejectedAt DateTime?
+  isAssorted Boolean @default(false)
 
   collectionItems CollectionItem[]
 }
 
-enum MaterialType {
-  METALS
-  PAPERS
-  BOTTLES
-  PLASTICS
-  ASSORTED
+model Category {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String @unique
+
+  material Material[]
 }
 
-enum WeightUnit {
+model Material {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String
+  categoryId String @db.Uuid
+
+  category Category @relation(fields: [categoryId], references: [id])
+
+  barangayId String @db.Uuid
+  barangay Barangay @relation(fields: [barangayId], references: [id])
+
+  defaultUnit Unit @default(KG)
+
+  pointValue Decimal?
+  cashValue Decimal?
+
+  isActive Boolean @default(true)
+  acceptNonSellable Boolean @default(false)
+
+  pickupRequest PickupRequests[]
+  collectionItem CollectionItem[]
+  programMaterial ProgramMaterial[]
+}
+
+enum Unit {
   KG
   GRAMS
   LBS
+  PIECE
 }
 
 enum Status {
@@ -169,22 +213,28 @@ model CollectionItem {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   requestId String @db.Uuid
-
   request PickupRequests @relation(fields: [requestId], references: [id])
 
-  materialType MaterialType 
+  materialId String @db.Uuid
+  material Material @relation(fields: [materialId], references: [id])
+
   actualWeight Float
-  weightUnit WeightUnit
+  actualUnit Unit
 
 }
 
 model Program {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  barangayId String @db.Uuid
+  barangay Barangay @relation(fields: [barangayId], references: [id])
+
   name String
   allotedBudget Float
   maxPoints Float
   description String?
   isActive Boolean @default(true)
+  isCashMode Boolean @default(false)
   createdAt DateTime @default(now()) 
   
   programMaterial ProgramMaterial[]
@@ -195,18 +245,20 @@ model ProgramMaterial {
   programId String @db.Uuid
   program Program @relation(fields: [programId], references: [id])
 
-  materialType MaterialType
+  materialId String @db.Uuid
+  material Material @relation(fields: [materialId], references: [id])
+
   pointValue Float
   createdAt DateTime @default(now())
 
   redemptionTransaction RedemptionTransaction[]
 
-  @@unique([programId, materialType])
+  @@unique([programId, materialId])
 }
 
 model RedemptionTransaction {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  
+
   programMaterialId String @db.Uuid
   programMaterial ProgramMaterial @relation(fields: [programMaterialId], references: [id])
 

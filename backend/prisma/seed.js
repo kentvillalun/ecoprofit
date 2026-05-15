@@ -6,7 +6,6 @@ import { PrismaClient, Role } from "../src/generated/prisma/index.js";
 // To seed, just run this command after migrate reset
 // node prisma/seed.js
 
-
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
 });
@@ -14,37 +13,43 @@ const adapter = new PrismaPg({
 const prisma = new PrismaClient({ adapter });
 
 const DEV_BARANGAY = {
-  name: "Barangay Beddeng Laud",
-  city: "Vigan City",
-  code: "BEDDENG_LAUD_VIGAN_CITY",
+  name: "Beddeng Laud",
+  municipality: "Vigan City",
+  province: "Ilocos Sur",
+  zipCode: "2700",
+  logoUrl: null,
   adminPhoneNumber: "09990000001",
   adminPassword: "barangay123",
   adminFirstName: "Beddeng",
   adminLastName: "Laud Admin",
   sitios: ["Sitio 1", "Sitio 2", "Sitio 3"],
   adminUsername: "barangayadmin",
-  contactNumber: "09177744669"
+  contactNumber: "09177744669",
 };
+
+const DEV_CATEGORIES = ["Metals", "Papers", "Bottles", "Plastics"];
 
 async function main() {
   const passwordHash = await bcrypt.hash(DEV_BARANGAY.adminPassword, 10);
 
   const barangay = await prisma.barangay.upsert({
     where: {
-      code: DEV_BARANGAY.code,
+      zipCode: DEV_BARANGAY.zipCode,
     },
     update: {
       name: DEV_BARANGAY.name,
-      city: DEV_BARANGAY.city,
+      municipality: DEV_BARANGAY.municipality,
+      province: DEV_BARANGAY.province,
       isRegistered: true,
-      contactNumber: DEV_BARANGAY.contactNumber
+      contactNumber: DEV_BARANGAY.contactNumber,
     },
     create: {
       name: DEV_BARANGAY.name,
-      city: DEV_BARANGAY.city,
-      code: DEV_BARANGAY.code,
+      municipality: DEV_BARANGAY.municipality,
+      province: DEV_BARANGAY.province,
+      zipCode: DEV_BARANGAY.zipCode,
       isRegistered: true,
-      contactNumber: DEV_BARANGAY.contactNumber
+      contactNumber: DEV_BARANGAY.contactNumber,
     },
   });
 
@@ -74,11 +79,11 @@ async function main() {
       role: Role.CAPTAIN,
       passwordHash,
       barangayId: barangay.id,
-      address: `Barangay Hall, ${DEV_BARANGAY.name}, ${DEV_BARANGAY.city}`,
+      address: `Barangay Hall, ${DEV_BARANGAY.name}, ${DEV_BARANGAY.municipality}`,
       isActive: true,
       termsAccepted: true,
       termsAcceptedAt: new Date(),
-      username: DEV_BARANGAY.adminUsername
+      username: DEV_BARANGAY.adminUsername,
     },
     create: {
       phoneNumber: DEV_BARANGAY.adminPhoneNumber,
@@ -87,20 +92,31 @@ async function main() {
       role: Role.CAPTAIN,
       passwordHash,
       barangayId: barangay.id,
-      address: `Barangay Hall, ${DEV_BARANGAY.name}, ${DEV_BARANGAY.city}`,
+      address: `Barangay Hall, ${DEV_BARANGAY.name}, ${DEV_BARANGAY.municipality}`,
       isActive: true,
       termsAccepted: true,
       termsAcceptedAt: new Date(),
-      username: DEV_BARANGAY.adminUsername
+      username: DEV_BARANGAY.adminUsername,
     },
   });
 
   console.log("Seeded development barangay account:", {
     barangay: DEV_BARANGAY.name,
-    city: DEV_BARANGAY.city,
+    municipality: DEV_BARANGAY.municipality,
     adminPhoneNumber: DEV_BARANGAY.adminPhoneNumber,
     sitios: DEV_BARANGAY.sitios,
   });
+
+  for (const categoryName of DEV_CATEGORIES) {
+    const category = await prisma.category.upsert({
+      where: { name: categoryName },
+      update: {},
+      create: {
+        name: categoryName
+      }
+      
+    })
+  }
 }
 
 main()

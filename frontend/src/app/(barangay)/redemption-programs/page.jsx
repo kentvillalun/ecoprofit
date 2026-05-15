@@ -87,10 +87,17 @@ export default function RedemptionProgramPage() {
           <div
             className={`grid gap-3 ${data?.programs.length === 1 && "grid-cols-1"} ${data?.programs.length === 2 && "md:grid-cols-2"} ${data?.programs.length >= 3 && "md:grid-cols-3"}`}
           >
-            {isLoading && <Spinner className="p-7!" />}
-            {isError && <Error handleRefetchCount={handleProgramRefetch} />}
-            {data?.programs?.length === 0 ? (
-              <Empty text={"No redemption programs yet"} subtext={"Please register a new redemption program by tapping the Add Program button above."}/>
+            {isLoading ? (
+              <Spinner className="p-7!" />
+            ) : isError ? (
+              <Error handleRefetchCount={handleProgramRefetch} />
+            ) : data?.programs?.length === 0 ? (
+              <Empty
+                text={"No redemption programs yet"}
+                subtext={
+                  "Please register a new redemption program by tapping the Add Program button above."
+                }
+              />
             ) : (
               data?.programs.map((p) => (
                 <Card
@@ -100,7 +107,9 @@ export default function RedemptionProgramPage() {
                     router.push(`/redemption-programs/${p.id}`)
                   }
                 >
-                  <div className={`flex flex-row items-center  w-full ${data?.programs?.length === 1 ? "justify-center gap-2" : "justify-between"}`}>
+                  <div
+                    className={`flex flex-row items-center  w-full ${data?.programs?.length === 1 ? "justify-center gap-2" : "justify-between"}`}
+                  >
                     <h4 className="text-base font-semibold">{p.name}</h4>
                     <span
                       className={`text-xs font-medium px-3 py-1 rounded-full ${p.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
@@ -119,7 +128,9 @@ export default function RedemptionProgramPage() {
                     />
                   </div>
 
-                  <div className={`flex flex-row flex-wrap gap-2 pt-3 border-t border-gray-100 w-full ${data?.programs?.length === 1 ? "items-center justify-center" : ""}`}>
+                  <div
+                    className={`flex flex-row flex-wrap gap-2 pt-3 border-t border-gray-100 w-full ${data?.programs?.length === 1 ? "items-center justify-center" : ""}`}
+                  >
                     {p.programMaterial.map((m) => (
                       <MaterialPill
                         type={m.materialType}
