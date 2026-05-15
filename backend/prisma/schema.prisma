@@ -144,7 +144,7 @@ model PickupRequests {
   materialId String? @db.Uuid
   material Material? @relation(fields: [materialId], references: [id])
 
-  estimatedWeight Float 
+  estimatedValue Float 
   estimatedUnit Unit @default(KG)
   status Status @default(REQUESTED)
   photoUrl String
@@ -182,9 +182,6 @@ model Material {
   barangay Barangay @relation(fields: [barangayId], references: [id])
 
   defaultUnit Unit @default(KG)
-
-  pointValue Decimal?
-  cashValue Decimal?
 
   isActive Boolean @default(true)
   acceptNonSellable Boolean @default(false)
@@ -249,6 +246,7 @@ model ProgramMaterial {
   material Material @relation(fields: [materialId], references: [id])
 
   pointValue Float
+  cashValue Float?
   createdAt DateTime @default(now())
 
   redemptionTransaction RedemptionTransaction[]
@@ -266,7 +264,7 @@ model RedemptionTransaction {
   collectorName String
   beneficiaryName String
   createdAt DateTime @default(now())
-  currentPointValue Float
+  currentValue Float
   educationalLevel EducationalLevel
 }
 

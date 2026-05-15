@@ -2,8 +2,16 @@ import { prisma } from "../config/db.js";
 
 const createProgram = async (req, res) => {
   try {
-    const { name, allotedBudget, maxPoints, programMaterial, description } =
-      req.body ?? {};
+    const {
+      name,
+      allotedBudget,
+      maxPoints,
+      programMaterial,
+      description,
+      isCashMode,
+    } = req.body ?? {};
+
+    const barangayId = req.user.barangayId;
 
     if (
       !name ||
@@ -17,10 +25,12 @@ const createProgram = async (req, res) => {
 
     const record = await prisma.program.create({
       data: {
+        barangayId,
         name,
         allotedBudget,
         maxPoints,
         description,
+        isCashMode,
         programMaterial: {
           createMany: {
             data: programMaterial,
@@ -37,7 +47,10 @@ const createProgram = async (req, res) => {
 
 const getPrograms = async (req, res) => {
   try {
+    const barangayId = req.user.barangayId;
+
     const programs = await prisma.program.findMany({
+      where: { barangayId },
       include: {
         programMaterial: true,
       },
@@ -54,23 +67,24 @@ const getPrograms = async (req, res) => {
 const getProgram = async (req, res) => {
   try {
     const { id } = req.params;
+    const barangayId = req.user.barangayId;
 
     const program = await prisma.program.findUnique({
-      where: { id },
+      where: { id, barangayId },
       include: {
         programMaterial: {
-            include: {
-                redemptionTransaction: {
+          include: {
+            redemptionTransaction: {
+              include: {
+                programMaterial: {
                   include: {
-                    programMaterial: {
-                      include: {
-                        program: true
-                      }
-                    }
-                  }
-                }
-            }
-        }
+                    program: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
 
@@ -92,39 +106,45 @@ const updateProgram = async (req, res) => {
     const { id } = req.params;
     const { name, allotedBudget, description, maxPoints, isActive, materials } =
       req.body ?? {};
-    
 
-    const data = {}
-    if (name !== undefined) data.name = name
-    if (allotedBudget !== undefined) data.allotedBudget = allotedBudget
-    if (description !== undefined) data.description = description
-    if (maxPoints !== undefined) data.maxPoints = maxPoints
-    if (isActive !== undefined) data.isActive = isActive
+    const data = {};
+    if (name !== undefined) data.name = name;
+    if (allotedBudget !== undefined) data.allotedBudget = allotedBudget;
+    if (description !== undefined) data.description = description;
+    if (maxPoints !== undefined) data.maxPoints = maxPoints;
+    if (isActive !== undefined) data.isActive = isActive;
 
     await prisma.program.update({
       where: { id },
-      data
+      data,
     });
 
     if (materials) {
       await Promise.all(
-        Object.entries(materials).map(([materialType, pointValue]) => 
+        materials.map(({ materialId, pointValue }) =>
           prisma.programMaterial.upsert({
-            where: { programId_materialType: {
-              programId: id, materialType
-            }},
-            update: {
-              pointValue: parseFloat(pointValue)
+            where: {
+              programId_materialId: {
+                programId: id,
+                materialId,
+              },
             },
-            create: { programId: id, materialType, pointValue: parseFloat(pointValue) }
-          })
-        )
-      )
+            update: {
+              pointValue: parseFloat(pointValue),
+            },
+            create: {
+              programId: id,
+              materialId,
+              pointValue: parseFloat(pointValue),
+            },
+          }),
+        ),
+      );
     }
 
-    return res.status(200).json({ message: "Update successful"})
+    return res.status(200).json({ message: "Update successful" });
   } catch (error) {
-    return res.status(400).json({ error: error.message})
+    return res.status(400).json({ error: error.message });
   }
 };
 
@@ -152,6 +172,12 @@ const createTransaction = async (req, res) => {
       where: { id: programMaterialId },
       select: {
         pointValue: true,
+        cashValue: true,
+        program: {
+          select: {
+            isCashMode: true,
+          },
+        },
       },
     });
 
@@ -165,7 +191,7 @@ const createTransaction = async (req, res) => {
         collectorName,
         beneficiaryName,
         educationalLevel,
-        currentPointValue: currentValue.pointValue,
+        currentValue: currentValue.program.isCashMode ? currentValue.cashValue : currentValue.pointValue,
         programMaterialId,
       },
     });
@@ -181,7 +207,17 @@ const createTransaction = async (req, res) => {
 
 const getTransactions = async (req, res) => {
   try {
+
+    const barangayId = req.user.barangayId
+
     const transactions = await prisma.redemptionTransaction.findMany({
+      where: {
+        programMaterial: {
+          program: {
+            barangayId
+          }
+        }
+      },
       include: {
         programMaterial: {
           include: {

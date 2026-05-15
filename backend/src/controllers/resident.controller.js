@@ -50,7 +50,8 @@ const getBarangayInfo = async (req, res) => {
         name: true,
         isRegistered: true,
         contactNumber: true,
-        city: true,
+        municipality: true,
+        province: true,
       },
     });
 

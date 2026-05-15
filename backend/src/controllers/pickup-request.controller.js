@@ -2,23 +2,35 @@ import { prisma } from "../config/db.js";
 
 const pickupRequest = async (req, res) => {
   try {
-    const { materialType, estimatedWeight, weightUnit, photoUrl, notes } =
-      req.body ?? {};
+    const {
+      materialId,
+      estimatedValue,
+      estimatedUnit,
+      photoUrl,
+      notes,
+      isAssorted,
+    } = req.body ?? {};
 
     const userId = req.user.id;
 
-    if (!materialType || !estimatedWeight || !weightUnit || !photoUrl) {
+    if (
+      !estimatedValue ||
+      !estimatedUnit ||
+      !photoUrl ||
+      (!isAssorted && !materialId)
+    ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     await prisma.pickupRequests.create({
       data: {
         userId,
-        materialType,
-        estimatedWeight,
-        weightUnit,
+        materialId,
+        estimatedValue,
+        estimatedUnit,
         photoUrl,
         notes,
+        isAssorted,
       },
     });
 
@@ -45,14 +57,22 @@ const listRequests = async (req, res) => {
         },
         id: true,
         createdAt: true,
-        materialType: true,
-        estimatedWeight: true,
-        weightUnit: true,
+        material: {
+          select: {
+            name: true,
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        estimatedValue: true,
+        estimatedUnit: true,
         status: true,
         approvedAt: true,
         isScheduled: true,
         rejectionReason: true,
-        actualWeight: true,
         collectedAt: true,
       },
     });
@@ -69,7 +89,7 @@ const listRequests = async (req, res) => {
 const updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, rejectionReason, actualWeight, weightUnit, items } =
+    const { status, rejectionReason, items } =
       req.body ?? {};
 
     if (status === "APPROVED") {
@@ -108,9 +128,9 @@ const updateStatus = async (req, res) => {
       await prisma.collectionItem.createMany({
         data: items.map((item) => ({
           requestId: id,
-          materialType: item.materialType,
+          materialId: item.materialId,
           actualWeight: item.actualWeight,
-          weightUnit: item.weightUnit,
+          actualUnit: item.actualUnit,
         })),
         skipDuplicates: true,
       });
@@ -170,9 +190,18 @@ const getRequest = async (req, res) => {
             },
           },
         },
-        materialType: true,
-        estimatedWeight: true,
-        weightUnit: true,
+        material: {
+          select: {
+            name: true,
+            category: {
+              select: {
+                name: true
+              }
+            }
+          }
+        },
+        estimatedValue: true,
+        estimatedUnit: true,
         notes: true,
         photoUrl: true,
         createdAt: true,
@@ -183,9 +212,13 @@ const getRequest = async (req, res) => {
         rejectionReason: true,
         collectionItems: {
           select: {
-            materialType: true,
+            material: {
+              select: {
+                name: true
+              }
+            },
             actualWeight: true,
-            weightUnit: true,
+            actualUnit: true,
           },
         },
       },
@@ -218,12 +251,21 @@ const getMyRequest = async (req, res) => {
       },
       select: {
         id: true,
-        materialType: true,
+        material: {
+          select: {
+            name: true,
+            category: {
+              select: {
+                name: true,
+              }
+            }
+          }
+        },
         status: true,
         createdAt: true,
         notes: true,
-        estimatedWeight: true,
-        weightUnit: true,
+        estimatedValue: true,
+        estimatedUnit: true,
         photoUrl: true,
       },
       ...(take && { take }),
@@ -247,11 +289,20 @@ const getMyRequestsById = async (req, res) => {
       where: { id, userId },
       select: {
         photoUrl: true,
-        materialType: true,
+        material: {
+          select: {
+            name: true,
+            category: {
+              select: {
+                name: true,
+              }
+            }
+          }
+        },
         status: true,
         notes: true,
-        estimatedWeight: true,
-        weightUnit: true,
+        estimatedValue: true,
+        estimatedUnit: true,
         createdAt: true,
         approvedAt: true,
         isScheduled: true,
@@ -259,9 +310,18 @@ const getMyRequestsById = async (req, res) => {
         rejectedAt: true,
         collectionItems: {
           select: {
-            materialType: true,
+            material: {
+              select: {
+                name: true,
+                category: {
+                  select: {
+                    name: true
+                  }
+                }
+              }
+            },
             actualWeight: true,
-            weightUnit: true,
+            actualUnit: true,
           },
         },
       },
